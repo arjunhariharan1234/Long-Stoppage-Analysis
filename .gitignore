@@ -1,0 +1,4 @@
+*.osm.pbf
+.DS_Store
+.ipynb_checkpoints/
+.claude/
