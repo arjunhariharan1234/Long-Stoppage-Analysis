@@ -102,6 +102,9 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
       style: DARK_BASEMAP,
       center: [77, 18],
       zoom: 5,
+      pitch: 45,
+      bearing: -15,
+      maxPitch: 85,
       dragRotate: true,
       touchPitch: true,
     });
@@ -165,7 +168,7 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
       if (data.length > 0 && mapRef.current) {
         const bounds = new maplibregl.LngLatBounds();
         data.forEach((d) => bounds.extend(d.coordinates));
-        mapRef.current.fitBounds(bounds, { padding: 80 });
+        mapRef.current.fitBounds(bounds, { padding: 80, pitch: 45, bearing: -15 });
       }
     });
   }, [uploadId, radius, classification]);
