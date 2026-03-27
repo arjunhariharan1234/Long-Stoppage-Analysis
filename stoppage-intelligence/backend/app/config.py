@@ -5,13 +5,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 PROJECT_ROOT = BASE_DIR.parent.parent  # Long Stoppage Analysis directory
 
 # Database
-DATABASE_URL = f"sqlite:///{BASE_DIR / 'data' / 'stoppage_intelligence.db'}"
+DATABASE_URL = os.environ.get(
+    "DATABASE_URL",
+    f"sqlite:///{BASE_DIR / 'data' / 'stoppage_intelligence.db'}",
+)
 
 # POI dataset
-POI_CSV_PATH = str(PROJECT_ROOT / "india_all_pois.csv")
+POI_CSV_PATH = os.environ.get(
+    "POI_CSV_PATH",
+    str(PROJECT_ROOT / "india_all_pois.csv"),
+)
 
 # Upload directory
-UPLOAD_DIR = BASE_DIR / "data" / "uploads"
+UPLOAD_DIR = Path(os.environ.get("UPLOAD_DIR", str(BASE_DIR / "data" / "uploads")))
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 # Clustering defaults
