@@ -17,19 +17,13 @@ interface Props {
   onSkip?: () => void;
 }
 
-const STEP_LABELS = [
-  "Upload File",
-  "Review Schema",
-  "Processing",
-  "Done",
-];
+const STEP_LABELS = ["Upload File", "Review Schema", "Processing", "Done"];
 
 export default function UploadStep({ onProcessed, onSkip }: Props) {
   const [step, setStep] = useState(0);
   const [uploadResult, setUploadResult] = useState<UploadResult | null>(null);
   const [uploading, setUploading] = useState(false);
   const [processing, setProcessing] = useState(false);
-  const [progress, setProgress] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const onDrop = useCallback(async (files: File[]) => {
@@ -41,11 +35,21 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
     form.append("file", files[0]);
 
     try {
-      const res = await api.post("/upload", form);
+      const res = await api.post("/upload", form, { timeout: 120000 });
       setUploadResult(res.data);
       setStep(1);
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Upload failed");
+    } catch (e: any) {
+      const msg =
+        e?.response?.data?.detail ||
+        e?.message ||
+        "Upload failed";
+      if (msg.includes("Network Error") || msg.includes("timeout")) {
+        setError(
+          "Network error — the backend may be starting up (cold start takes ~30s). Please wait and try again."
+        );
+      } else {
+        setError(msg);
+      }
     } finally {
       setUploading(false);
     }
@@ -64,18 +68,30 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
     if (!uploadResult) return;
     setProcessing(true);
     setStep(2);
-    setProgress("Validating and normalizing events...");
     setError(null);
 
     try {
-      const res = await api.post(`/upload/${uploadResult.upload_id}/confirm`);
-      setProgress("Complete!");
+      const res = await api.post(
+        `/upload/${uploadResult.upload_id}/confirm`,
+        null,
+        { timeout: 300000 }
+      );
       setStep(3);
-
-      // Brief pause to show success, then transition
       setTimeout(() => onProcessed(res.data.upload_id), 800);
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Processing failed");
+    } catch (e: any) {
+      const msg =
+        e?.response?.data?.detail ||
+        e?.message ||
+        "Processing failed";
+      if (msg.includes("Network Error") || msg.includes("timeout")) {
+        setError(
+          "Processing timed out. This typically happens on Vercel's free tier (10s limit). For large files, run the platform locally:\n\n" +
+          "cd stoppage-intelligence/backend && python3 -m uvicorn app.main:app --port 8000\n" +
+          "cd stoppage-intelligence/frontend && npm run dev"
+        );
+      } else {
+        setError(msg);
+      }
       setStep(1);
     } finally {
       setProcessing(false);
@@ -91,14 +107,9 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
               <div
                 style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: "50%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 13,
-                  fontWeight: 600,
+                  width: 32, height: 32, borderRadius: "50%",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 13, fontWeight: 600,
                   background: i <= step ? (i === step ? "var(--blue)" : "var(--green)") : "var(--bg-tertiary)",
                   color: i <= step ? "#fff" : "var(--text-secondary)",
                   border: `2px solid ${i <= step ? (i === step ? "var(--blue)" : "var(--green)") : "var(--border)"}`,
@@ -111,15 +122,7 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
               </span>
             </div>
             {i < STEP_LABELS.length - 1 && (
-              <div
-                style={{
-                  width: 60,
-                  height: 2,
-                  background: i < step ? "var(--green)" : "var(--border)",
-                  margin: "0 8px",
-                  marginBottom: 18,
-                }}
-              />
+              <div style={{ width: 60, height: 2, background: i < step ? "var(--green)" : "var(--border)", margin: "0 8px", marginBottom: 18 }} />
             )}
           </div>
         ))}
@@ -127,7 +130,7 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
 
       {error && (
         <div className="panel" style={{ margin: "0 24px 20px", borderColor: "var(--red)" }}>
-          <p style={{ color: "var(--red)" }}>{error}</p>
+          <p style={{ color: "var(--red)", whiteSpace: "pre-wrap", fontSize: 13 }}>{error}</p>
         </div>
       )}
 
@@ -144,6 +147,19 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
               <p style={{ marginTop: 8 }}>Supports .xlsx and .csv files</p>
             </div>
           </div>
+
+          <div style={{ background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, padding: "14px 18px", marginTop: 16, fontSize: 13 }}>
+            <div style={{ fontWeight: 600, marginBottom: 6 }}>Expected schema</div>
+            <div style={{ color: "var(--text-secondary)", lineHeight: 1.7, fontSize: 12 }}>
+              The file should contain stoppage alert data with columns like:<br />
+              <code style={{ color: "var(--blue)" }}>Combined Created At</code> (timestamp),{" "}
+              <code style={{ color: "var(--blue)" }}>Trip Id</code>,{" "}
+              <code style={{ color: "var(--blue)" }}>Route Code</code>,{" "}
+              <code style={{ color: "var(--blue)" }}>CURRENT_LAT</code> / <code style={{ color: "var(--blue)" }}>CURRENT_LONG</code><br />
+              Column names are auto-detected. Lat/Lon are required for spatial analysis.
+            </div>
+          </div>
+
           {onSkip && (
             <div style={{ textAlign: "center", marginTop: 16 }}>
               <button className="btn" onClick={onSkip}>
@@ -187,9 +203,7 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
               Auto-detected mapping from your file columns to internal fields
             </p>
             <table>
-              <thead>
-                <tr><th>Your Column</th><th>Mapped To</th><th>Status</th></tr>
-              </thead>
+              <thead><tr><th>Your Column</th><th>Mapped To</th><th>Status</th></tr></thead>
               <tbody>
                 {uploadResult.columns.map((col) => {
                   const mapped = uploadResult.proposed_mapping[col];
@@ -210,11 +224,7 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
             <div style={{ overflowX: "auto" }}>
               <table>
                 <thead>
-                  <tr>
-                    {uploadResult.columns.map((c) => (
-                      <th key={c} style={{ whiteSpace: "nowrap" }}>{c}</th>
-                    ))}
-                  </tr>
+                  <tr>{uploadResult.columns.map((c) => <th key={c} style={{ whiteSpace: "nowrap" }}>{c}</th>)}</tr>
                 </thead>
                 <tbody>
                   {uploadResult.preview.map((row, i) => (
@@ -232,9 +242,7 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
           </div>
 
           <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
-            <button className="btn" onClick={() => { setStep(0); setUploadResult(null); }}>
-              Back
-            </button>
+            <button className="btn" onClick={() => { setStep(0); setUploadResult(null); }}>Back</button>
             <button className="btn primary" onClick={handleProcess} disabled={processing}>
               Process File
             </button>
@@ -261,12 +269,14 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
                 </div>
               ))}
             </div>
-            <p style={{ color: "var(--text-secondary)", fontSize: 13, marginTop: 8 }}>{progress}</p>
+            <p style={{ color: "var(--text-secondary)", fontSize: 12, marginTop: 8 }}>
+              This may take 1-2 minutes for large files...
+            </p>
           </div>
         </div>
       )}
 
-      {/* Step 3: Done (brief flash) */}
+      {/* Step 3: Done */}
       {step === 3 && (
         <div style={{ maxWidth: 500, margin: "40px auto", textAlign: "center", padding: "0 24px" }}>
           <div className="panel">
