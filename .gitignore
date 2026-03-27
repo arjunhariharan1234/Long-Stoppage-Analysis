@@ -2,3 +2,11 @@
 .DS_Store
 .ipynb_checkpoints/
 .claude/
+node_modules/
+dist/
+stoppage-intelligence/backend/data/uploads/
+stoppage-intelligence/backend/data/*.db
+stoppage-intelligence/backend/data/*.db-shm
+stoppage-intelligence/backend/data/*.db-wal
+__pycache__/
+*.pyc
