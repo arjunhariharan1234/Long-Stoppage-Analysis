@@ -102,13 +102,25 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
       style: DARK_BASEMAP,
       center: [77, 18],
       zoom: 5,
+      dragRotate: true,
+      touchPitch: true,
     });
 
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left");
+    map.addControl(
+      new maplibregl.NavigationControl({
+        showCompass: true,
+        visualizePitch: true,
+      }),
+      "top-left"
+    );
 
+    // Deck canvas defaults to pointer-events:auto; without this it steals drags
+    // above the map and MapLibre never receives pitch/rotate. Picking still works
+    // via MapboxOverlay forwarding map mouse events to Deck.
     const overlay = new MapboxOverlay({
       interleaved: false,
       layers: [],
+      style: { pointerEvents: "none" },
     });
     map.addControl(overlay as unknown as maplibregl.IControl);
     overlayRef.current = overlay;
