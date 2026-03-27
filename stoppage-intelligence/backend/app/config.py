@@ -10,11 +10,11 @@ DATABASE_URL = os.environ.get(
     f"sqlite:///{BASE_DIR / 'data' / 'stoppage_intelligence.db'}",
 )
 
-# POI dataset
-POI_CSV_PATH = os.environ.get(
-    "POI_CSV_PATH",
-    str(PROJECT_ROOT / "india_all_pois.csv"),
-)
+# POI dataset — use gzipped version if available (for deployment), else raw CSV
+_default_poi = str(BASE_DIR / "data" / "india_all_pois.csv.gz")
+if not os.path.exists(_default_poi):
+    _default_poi = str(PROJECT_ROOT / "india_all_pois.csv")
+POI_CSV_PATH = os.environ.get("POI_CSV_PATH", _default_poi)
 
 # Upload directory
 UPLOAD_DIR = Path(os.environ.get("UPLOAD_DIR", str(BASE_DIR / "data" / "uploads")))

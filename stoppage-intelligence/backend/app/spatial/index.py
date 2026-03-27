@@ -107,7 +107,11 @@ class POISpatialIndex:
 
     def __init__(self, csv_path: str):
         logger.info("Loading POI dataset from %s ...", csv_path)
-        self.pois = pd.read_csv(csv_path)
+        if csv_path.endswith(".gz"):
+            import gzip
+            self.pois = pd.read_csv(csv_path, compression="gzip")
+        else:
+            self.pois = pd.read_csv(csv_path)
         logger.info("Loaded %d POIs", len(self.pois))
 
         # Resolve types
