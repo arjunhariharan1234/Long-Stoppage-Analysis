@@ -107,7 +107,20 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
       maxPitch: 85,
       dragRotate: true,
       touchPitch: true,
+      touchZoomRotate: true,
+      pitchWithRotate: true,
     });
+
+    // Allow scroll-wheel pitch: hold Ctrl + scroll to change pitch
+    // Two-finger pinch/rotate on trackpad handles pitch + rotation natively
+    map.getCanvas().addEventListener("wheel", (e) => {
+      if (e.ctrlKey) {
+        e.preventDefault();
+        const currentPitch = map.getPitch();
+        const delta = e.deltaY > 0 ? -2 : 2;
+        map.setPitch(Math.min(85, Math.max(0, currentPitch + delta)));
+      }
+    }, { passive: false });
 
     map.addControl(
       new maplibregl.NavigationControl({
@@ -117,9 +130,6 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
       "top-left"
     );
 
-    // Deck canvas defaults to pointer-events:auto; without this it steals drags
-    // above the map and MapLibre never receives pitch/rotate. Picking still works
-    // via MapboxOverlay forwarding map mouse events to Deck.
     const overlay = new MapboxOverlay({
       interleaved: false,
       layers: [],
@@ -365,6 +375,11 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
               Height &amp; color = stoppage density
             </div>
           )}
+          <div style={{ fontSize: 10, color: "var(--text-secondary)", marginTop: 8, borderTop: "1px solid var(--border)", paddingTop: 6, lineHeight: 1.5 }}>
+            Pinch to zoom &amp; rotate<br />
+            Ctrl + scroll to tilt<br />
+            Right-drag to orbit
+          </div>
         </div>
       </div>
 
