@@ -1,7 +1,26 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import { MapboxOverlay } from "@deck.gl/mapbox";
+import { ScatterplotLayer, TextLayer } from "@deck.gl/layers";
+import { HexagonLayer } from "@deck.gl/aggregation-layers";
 import api from "../api/client";
+
+interface ClusterData {
+  id: number;
+  coordinates: [number, number];
+  event_count: number;
+  distinct_trips: number;
+  distinct_routes: number;
+  classification: string;
+  poi_name: string | null;
+  poi_type: string | null;
+  poi_distance_m: number | null;
+  peak_hour: number | null;
+  night_halt_pct: number | null;
+  first_seen: string | null;
+  last_seen: string | null;
+}
 
 interface ClusterDetail {
   id: number;
@@ -35,48 +54,75 @@ interface Props {
   classification: string;
 }
 
-const CLASS_COLORS: Record<string, string> = {
-  known_functional: "#3fb950",
-  other_legit: "#d29922",
-  unauthorized: "#f85149",
+const CLASS_COLORS: Record<string, [number, number, number]> = {
+  known_functional: [63, 185, 80],
+  other_legit: [210, 153, 34],
+  unauthorized: [248, 81, 73],
 };
+
+const DARK_BASEMAP = {
+  version: 8 as const,
+  sources: {
+    carto: {
+      type: "raster" as const,
+      tiles: [
+        "https://basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png",
+      ],
+      tileSize: 256,
+      attribution: "&copy; CARTO &copy; OpenStreetMap",
+    },
+  },
+  layers: [
+    {
+      id: "carto-dark",
+      type: "raster" as const,
+      source: "carto",
+    },
+  ],
+};
+
+type ViewMode = "clusters" | "hexbin";
 
 export default function MapTab({ uploadId, radius, classification }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
+  const overlayRef = useRef<MapboxOverlay | null>(null);
+  const [clusters, setClusters] = useState<ClusterData[]>([]);
   const [selected, setSelected] = useState<ClusterDetail | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>("clusters");
+  const [hexRadius, setHexRadius] = useState(3000);
   const [count, setCount] = useState(0);
 
   // Init map once
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
+
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: {
-        version: 8,
-        sources: {
-          osm: {
-            type: "raster",
-            tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-            tileSize: 256,
-            attribution: "&copy; OpenStreetMap",
-          },
-        },
-        layers: [{ id: "osm", type: "raster", source: "osm" }],
-      },
+      style: DARK_BASEMAP,
       center: [77, 18],
       zoom: 5,
     });
-    map.addControl(new maplibregl.NavigationControl());
+
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-left");
+
+    const overlay = new MapboxOverlay({
+      interleaved: false,
+      layers: [],
+    });
+    map.addControl(overlay as unknown as maplibregl.IControl);
+    overlayRef.current = overlay;
     mapRef.current = map;
-    return () => { map.remove(); mapRef.current = null; };
+
+    return () => {
+      map.remove();
+      mapRef.current = null;
+      overlayRef.current = null;
+    };
   }, []);
 
-  // Load data
+  // Load cluster data
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-
     const params = new URLSearchParams({
       upload_id: String(uploadId),
       radius_m: String(radius),
@@ -84,169 +130,323 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
     if (classification) params.set("classification", classification);
 
     api.get(`/map/clusters?${params}`).then((r) => {
-      const geojson = r.data;
-      setCount(geojson.features.length);
+      const features = r.data.features;
+      const data: ClusterData[] = features.map((f: any) => ({
+        id: f.properties.id,
+        coordinates: f.geometry.coordinates as [number, number],
+        event_count: f.properties.event_count,
+        distinct_trips: f.properties.distinct_trips,
+        distinct_routes: f.properties.distinct_routes,
+        classification: f.properties.classification,
+        poi_name: f.properties.poi_name,
+        poi_type: f.properties.poi_type,
+        poi_distance_m: f.properties.poi_distance_m,
+        peak_hour: f.properties.peak_hour,
+        night_halt_pct: f.properties.night_halt_pct,
+        first_seen: f.properties.first_seen,
+        last_seen: f.properties.last_seen,
+      }));
+      setClusters(data);
+      setCount(data.length);
 
-      if (map.getLayer("cl-circle")) map.removeLayer("cl-circle");
-      if (map.getLayer("cl-label")) map.removeLayer("cl-label");
-      if (map.getSource("cl")) map.removeSource("cl");
-
-      map.addSource("cl", { type: "geojson", data: geojson });
-
-      map.addLayer({
-        id: "cl-circle",
-        type: "circle",
-        source: "cl",
-        paint: {
-          "circle-radius": [
-            "interpolate", ["linear"], ["get", "event_count"],
-            5, 6, 50, 12, 200, 20, 1000, 30,
-          ],
-          "circle-color": [
-            "match", ["get", "classification"],
-            "known_functional", CLASS_COLORS.known_functional,
-            "other_legit", CLASS_COLORS.other_legit,
-            "unauthorized", CLASS_COLORS.unauthorized,
-            "#8b949e",
-          ],
-          "circle-opacity": 0.85,
-          "circle-stroke-width": 1.5,
-          "circle-stroke-color": "#ffffff",
-          "circle-stroke-opacity": 0.3,
-        },
-      });
-
-      map.addLayer({
-        id: "cl-label",
-        type: "symbol",
-        source: "cl",
-        layout: {
-          "text-field": ["get", "event_count"],
-          "text-size": 10,
-          "text-allow-overlap": false,
-        },
-        paint: { "text-color": "#fff" },
-      });
-
-      // Click
-      map.on("click", "cl-circle", async (e) => {
-        const f = e.features?.[0];
-        if (!f) return;
-        const props = f.properties as { id: number };
-        const res = await api.get(`/clusters/${props.id}`);
-        setSelected(res.data);
-      });
-      map.on("mouseenter", "cl-circle", () => { map.getCanvas().style.cursor = "pointer"; });
-      map.on("mouseleave", "cl-circle", () => { map.getCanvas().style.cursor = ""; });
-
-      // Fit
-      if (geojson.features.length > 0) {
+      // Fit bounds
+      if (data.length > 0 && mapRef.current) {
         const bounds = new maplibregl.LngLatBounds();
-        for (const f of geojson.features) {
-          bounds.extend(f.geometry.coordinates as [number, number]);
-        }
-        map.fitBounds(bounds, { padding: 60 });
+        data.forEach((d) => bounds.extend(d.coordinates));
+        mapRef.current.fitBounds(bounds, { padding: 80 });
       }
     });
   }, [uploadId, radius, classification]);
 
+  // Handle cluster click
+  const handleClick = useCallback((info: any) => {
+    if (info.object) {
+      const d = info.object as ClusterData;
+      if (d.id) {
+        api.get(`/clusters/${d.id}`).then((res) => setSelected(res.data));
+      }
+    }
+  }, []);
+
+  // Update deck.gl layers
+  useEffect(() => {
+    if (!overlayRef.current) return;
+
+    const layers = [];
+
+    if (viewMode === "hexbin") {
+      layers.push(
+        new HexagonLayer({
+          id: "hexbin",
+          data: clusters,
+          getPosition: (d: ClusterData) => d.coordinates,
+          getElevationWeight: (d: ClusterData) => d.event_count,
+          getColorWeight: (d: ClusterData) => d.event_count,
+          elevationScale: 100,
+          extruded: true,
+          radius: hexRadius,
+          coverage: 0.88,
+          upperPercentile: 95,
+          colorRange: [
+            [35, 51, 64],
+            [29, 82, 79],
+            [46, 137, 75],
+            [110, 183, 54],
+            [210, 153, 34],
+            [248, 81, 73],
+          ],
+          elevationRange: [0, 8000],
+          pickable: true,
+          opacity: 0.85,
+          material: {
+            ambient: 0.6,
+            diffuse: 0.6,
+            shininess: 40,
+          },
+        })
+      );
+    }
+
+    if (viewMode === "clusters") {
+      // Scatterplot layer for clusters
+      layers.push(
+        new ScatterplotLayer({
+          id: "cluster-scatter",
+          data: clusters,
+          getPosition: (d: ClusterData) => d.coordinates,
+          getRadius: (d: ClusterData) => {
+            const base = Math.sqrt(d.event_count) * 120;
+            return Math.max(base, 400);
+          },
+          getFillColor: (d: ClusterData) => {
+            const c = CLASS_COLORS[d.classification] || [139, 148, 158];
+            return [...c, 200] as [number, number, number, number];
+          },
+          getLineColor: [255, 255, 255, 60],
+          lineWidthMinPixels: 1,
+          stroked: true,
+          pickable: true,
+          onClick: handleClick,
+          radiusMinPixels: 4,
+          radiusMaxPixels: 60,
+          autoHighlight: true,
+          highlightColor: [255, 255, 255, 80],
+        })
+      );
+
+      // Text labels
+      layers.push(
+        new TextLayer({
+          id: "cluster-labels",
+          data: clusters.filter((d) => d.event_count >= 10),
+          getPosition: (d: ClusterData) => d.coordinates,
+          getText: (d: ClusterData) => String(d.event_count),
+          getSize: (d: ClusterData) => {
+            if (d.event_count > 500) return 14;
+            if (d.event_count > 100) return 12;
+            return 10;
+          },
+          getColor: [255, 255, 255, 230],
+          getTextAnchor: "middle" as const,
+          getAlignmentBaseline: "center" as const,
+          fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
+          fontWeight: 700,
+          outlineWidth: 2,
+          outlineColor: [0, 0, 0, 180],
+          billboard: true,
+          sizeUnits: "pixels" as const,
+          pickable: false,
+        })
+      );
+    }
+
+    overlayRef.current.setProps({ layers });
+  }, [clusters, viewMode, hexRadius, handleClick]);
+
   return (
-    <div style={{ flex: 1, position: "relative", minHeight: 550 }}>
-      {/* Legend */}
+    <div style={{ flex: 1, position: "relative", minHeight: 550, background: "#0a0e14" }}>
+      {/* Controls overlay */}
       <div
         style={{
           position: "absolute",
           top: 12,
-          left: 12,
+          right: selected ? 396 : 12,
           zIndex: 5,
-          background: "rgba(13,17,23,0.9)",
-          borderRadius: 8,
-          padding: "10px 14px",
-          fontSize: 12,
-          border: "1px solid var(--border)",
+          display: "flex",
+          flexDirection: "column",
+          gap: 8,
+          transition: "right 0.2s",
         }}
       >
-        <div style={{ fontWeight: 600, marginBottom: 6 }}>{count} clusters</div>
-        {Object.entries(CLASS_COLORS).map(([k, c]) => (
-          <div key={k} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
-            <span style={{ width: 10, height: 10, borderRadius: "50%", background: c, display: "inline-block" }} />
-            <span>{k.replace("_", " ")}</span>
+        {/* View mode toggle */}
+        <div
+          style={{
+            background: "rgba(13,17,23,0.92)",
+            borderRadius: 8,
+            padding: "8px 12px",
+            border: "1px solid var(--border)",
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          <div style={{ fontSize: 10, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>
+            View Mode
           </div>
-        ))}
+          <div style={{ display: "flex", gap: 4 }}>
+            <button
+              className={`btn ${viewMode === "clusters" ? "primary" : ""}`}
+              style={{ fontSize: 11, padding: "4px 10px" }}
+              onClick={() => setViewMode("clusters")}
+            >
+              Clusters
+            </button>
+            <button
+              className={`btn ${viewMode === "hexbin" ? "primary" : ""}`}
+              style={{ fontSize: 11, padding: "4px 10px" }}
+              onClick={() => setViewMode("hexbin")}
+            >
+              Hexbin
+            </button>
+          </div>
+          {viewMode === "hexbin" && (
+            <div style={{ marginTop: 8 }}>
+              <div style={{ fontSize: 10, color: "var(--text-secondary)", marginBottom: 4 }}>
+                Hex Radius: {(hexRadius / 1000).toFixed(1)}km
+              </div>
+              <input
+                type="range"
+                min={500}
+                max={10000}
+                step={500}
+                value={hexRadius}
+                onChange={(e) => setHexRadius(Number(e.target.value))}
+                style={{ width: "100%", accentColor: "var(--blue)" }}
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Legend */}
+        <div
+          style={{
+            background: "rgba(13,17,23,0.92)",
+            borderRadius: 8,
+            padding: "10px 12px",
+            border: "1px solid var(--border)",
+            backdropFilter: "blur(8px)",
+          }}
+        >
+          <div style={{ fontSize: 10, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>
+            {count} clusters
+          </div>
+          {viewMode === "clusters" ? (
+            Object.entries(CLASS_COLORS).map(([k, c]) => (
+              <div key={k} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3, fontSize: 12 }}>
+                <span style={{ width: 10, height: 10, borderRadius: "50%", background: `rgb(${c.join(",")})`, display: "inline-block" }} />
+                <span style={{ color: "var(--text-primary)" }}>{k.replace("_", " ")}</span>
+              </div>
+            ))
+          ) : (
+            <div style={{ fontSize: 11, color: "var(--text-secondary)" }}>
+              Height &amp; color = stoppage density
+            </div>
+          )}
+        </div>
       </div>
 
+      {/* Map */}
       <div ref={containerRef} style={{ width: "100%", height: "100%", minHeight: 550 }} />
 
-      {/* Detail panel */}
+      {/* Cluster detail panel */}
       {selected && (
-        <div className="cluster-detail">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <h3>Cluster #{selected.id}</h3>
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+            width: 380,
+            height: "100%",
+            background: "rgba(22,27,34,0.97)",
+            borderLeft: "1px solid var(--border)",
+            overflowY: "auto",
+            padding: 20,
+            zIndex: 10,
+            backdropFilter: "blur(12px)",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <h3 style={{ fontSize: 15, fontWeight: 600 }}>Cluster #{selected.id}</h3>
             <button className="btn" style={{ padding: "4px 8px", fontSize: 11 }} onClick={() => setSelected(null)}>
               Close
             </button>
           </div>
 
-          <span className={`badge ${selected.classification}`}>
-            {selected.classification?.replace("_", " ")}
-          </span>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 16 }}>
-            <div className="field">
-              <div className="field-label">Events</div>
-              <div className="field-value">{selected.event_count}</div>
-            </div>
-            <div className="field">
-              <div className="field-label">Trips</div>
-              <div className="field-value">{selected.distinct_trips}</div>
-            </div>
-            <div className="field">
-              <div className="field-label">Routes</div>
-              <div className="field-value">{selected.distinct_routes}</div>
-            </div>
-            <div className="field">
-              <div className="field-label">Peak Hour</div>
-              <div className="field-value">{selected.peak_hour != null ? `${selected.peak_hour}:00` : "—"}</div>
-            </div>
-            <div className="field">
-              <div className="field-label">Night Halt %</div>
-              <div className="field-value" style={{ color: (selected.night_halt_pct ?? 0) > 40 ? "var(--red)" : undefined }}>
-                {selected.night_halt_pct != null ? `${selected.night_halt_pct}%` : "—"}
-              </div>
-            </div>
-            <div className="field">
-              <div className="field-label">POI Distance</div>
-              <div className="field-value">{selected.poi_distance_m != null ? `${selected.poi_distance_m}m` : "—"}</div>
-            </div>
+          <div style={{ marginBottom: 16 }}>
+            <span className={`badge ${selected.classification}`} style={{ fontSize: 12, padding: "3px 10px" }}>
+              {selected.classification?.replace("_", " ")}
+            </span>
           </div>
 
-          <div style={{ marginTop: 16 }}>
-            <div className="field">
-              <div className="field-label">Nearest POI</div>
-              <div className="field-value">{selected.poi_name || "None found within 2km"}</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 20 }}>
+            {[
+              { label: "Events", value: selected.event_count, color: "var(--blue)" },
+              { label: "Trips", value: selected.distinct_trips, color: "var(--text-primary)" },
+              { label: "Routes", value: selected.distinct_routes, color: "var(--text-primary)" },
+            ].map((m) => (
+              <div key={m.label} style={{ background: "var(--bg-tertiary)", borderRadius: 6, padding: "10px 12px", textAlign: "center" }}>
+                <div style={{ fontSize: 10, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 0.5 }}>{m.label}</div>
+                <div style={{ fontSize: 20, fontWeight: 700, color: m.color, marginTop: 2 }}>{m.value}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 20 }}>
+            <div>
+              <div style={{ fontSize: 10, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 0.5 }}>Nearest POI</div>
+              <div style={{ fontSize: 14, marginTop: 2 }}>
+                {selected.poi_name || "None found within 2km"}
+                {selected.poi_distance_m != null && (
+                  <span style={{ color: "var(--text-secondary)", fontSize: 12, marginLeft: 6 }}>
+                    {selected.poi_distance_m}m
+                  </span>
+                )}
+              </div>
             </div>
-            <div className="field" style={{ marginTop: 8 }}>
-              <div className="field-label">POI Type</div>
-              <div className="field-value">{selected.poi_type || "—"}</div>
+            <div>
+              <div style={{ fontSize: 10, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 0.5 }}>POI Type</div>
+              <div style={{ fontSize: 14, marginTop: 2 }}>{selected.poi_type || "N/A"}</div>
             </div>
-            <div className="field" style={{ marginTop: 8 }}>
-              <div className="field-label">Location</div>
-              <div className="field-value" style={{ fontSize: 12, fontFamily: "monospace" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <div>
+                <div style={{ fontSize: 10, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 0.5 }}>Peak Hour</div>
+                <div style={{ fontSize: 14, marginTop: 2 }}>{selected.peak_hour != null ? `${selected.peak_hour}:00` : "—"}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: 10, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 0.5 }}>Night Halt %</div>
+                <div style={{ fontSize: 14, marginTop: 2, color: (selected.night_halt_pct ?? 0) > 40 ? "var(--red)" : undefined }}>
+                  {selected.night_halt_pct != null ? `${selected.night_halt_pct}%` : "—"}
+                </div>
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: 10, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 0.5 }}>Location</div>
+              <div style={{ fontSize: 12, marginTop: 2, fontFamily: "monospace", color: "var(--text-secondary)" }}>
                 {selected.centroid_lat.toFixed(5)}, {selected.centroid_lon.toFixed(5)}
               </div>
             </div>
-            <div className="field" style={{ marginTop: 8 }}>
-              <div className="field-label">Active Period</div>
-              <div className="field-value" style={{ fontSize: 12 }}>
+            <div>
+              <div style={{ fontSize: 10, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 0.5 }}>Active Period</div>
+              <div style={{ fontSize: 12, marginTop: 2, color: "var(--text-secondary)" }}>
                 {selected.first_seen?.split("T")[0]} to {selected.last_seen?.split("T")[0]}
               </div>
             </div>
           </div>
 
           {selected.events.length > 0 && (
-            <div style={{ marginTop: 20 }}>
-              <h3 style={{ marginBottom: 8 }}>Recent Events</h3>
-              <div style={{ maxHeight: 250, overflowY: "auto" }}>
+            <>
+              <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                Recent Events ({selected.events.length})
+              </div>
+              <div style={{ maxHeight: 260, overflowY: "auto", borderRadius: 6, border: "1px solid var(--border)" }}>
                 <table style={{ fontSize: 11 }}>
                   <thead>
                     <tr><th>Trip</th><th>Route</th><th>Time</th></tr>
@@ -254,7 +454,7 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
                   <tbody>
                     {selected.events.slice(0, 30).map((e) => (
                       <tr key={e.id}>
-                        <td>{e.trip_id}</td>
+                        <td style={{ fontFamily: "monospace" }}>{e.trip_id}</td>
                         <td>{e.route_code}</td>
                         <td style={{ whiteSpace: "nowrap" }}>{e.event_timestamp?.replace("T", " ").slice(0, 16)}</td>
                       </tr>
@@ -262,7 +462,7 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </>
           )}
         </div>
       )}
