@@ -20,6 +20,10 @@ interface ClusterData {
   night_halt_pct: number | null;
   first_seen: string | null;
   last_seen: string | null;
+  top_routes: string[];
+  dispatch_branches: string[];
+  route_label: string;
+  branch_label: string;
 }
 
 interface ClusterDetail {
@@ -159,6 +163,10 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
         night_halt_pct: f.properties.night_halt_pct,
         first_seen: f.properties.first_seen,
         last_seen: f.properties.last_seen,
+        top_routes: f.properties.top_routes || [],
+        dispatch_branches: f.properties.dispatch_branches || [],
+        route_label: f.properties.route_label || "",
+        branch_label: f.properties.branch_label || "",
       }));
       setClusters(data);
       setCount(data.length);
@@ -217,6 +225,36 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
             diffuse: 0.6,
             shininess: 40,
           },
+        })
+      );
+
+      // Branch / route labels on top of hexbin columns
+      // Show labels for clusters with 20+ events so they're meaningful
+      const labelData = clusters.filter((d) => d.event_count >= 20 && d.branch_label);
+      layers.push(
+        new TextLayer({
+          id: "hex-branch-labels",
+          data: labelData,
+          getPosition: (d: ClusterData) => d.coordinates,
+          getText: (d: ClusterData) => {
+            const branch = d.dispatch_branches[0] || "";
+            const routes = d.top_routes.slice(0, 2).join(", ");
+            return `${branch}\n${routes}`;
+          },
+          getSize: 11,
+          getColor: [255, 255, 255, 220],
+          getTextAnchor: "middle" as const,
+          getAlignmentBaseline: "bottom" as const,
+          getPixelOffset: [0, -20],
+          fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
+          fontWeight: 700,
+          outlineWidth: 3,
+          outlineColor: [0, 0, 0, 200],
+          billboard: true,
+          sizeUnits: "pixels" as const,
+          pickable: false,
+          maxWidth: 200,
+          wordBreak: "break-word" as const,
         })
       );
     }
@@ -459,6 +497,52 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
               </div>
             </div>
           </div>
+
+          {/* Route breakdown */}
+          {selected.events.length > 0 && (() => {
+            const routeCounts: Record<string, number> = {};
+            selected.events.forEach((e) => {
+              if (e.route_code) routeCounts[e.route_code] = (routeCounts[e.route_code] || 0) + 1;
+            });
+            const sorted = Object.entries(routeCounts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+            const branchCounts: Record<string, number> = {};
+            sorted.forEach(([r, c]) => {
+              const branch = r.includes("-") ? r.split("-")[0] : r;
+              branchCounts[branch] = (branchCounts[branch] || 0) + c;
+            });
+            return (
+              <div style={{ marginTop: 16, marginBottom: 16 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                  Dispatch Branches
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
+                  {Object.entries(branchCounts).sort((a, b) => b[1] - a[1]).map(([branch, cnt]) => (
+                    <span key={branch} style={{
+                      background: "var(--bg-tertiary)", border: "1px solid var(--border)",
+                      borderRadius: 4, padding: "3px 8px", fontSize: 11, fontWeight: 600,
+                    }}>
+                      {branch} <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>({cnt})</span>
+                    </span>
+                  ))}
+                </div>
+                <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 6, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 0.5 }}>
+                  Top Routes
+                </div>
+                {sorted.map(([route, cnt]) => (
+                  <div key={route} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3, fontSize: 12 }}>
+                    <span style={{ fontFamily: "monospace" }}>{route}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <div style={{
+                        width: Math.min(cnt / sorted[0][1] * 80, 80), height: 6,
+                        background: "var(--blue)", borderRadius: 3, opacity: 0.7,
+                      }} />
+                      <span style={{ color: "var(--text-secondary)", fontSize: 11, minWidth: 24, textAlign: "right" }}>{cnt}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
 
           {selected.events.length > 0 && (
             <>
