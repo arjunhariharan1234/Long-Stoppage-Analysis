@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import POI_CSV_PATH
 from app.database import init_db
 from app.spatial.index import POISpatialIndex
-from app.routers import upload, poi, clusters, map_data, analytics, events
+from app.routers import upload, poi, clusters, map_data, analytics, events, live
 
 logging.basicConfig(
     level=logging.INFO,
@@ -53,6 +53,7 @@ app.include_router(clusters.router, prefix="/api")
 app.include_router(map_data.router, prefix="/api")
 app.include_router(analytics.router, prefix="/api")
 app.include_router(events.router, prefix="/api")
+app.include_router(live.router, prefix="/api")
 
 
 @app.get("/api/health")

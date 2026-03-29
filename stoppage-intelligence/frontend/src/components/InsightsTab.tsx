@@ -97,8 +97,87 @@ export default function InsightsTab({ uploadId, radius }: Props) {
     labelStyle: { color: "#e6edf3" },
   };
 
+  // Build Google Maps links for top clusters
+  const getGoogleMapsUrl = (lat: number, lon: number) =>
+    `https://www.google.com/maps?q=${lat},${lon}&z=15&output=embed`;
+
+  const getGoogleMapsLink = (lat: number, lon: number) =>
+    `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
+
+  const [selectedMapCluster, setSelectedMapCluster] = useState<TopCluster | null>(null);
+
   return (
     <div style={{ padding: 20, overflowY: "auto" }}>
+      {/* Google Maps cluster viewer */}
+      <div className="panel" style={{ margin: "0 0 20px", padding: 16 }}>
+        <div style={{ display: "flex", gap: 16 }}>
+          {/* Cluster list */}
+          <div style={{ width: 300, maxHeight: 350, overflowY: "auto" }}>
+            <h2 style={{ marginBottom: 12, fontSize: 14 }}>Cluster Locations</h2>
+            {topClusters.map((c) => (
+              <div
+                key={c.id}
+                onClick={() => setSelectedMapCluster(c)}
+                style={{
+                  padding: "8px 10px",
+                  borderRadius: 6,
+                  cursor: "pointer",
+                  marginBottom: 4,
+                  background: selectedMapCluster?.id === c.id ? "var(--bg-tertiary)" : "transparent",
+                  border: selectedMapCluster?.id === c.id ? "1px solid var(--border)" : "1px solid transparent",
+                  transition: "all 0.15s",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <span style={{ fontSize: 12, fontWeight: 600 }}>
+                      {c.poi_name || `Cluster #${c.id}`}
+                    </span>
+                    <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 2 }}>
+                      {c.event_count} events &middot; {c.poi_type || "unknown"}
+                    </div>
+                  </div>
+                  <span className={`badge ${c.classification}`} style={{ fontSize: 9 }}>
+                    {c.classification?.replace("_", " ")}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Google Maps embed */}
+          <div style={{ flex: 1, borderRadius: 8, overflow: "hidden", border: "1px solid var(--border)", minHeight: 350 }}>
+            {selectedMapCluster ? (
+              <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                <iframe
+                  src={getGoogleMapsUrl(selectedMapCluster.centroid_lat, selectedMapCluster.centroid_lon)}
+                  style={{ width: "100%", height: 350, border: 0 }}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Cluster location"
+                />
+                <a
+                  href={getGoogleMapsLink(selectedMapCluster.centroid_lat, selectedMapCluster.centroid_lon)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    position: "absolute", bottom: 10, right: 10,
+                    background: "rgba(13,17,23,0.9)", padding: "4px 10px",
+                    borderRadius: 4, fontSize: 11, color: "var(--blue)",
+                  }}
+                >
+                  Open in Google Maps
+                </a>
+              </div>
+            ) : (
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 350, color: "var(--text-secondary)", fontSize: 13 }}>
+                Click a cluster to view it on Google Maps
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="charts-grid" style={{ padding: 0, marginBottom: 20 }}>
         {/* Classification pie */}
         <div className="panel" style={{ margin: 0 }}>

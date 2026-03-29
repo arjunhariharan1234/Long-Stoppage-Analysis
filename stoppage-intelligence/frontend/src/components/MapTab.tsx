@@ -89,7 +89,7 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
   const overlayRef = useRef<MapboxOverlay | null>(null);
   const [clusters, setClusters] = useState<ClusterData[]>([]);
   const [selected, setSelected] = useState<ClusterDetail | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>("clusters");
+  const [viewMode, setViewMode] = useState<ViewMode>("hexbin");
   const [hexRadius, setHexRadius] = useState(3000);
   const [count, setCount] = useState(0);
 
@@ -110,17 +110,6 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
       touchZoomRotate: true,
       pitchWithRotate: true,
     });
-
-    // Allow scroll-wheel pitch: hold Ctrl + scroll to change pitch
-    // Two-finger pinch/rotate on trackpad handles pitch + rotation natively
-    map.getCanvas().addEventListener("wheel", (e) => {
-      if (e.ctrlKey) {
-        e.preventDefault();
-        const currentPitch = map.getPitch();
-        const delta = e.deltaY > 0 ? -2 : 2;
-        map.setPitch(Math.min(85, Math.max(0, currentPitch + delta)));
-      }
-    }, { passive: false });
 
     map.addControl(
       new maplibregl.NavigationControl({
@@ -376,9 +365,9 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
             </div>
           )}
           <div style={{ fontSize: 10, color: "var(--text-secondary)", marginTop: 8, borderTop: "1px solid var(--border)", paddingTop: 6, lineHeight: 1.5 }}>
-            Pinch to zoom &amp; rotate<br />
-            Ctrl + scroll to tilt<br />
-            Right-drag to orbit
+            Scroll to zoom<br />
+            Right-drag to tilt &amp; orbit<br />
+            Two-finger rotate to pitch
           </div>
         </div>
       </div>
