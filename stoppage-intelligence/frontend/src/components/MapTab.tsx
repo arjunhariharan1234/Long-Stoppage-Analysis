@@ -228,35 +228,6 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
         })
       );
 
-      // Branch / route labels on top of hexbin columns
-      // Show labels for clusters with 20+ events so they're meaningful
-      const labelData = clusters.filter((d) => d.event_count >= 20 && d.branch_label);
-      layers.push(
-        new TextLayer({
-          id: "hex-branch-labels",
-          data: labelData,
-          getPosition: (d: ClusterData) => d.coordinates,
-          getText: (d: ClusterData) => {
-            const branch = d.dispatch_branches[0] || "";
-            const routes = d.top_routes.slice(0, 2).join(", ");
-            return `${branch}\n${routes}`;
-          },
-          getSize: 11,
-          getColor: [255, 255, 255, 220],
-          getTextAnchor: "middle" as const,
-          getAlignmentBaseline: "bottom" as const,
-          getPixelOffset: [0, -20],
-          fontFamily: "-apple-system, BlinkMacSystemFont, sans-serif",
-          fontWeight: 700,
-          outlineWidth: 3,
-          outlineColor: [0, 0, 0, 200],
-          billboard: true,
-          sizeUnits: "pixels" as const,
-          pickable: false,
-          maxWidth: 200,
-          wordBreak: "break-word" as const,
-        })
-      );
     }
 
     if (viewMode === "clusters") {
