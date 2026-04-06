@@ -132,7 +132,7 @@ def fetch_live_data(
         db.commit()
 
         # POI enrichment
-        from app.main import get_poi_index
+        from app.spatial.lazy import get_poi_index
         poi_index = get_poi_index()
         event_stats = enrich_events(db, upload.id, poi_index)
         cluster_stats = enrich_clusters(db, upload.id, poi_index)

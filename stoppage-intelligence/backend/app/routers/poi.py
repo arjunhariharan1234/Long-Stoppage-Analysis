@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query
 
-from app.main import get_poi_index
+from app.spatial.lazy import get_poi_index
 from app.schemas import POIMatchResponse
 
 router = APIRouter(tags=["poi"])

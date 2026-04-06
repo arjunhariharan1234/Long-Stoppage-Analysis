@@ -183,7 +183,7 @@ def confirm_and_process(
         db.commit()
 
         # --- POI Enrichment + Classification ---
-        from app.main import get_poi_index
+        from app.spatial.lazy import get_poi_index
         poi_index = get_poi_index()
 
         logger.info("Enriching events with POI data...")
