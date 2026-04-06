@@ -21,10 +21,14 @@ async def lifespan(app: FastAPI):
     # Startup
     logger.info("Initializing database...")
     init_db()
-    try:
-        seed_if_empty()
-    except Exception:
-        logger.exception("Seed failed — server will start without pre-loaded data")
+    import os
+    if os.environ.get("SKIP_SEED") != "1":
+        try:
+            seed_if_empty()
+        except Exception:
+            logger.exception("Seed failed — server will start without pre-loaded data")
+    else:
+        logger.info("SKIP_SEED=1 — skipping seed.")
     logger.info("Startup complete. POI index will load on first use.")
 
     yield
