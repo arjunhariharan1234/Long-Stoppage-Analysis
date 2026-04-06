@@ -2,7 +2,8 @@ import logging
 import shutil
 from pathlib import Path
 
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Request
+import pandas as pd
+from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Request, Query
 from sqlalchemy.orm import Session
 
 from app.config import UPLOAD_DIR, CLUSTER_RADII_M
@@ -18,12 +19,126 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["upload"])
 
 
+def _run_pipeline(upload: Upload, df: pd.DataFrame, mapping: dict, db: Session):
+    """Run the full processing pipeline: normalize → cluster → enrich → classify."""
+    upload.status = "processing"
+    upload.column_mapping = mapping
+    db.commit()
+
+    logger.info("Processing upload %d (%s) with mapping: %s", upload.id, upload.filename, mapping)
+
+    # Normalize
+    normalized = normalize_events(df, mapping)
+    valid_count = int(normalized["is_valid"].sum())
+    invalid_count = int((~normalized["is_valid"]).sum())
+
+    # Store events in database
+    events = []
+    for _, row in normalized.iterrows():
+        event = StoppageEvent(
+            upload_id=upload.id,
+            external_id=row.get("external_id"),
+            trip_id=row.get("trip_id"),
+            route_code=row.get("route_code"),
+            alert_id=row.get("alert_id"),
+            alert_name=row.get("alert_name"),
+            alert_status=row.get("alert_status"),
+            event_timestamp=row.get("event_timestamp") if row.get("event_timestamp") is not None and str(row.get("event_timestamp")) != "NaT" else None,
+            lat=float(row["lat"]) if row["is_valid"] else None,
+            lon=float(row["lon"]) if row["is_valid"] else None,
+            is_valid=bool(row["is_valid"]),
+        )
+        events.append(event)
+
+    db.bulk_save_objects(events)
+    db.commit()
+
+    upload.valid_row_count = valid_count
+    upload.invalid_row_count = invalid_count
+
+    logger.info("Upload %d: %d valid, %d invalid events stored. Starting clustering...", upload.id, valid_count, invalid_count)
+
+    # --- Clustering ---
+    db_events = (
+        db.query(StoppageEvent)
+        .filter(StoppageEvent.upload_id == upload.id, StoppageEvent.is_valid == True)
+        .all()
+    )
+    events_df = pd.DataFrame([{
+        "db_id": e.id,
+        "lat": e.lat,
+        "lon": e.lon,
+        "trip_id": e.trip_id,
+        "route_code": e.route_code,
+        "event_timestamp": e.event_timestamp,
+    } for e in db_events])
+
+    cluster_summary = {}
+    for radius_m in CLUSTER_RADII_M:
+        clusters_result, labels = cluster_stoppages(events_df, radius_m=radius_m)
+
+        for cr in clusters_result:
+            cluster_obj = Cluster(
+                upload_id=upload.id,
+                radius_meters=radius_m,
+                centroid_lat=cr.centroid_lat,
+                centroid_lon=cr.centroid_lon,
+                event_count=cr.event_count,
+                distinct_trips=cr.distinct_trips,
+                distinct_routes=cr.distinct_routes,
+                first_seen=cr.first_seen,
+                last_seen=cr.last_seen,
+                peak_hour=cr.peak_hour,
+                night_halt_pct=cr.night_halt_pct,
+            )
+            db.add(cluster_obj)
+            db.flush()
+
+            event_db_ids = [int(events_df.iloc[i]["db_id"]) for i in cr.event_indices]
+            if radius_m == 500:
+                db.query(StoppageEvent).filter(
+                    StoppageEvent.id.in_(event_db_ids)
+                ).update({StoppageEvent.cluster_id: cluster_obj.id}, synchronize_session=False)
+
+        cluster_summary[radius_m] = len(clusters_result)
+        logger.info("Clustering at %dm: %d clusters", radius_m, len(clusters_result))
+
+    db.commit()
+
+    # --- POI Enrichment + Classification ---
+    from app.spatial.lazy import get_poi_index
+    poi_index = get_poi_index()
+
+    logger.info("Enriching events with POI data...")
+    event_stats = enrich_events(db, upload.id, poi_index)
+
+    logger.info("Enriching clusters with POI data...")
+    cluster_stats = enrich_clusters(db, upload.id, poi_index)
+
+    upload.status = "complete"
+    db.commit()
+
+    return {
+        "upload_id": upload.id,
+        "status": "complete",
+        "total_rows": upload.row_count,
+        "valid_events": valid_count,
+        "invalid_events": invalid_count,
+        "clusters": cluster_summary,
+        "event_classification": event_stats,
+        "cluster_classification": cluster_stats,
+        "message": f"Processed {valid_count} events → clustered → enriched → classified",
+    }
+
+
 @router.post("/upload")
 def upload_file(
     file: UploadFile = File(...),
+    auto_process: bool = Query(False),
     db: Session = Depends(get_db),
 ):
-    """Upload a stoppage file. Returns proposed column mapping and preview."""
+    """Upload a stoppage file. Returns proposed column mapping and preview.
+    If auto_process=true, runs the full pipeline in one request."""
     # Validate extension
     suffix = Path(file.filename).suffix.lower()
     if suffix not in (".xlsx", ".csv", ".tsv"):
@@ -59,6 +174,21 @@ def upload_file(
     db.commit()
     db.refresh(upload)
 
+    if auto_process:
+        try:
+            result = _run_pipeline(upload, df, proposed_mapping, db)
+            result["columns"] = columns
+            result["proposed_mapping"] = proposed_mapping
+            result["warnings"] = warnings
+            result["preview"] = preview
+            return result
+        except Exception as e:
+            logger.exception("Failed to process upload %d", upload.id)
+            upload.status = "error"
+            upload.error_message = str(e)
+            db.commit()
+            raise HTTPException(500, f"Processing failed: {e}")
+
     return {
         "upload_id": upload.id,
         "filename": file.filename,
@@ -84,129 +214,11 @@ def confirm_and_process(
     if upload.status not in ("pending", "error"):
         raise HTTPException(400, f"Upload already in status: {upload.status}")
 
-    upload.status = "processing"
-    db.commit()
-
     try:
-        # Use override mapping if provided, else use auto-detected
         mapping = mapping_override or upload.column_mapping
-        upload.column_mapping = mapping
-        logger.info("Processing upload %d (%s) with mapping: %s", upload.id, upload.filename, mapping)
-
-        # Parse file
         file_path = UPLOAD_DIR / upload.filename
         df = parse_file(file_path)
-
-        # Normalize
-        normalized = normalize_events(df, mapping)
-
-        valid_count = int(normalized["is_valid"].sum())
-        invalid_count = int((~normalized["is_valid"]).sum())
-
-        # Store events in database
-        events = []
-        for _, row in normalized.iterrows():
-            event = StoppageEvent(
-                upload_id=upload.id,
-                external_id=row.get("external_id"),
-                trip_id=row.get("trip_id"),
-                route_code=row.get("route_code"),
-                alert_id=row.get("alert_id"),
-                alert_name=row.get("alert_name"),
-                alert_status=row.get("alert_status"),
-                event_timestamp=row.get("event_timestamp") if row.get("event_timestamp") is not None and str(row.get("event_timestamp")) != "NaT" else None,
-                lat=float(row["lat"]) if row["is_valid"] else None,
-                lon=float(row["lon"]) if row["is_valid"] else None,
-                is_valid=bool(row["is_valid"]),
-            )
-            events.append(event)
-
-        db.bulk_save_objects(events)
-        db.commit()
-
-        upload.valid_row_count = valid_count
-        upload.invalid_row_count = invalid_count
-
-        logger.info(
-            "Upload %d: %d valid, %d invalid events stored. Starting clustering...",
-            upload.id, valid_count, invalid_count,
-        )
-
-        # --- Clustering ---
-        # Reload valid events from DB to get their IDs
-        db_events = (
-            db.query(StoppageEvent)
-            .filter(StoppageEvent.upload_id == upload.id, StoppageEvent.is_valid == True)
-            .all()
-        )
-        import pandas as pd
-        events_df = pd.DataFrame([{
-            "db_id": e.id,
-            "lat": e.lat,
-            "lon": e.lon,
-            "trip_id": e.trip_id,
-            "route_code": e.route_code,
-            "event_timestamp": e.event_timestamp,
-        } for e in db_events])
-
-        cluster_summary = {}
-        for radius_m in CLUSTER_RADII_M:
-            clusters_result, labels = cluster_stoppages(events_df, radius_m=radius_m)
-
-            for cr in clusters_result:
-                cluster_obj = Cluster(
-                    upload_id=upload.id,
-                    radius_meters=radius_m,
-                    centroid_lat=cr.centroid_lat,
-                    centroid_lon=cr.centroid_lon,
-                    event_count=cr.event_count,
-                    distinct_trips=cr.distinct_trips,
-                    distinct_routes=cr.distinct_routes,
-                    first_seen=cr.first_seen,
-                    last_seen=cr.last_seen,
-                    peak_hour=cr.peak_hour,
-                    night_halt_pct=cr.night_halt_pct,
-                )
-                db.add(cluster_obj)
-                db.flush()  # get cluster_obj.id
-
-                # Assign events to cluster
-                event_db_ids = [int(events_df.iloc[i]["db_id"]) for i in cr.event_indices]
-                if radius_m == 500:  # default radius: assign cluster_id on events
-                    db.query(StoppageEvent).filter(
-                        StoppageEvent.id.in_(event_db_ids)
-                    ).update({StoppageEvent.cluster_id: cluster_obj.id}, synchronize_session=False)
-
-            cluster_summary[radius_m] = len(clusters_result)
-            logger.info("Clustering at %dm: %d clusters", radius_m, len(clusters_result))
-
-        db.commit()
-
-        # --- POI Enrichment + Classification ---
-        from app.spatial.lazy import get_poi_index
-        poi_index = get_poi_index()
-
-        logger.info("Enriching events with POI data...")
-        event_stats = enrich_events(db, upload.id, poi_index)
-
-        logger.info("Enriching clusters with POI data...")
-        cluster_stats = enrich_clusters(db, upload.id, poi_index)
-
-        upload.status = "complete"
-        db.commit()
-
-        return {
-            "upload_id": upload.id,
-            "status": "complete",
-            "total_rows": upload.row_count,
-            "valid_events": valid_count,
-            "invalid_events": invalid_count,
-            "clusters": cluster_summary,
-            "event_classification": event_stats,
-            "cluster_classification": cluster_stats,
-            "message": f"Processed {valid_count} events → clustered → enriched → classified",
-        }
-
+        return _run_pipeline(upload, df, mapping, db)
     except Exception as e:
         logger.exception("Failed to process upload %d", upload.id)
         upload.status = "error"

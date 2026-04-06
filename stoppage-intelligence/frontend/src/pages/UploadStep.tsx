@@ -78,18 +78,23 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
     form.append("file", file, filename);
 
     try {
-      const res = await api.post("/upload", form, {
-        timeout: 120000,
+      const res = await api.post("/upload?auto_process=true", form, {
+        timeout: 300000,
         onUploadProgress: (e) => {
           if (e.total) {
             const pct = Math.round((e.loaded / e.total) * 100);
-            setUploadProgress(`Uploading... ${pct}%`);
+            if (pct >= 100) {
+              setUploadProgress("Processing — clustering, POI matching, classifying...");
+            } else {
+              setUploadProgress(`Uploading... ${pct}%`);
+            }
           }
         },
       });
       setUploadResult(res.data);
       setFileSizeIssue(null);
-      setStep(1);
+      setStep(3);
+      setTimeout(() => onProcessed(res.data.upload_id), 800);
     } catch (e: any) {
       const status = e?.response?.status;
       const msg = e?.response?.data?.detail || e?.message || "Upload failed";
