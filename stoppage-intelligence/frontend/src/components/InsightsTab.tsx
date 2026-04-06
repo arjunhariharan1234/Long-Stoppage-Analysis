@@ -36,6 +36,7 @@ export default function InsightsTab({ uploadId, radius }: Props) {
   const [topRoutes, setTopRoutes] = useState<{ route_code: string; event_count: number; trip_count: number }[]>([]);
   const [topClusters, setTopClusters] = useState<TopCluster[]>([]);
   const [unauthorized, setUnauthorized] = useState<TopCluster[]>([]);
+  const [selectedMapCluster, setSelectedMapCluster] = useState<TopCluster | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -103,8 +104,6 @@ export default function InsightsTab({ uploadId, radius }: Props) {
 
   const getGoogleMapsLink = (lat: number, lon: number) =>
     `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
-
-  const [selectedMapCluster, setSelectedMapCluster] = useState<TopCluster | null>(null);
 
   return (
     <div style={{ padding: 20, overflowY: "auto" }}>
