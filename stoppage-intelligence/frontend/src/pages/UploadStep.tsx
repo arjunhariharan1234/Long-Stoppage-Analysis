@@ -17,7 +17,7 @@ interface Props {
   onSkip?: () => void;
 }
 
-const MAX_FILE_SIZE_MB = 4;
+const MAX_FILE_SIZE_MB = 50;
 const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 const STEP_LABELS = ["Upload File", "Review Schema", "Processing", "Done"];
@@ -101,9 +101,8 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
       } else if (msg.includes("Network Error") || msg.includes("timeout") || msg.includes("ECONNREFUSED")) {
         setError(
           "Could not reach the server. This usually means:\n\n" +
-          "1. The backend is waking up from a cold start (wait 30s, then retry)\n" +
-          "2. Your file exceeds the 4.5MB server limit — compress it first using the button below\n" +
-          "3. You're on a slow connection — try again"
+          "1. The backend is starting up (wait a moment, then retry)\n" +
+          "2. You're on a slow connection — try again"
         );
       } else {
         setError(msg);

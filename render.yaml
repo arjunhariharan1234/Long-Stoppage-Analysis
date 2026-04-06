@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: stoppage-intelligence-api
+    runtime: docker
+    dockerfilePath: ./stoppage-intelligence/backend/Dockerfile
+    dockerContext: ./stoppage-intelligence/backend
+    repo: https://github.com/arjunhariharan1234/Long-Stoppage-Analysis.git
+    branch: main
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: POI_CSV_PATH
+        value: /app/data/india_all_pois.csv.gz
+      - key: DATABASE_URL
+        value: sqlite:////app/data/stoppage_intelligence.db
+      - key: UPLOAD_DIR
+        value: /app/data/uploads
