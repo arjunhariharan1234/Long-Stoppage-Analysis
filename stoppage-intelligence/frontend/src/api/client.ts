@@ -5,7 +5,7 @@ const api = axios.create({
     import.meta.env.VITE_API_URL ||
     (window.location.hostname === "localhost"
       ? "http://localhost:8000/api"
-      : "/api"),  // Will be set via VITE_API_URL env var in Vercel for Railway backend
+      : "https://stoppage-intelligence-api.onrender.com/api"),
 });
 
 export default api;
