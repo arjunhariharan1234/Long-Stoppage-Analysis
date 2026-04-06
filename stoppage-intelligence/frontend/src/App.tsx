@@ -21,17 +21,24 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [backendError, setBackendError] = useState(false);
 
-  const refreshUploads = async () => {
-    try {
-      const r = await api.get("/uploads", { timeout: 45000 });
-      const list: UploadRecord[] = r.data.uploads;
-      setUploads(list);
-      setBackendError(false);
-      return list;
-    } catch {
-      setBackendError(true);
-      return [];
+  const refreshUploads = async (retries = 3): Promise<UploadRecord[]> => {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+      try {
+        const r = await api.get("/uploads", { timeout: 60000 });
+        const list: UploadRecord[] = r.data.uploads;
+        setUploads(list);
+        setBackendError(false);
+        return list;
+      } catch {
+        if (attempt < retries) {
+          await new Promise((r) => setTimeout(r, 3000));
+        } else {
+          setBackendError(true);
+          return [];
+        }
+      }
     }
+    return [];
   };
 
   useEffect(() => {
@@ -107,7 +114,7 @@ export default function App() {
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, gap: 16, padding: 40 }}>
           <div style={{ width: 40, height: 40, border: "3px solid var(--border)", borderTopColor: "var(--blue)", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
           <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>Connecting to backend...</p>
-          <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>First load may take up to 30 seconds</p>
+          <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>First load may take up to 60 seconds while the server wakes up</p>
           <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
       )}
