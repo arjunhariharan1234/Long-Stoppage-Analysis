@@ -117,10 +117,10 @@ export default function App() {
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, padding: 40 }}>
           <div style={{ maxWidth: 480, textAlign: "center" }}>
             <div style={{ fontSize: 48, marginBottom: 16 }}>&#9888;&#65039;</div>
-            <h2 style={{ marginBottom: 12 }}>Backend is warming up</h2>
+            <h2 style={{ marginBottom: 12 }}>Could not reach backend</h2>
             <p style={{ color: "var(--text-secondary)", fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
-              The server loads 1.2 million POI records on startup, which takes about 30 seconds on cold start.
-              This is a one-time delay — once warm, everything runs instantly.
+              The server may be starting up. On free hosting, the first request can take 30–60 seconds.
+              Click below to retry.
             </p>
             <button className="btn primary" onClick={handleRetry} style={{ fontSize: 14, padding: "10px 24px" }}>
               Try again

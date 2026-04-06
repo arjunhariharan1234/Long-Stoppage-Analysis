@@ -183,7 +183,8 @@ def confirm_and_process(
         db.commit()
 
         # --- POI Enrichment + Classification ---
-        poi_index = request.app.state.poi_index
+        from app.main import get_poi_index
+        poi_index = get_poi_index()
 
         logger.info("Enriching events with POI data...")
         event_stats = enrich_events(db, upload.id, poi_index)

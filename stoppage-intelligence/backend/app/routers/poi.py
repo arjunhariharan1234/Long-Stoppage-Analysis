@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Request, Query
+from fastapi import APIRouter, Query
 
+from app.main import get_poi_index
 from app.schemas import POIMatchResponse
 
 router = APIRouter(tags=["poi"])
@@ -7,12 +8,11 @@ router = APIRouter(tags=["poi"])
 
 @router.get("/poi/nearest", response_model=POIMatchResponse | None)
 def get_nearest_poi(
-    request: Request,
     lat: float = Query(..., ge=-90, le=90),
     lon: float = Query(..., ge=-180, le=180),
 ):
     """Find the nearest POI to a given lat/lon using progressive radius search."""
-    poi_index = request.app.state.poi_index
+    poi_index = get_poi_index()
     match = poi_index.query_nearest(lat, lon)
     if match is None:
         return None
@@ -28,13 +28,12 @@ def get_nearest_poi(
 
 @router.get("/poi/nearby", response_model=list[POIMatchResponse])
 def get_nearby_pois(
-    request: Request,
     lat: float = Query(..., ge=-90, le=90),
     lon: float = Query(..., ge=-180, le=180),
     radius_m: float = Query(2000, ge=100, le=10000),
 ):
     """Find all POIs within a given radius of a lat/lon."""
-    poi_index = request.app.state.poi_index
+    poi_index = get_poi_index()
     matches = poi_index.query_all_within(lat, lon, radius_m)
     return [
         POIMatchResponse(
