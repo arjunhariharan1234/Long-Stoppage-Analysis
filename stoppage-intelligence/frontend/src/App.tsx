@@ -20,29 +20,55 @@ export default function App() {
   const [view, setView] = useState<"upload" | "results">("upload");
   const [loading, setLoading] = useState(true);
   const [backendError, setBackendError] = useState(false);
+  const [loadingMsg, setLoadingMsg] = useState("Connecting to backend...");
 
-  const refreshUploads = async (retries = 3): Promise<UploadRecord[]> => {
-    for (let attempt = 1; attempt <= retries; attempt++) {
+  // Wake up the backend first, then fetch uploads
+  const wakeAndFetch = async (): Promise<UploadRecord[]> => {
+    // Try to wake the backend with up to 5 pings (health is fast, no DB/POI needed)
+    let awake = false;
+    for (let i = 1; i <= 5; i++) {
       try {
-        const r = await api.get("/uploads", { timeout: 60000 });
-        const list: UploadRecord[] = r.data.uploads;
-        setUploads(list);
-        setBackendError(false);
-        return list;
+        setLoadingMsg(i === 1 ? "Waking up the server..." : `Server is starting... (attempt ${i}/5)`);
+        await api.get("/health", { timeout: 90000 });
+        awake = true;
+        break;
       } catch {
-        if (attempt < retries) {
-          await new Promise((r) => setTimeout(r, 3000));
-        } else {
-          setBackendError(true);
-          return [];
-        }
+        if (i < 5) await new Promise((r) => setTimeout(r, 2000));
       }
     }
-    return [];
+    if (!awake) {
+      setBackendError(true);
+      return [];
+    }
+    // Backend is awake — fetch uploads
+    try {
+      setLoadingMsg("Loading data...");
+      const r = await api.get("/uploads", { timeout: 15000 });
+      const list: UploadRecord[] = r.data.uploads;
+      setUploads(list);
+      setBackendError(false);
+      return list;
+    } catch {
+      // Backend is up but uploads failed — still let user through to upload page
+      setBackendError(false);
+      return [];
+    }
+  };
+
+  const refreshUploads = async (): Promise<UploadRecord[]> => {
+    try {
+      const r = await api.get("/uploads", { timeout: 15000 });
+      const list: UploadRecord[] = r.data.uploads;
+      setUploads(list);
+      setBackendError(false);
+      return list;
+    } catch {
+      return uploads; // Keep existing data on refresh failure
+    }
   };
 
   useEffect(() => {
-    refreshUploads().then((list) => {
+    wakeAndFetch().then((list) => {
       const completed = list.filter((u) => u.status === "complete");
       if (completed.length > 0) {
         setActiveUploadId(completed[0].id);
@@ -113,8 +139,8 @@ export default function App() {
       {loading && (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, gap: 16, padding: 40 }}>
           <div style={{ width: 40, height: 40, border: "3px solid var(--border)", borderTopColor: "var(--blue)", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-          <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>Connecting to backend...</p>
-          <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>First load may take up to 60 seconds while the server wakes up</p>
+          <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>{loadingMsg}</p>
+          <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>Free hosting may take up to 60 seconds on first visit</p>
           <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
       )}
