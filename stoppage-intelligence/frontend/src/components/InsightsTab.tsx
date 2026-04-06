@@ -4,6 +4,7 @@ import {
   PieChart, Pie, Cell, Legend,
 } from "recharts";
 import api from "../api/client";
+import { isStaticUpload, fetchStatic } from "../api/static";
 
 const PIE_COLORS = ["#3fb950", "#d29922", "#f85149"];
 
@@ -42,29 +43,54 @@ export default function InsightsTab({ uploadId, radius }: Props) {
     setLoading(true);
     setError(null);
 
-    const p = { upload_id: String(uploadId), radius_m: String(radius) };
-
-    Promise.all([
-      api.get("/analytics/summary", { params: p }),
-      api.get("/analytics/hourly", { params: { upload_id: String(uploadId) } }),
-      api.get("/analytics/poi-breakdown", { params: p }),
-      api.get("/analytics/route-breakdown", { params: { upload_id: String(uploadId), limit: "12" } }),
-      api.get("/analytics/top-clusters", { params: { ...p, limit: "10" } }),
-      api.get("/analytics/top-clusters", { params: { ...p, classification: "unauthorized", limit: "10" } }),
-    ])
-      .then(([sumRes, hourRes, poiRes, routeRes, topRes, unRes]) => {
-        setSummary(sumRes.data);
-        setHourly(hourRes.data.distribution);
-        setPoiBreakdown(poiRes.data.breakdown);
-        setTopRoutes(routeRes.data.routes);
-        setTopClusters(topRes.data.clusters);
-        setUnauthorized(unRes.data.clusters);
-        setLoading(false);
-      })
-      .catch((e) => {
-        setError(e?.response?.data?.detail || e?.message || "Failed to load insights");
-        setLoading(false);
-      });
+    if (isStaticUpload(uploadId) && radius === 500) {
+      // Load from pre-computed static JSON (instant)
+      Promise.all([
+        fetchStatic("summary.json"),
+        fetchStatic("hourly.json"),
+        fetchStatic("poi-breakdown.json"),
+        fetchStatic("route-breakdown.json"),
+        fetchStatic("top-clusters-all.json"),
+        fetchStatic("top-clusters-unauthorized.json"),
+      ])
+        .then(([sumData, hourData, poiData, routeData, topData, unData]) => {
+          setSummary(sumData);
+          setHourly(hourData.distribution);
+          setPoiBreakdown(poiData.breakdown);
+          setTopRoutes(routeData.routes);
+          setTopClusters(topData.clusters);
+          setUnauthorized(unData.clusters);
+          setLoading(false);
+        })
+        .catch((e) => {
+          setError(e?.message || "Failed to load insights");
+          setLoading(false);
+        });
+    } else {
+      // Fall back to backend API for non-static uploads
+      const p = { upload_id: String(uploadId), radius_m: String(radius) };
+      Promise.all([
+        api.get("/analytics/summary", { params: p }),
+        api.get("/analytics/hourly", { params: { upload_id: String(uploadId) } }),
+        api.get("/analytics/poi-breakdown", { params: p }),
+        api.get("/analytics/route-breakdown", { params: { upload_id: String(uploadId), limit: "12" } }),
+        api.get("/analytics/top-clusters", { params: { ...p, limit: "10" } }),
+        api.get("/analytics/top-clusters", { params: { ...p, classification: "unauthorized", limit: "10" } }),
+      ])
+        .then(([sumRes, hourRes, poiRes, routeRes, topRes, unRes]) => {
+          setSummary(sumRes.data);
+          setHourly(hourRes.data.distribution);
+          setPoiBreakdown(poiRes.data.breakdown);
+          setTopRoutes(routeRes.data.routes);
+          setTopClusters(topRes.data.clusters);
+          setUnauthorized(unRes.data.clusters);
+          setLoading(false);
+        })
+        .catch((e) => {
+          setError(e?.response?.data?.detail || e?.message || "Failed to load insights");
+          setLoading(false);
+        });
+    }
   }, [uploadId, radius]);
 
   if (loading) {

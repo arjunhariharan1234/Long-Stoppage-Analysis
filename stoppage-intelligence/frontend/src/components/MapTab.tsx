@@ -5,6 +5,7 @@ import { MapboxOverlay } from "@deck.gl/mapbox";
 import { ScatterplotLayer, TextLayer } from "@deck.gl/layers";
 import { HexagonLayer } from "@deck.gl/aggregation-layers";
 import api from "../api/client";
+import { isStaticUpload, fetchStatic } from "../api/static";
 
 interface ClusterData {
   id: number;
@@ -147,8 +148,12 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
     });
     if (classification) params.set("classification", classification);
 
-    api.get(`/map/clusters?${params}`).then((r) => {
-      const features = r.data.features;
+    const fetchClusters = isStaticUpload(uploadId) && radius === 500 && !classification
+      ? fetchStatic("clusters-geojson.json")
+      : api.get(`/map/clusters?${params}`).then((r) => r.data);
+
+    fetchClusters.then((geojson: any) => {
+      const features = geojson.features;
       const data: ClusterData[] = features.map((f: any) => ({
         id: f.properties.id,
         coordinates: f.geometry.coordinates as [number, number],

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "./api/client";
+import { fetchStatic } from "./api/static";
 import LandingPage from "./pages/LandingPage";
 import UploadStep from "./pages/UploadStep";
 import ResultsView from "./pages/ResultsView";
@@ -109,54 +110,57 @@ export default function App() {
   const [loadingMsg, setLoadingMsg] = useState("Waking up the server");
   const [landingStats, setLandingStats] = useState<LandingStats | null>(null);
 
-  const wakeAndFetch = async (): Promise<UploadRecord[]> => {
-    for (let i = 1; i <= 5; i++) {
+  const loadData = async (): Promise<UploadRecord[]> => {
+    // Try static JSON first (instant, no backend needed)
+    try {
+      setLoadingMsg("Loading analysis");
+      const [uploadsData, summaryData] = await Promise.all([
+        fetchStatic("uploads.json"),
+        fetchStatic("summary.json"),
+      ]);
+      const list: UploadRecord[] = uploadsData.uploads;
+      setUploads(list);
+      setBackendError(false);
+
+      const completed = list.filter((u) => u.status === "complete");
+      if (completed.length > 0) {
+        setActiveUploadId(completed[0].id);
+        const ec = summaryData.event_classification || {};
+        setLandingStats({
+          totalEvents: summaryData.valid_events || 0,
+          routes: summaryData.distinct_routes || 0,
+          trips: summaryData.distinct_trips || 0,
+          knownFunctional: ec.known_functional || 0,
+          otherLegit: ec.other_legit || 0,
+          unauthorized: ec.unauthorized || 0,
+        });
+      }
+      return list;
+    } catch {
+      // Static not available — fall back to backend API
+      setLoadingMsg("Connecting to backend");
+    }
+
+    // Backend fallback
+    for (let i = 1; i <= 3; i++) {
       try {
-        setLoadingMsg(i <= 2 ? "Waking up the server" : `Starting backend (attempt ${i}/5)`);
+        setLoadingMsg(i === 1 ? "Waking up the server" : `Starting backend (attempt ${i}/3)`);
         await api.get("/health", { timeout: 90000 });
         break;
       } catch {
-        if (i === 5) { setBackendError(true); return []; }
+        if (i === 3) { setBackendError(true); return []; }
         await new Promise((r) => setTimeout(r, 2000));
       }
     }
 
-    // Fetch uploads
     try {
-      setLoadingMsg("Loading analysis data");
+      setLoadingMsg("Loading data from server");
       const r = await api.get("/uploads", { timeout: 30000 });
       const list: UploadRecord[] = r.data.uploads;
       setUploads(list);
       setBackendError(false);
-
-      // Fetch analytics for the landing page if we have a completed upload
       const completed = list.filter((u) => u.status === "complete");
-      if (completed.length > 0) {
-        setActiveUploadId(completed[0].id);
-        try {
-          const analytics = await api.get(`/analytics/summary?upload_id=${completed[0].id}`, { timeout: 15000 });
-          const d = analytics.data;
-          const ec = d.event_classification || {};
-          setLandingStats({
-            totalEvents: d.valid_events || completed[0].row_count || 0,
-            routes: d.distinct_routes || 0,
-            trips: d.distinct_trips || 0,
-            knownFunctional: ec.known_functional || 0,
-            otherLegit: ec.other_legit || 0,
-            unauthorized: ec.unauthorized || 0,
-          });
-        } catch {
-          // Fallback stats from upload record
-          setLandingStats({
-            totalEvents: completed[0].valid_row_count || completed[0].row_count || 0,
-            routes: 617,
-            trips: 32634,
-            knownFunctional: 0,
-            otherLegit: 0,
-            unauthorized: 0,
-          });
-        }
-      }
+      if (completed.length > 0) setActiveUploadId(completed[0].id);
       return list;
     } catch {
       setBackendError(false);
@@ -176,7 +180,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    wakeAndFetch().then((list) => {
+    loadData().then((list) => {
       const completed = list.filter((u) => u.status === "complete");
       if (completed.length > 0) {
         setActiveUploadId(completed[0].id);
@@ -195,7 +199,7 @@ export default function App() {
   const handleRetry = async () => {
     setLoading(true);
     setBackendError(false);
-    const list = await wakeAndFetch();
+    const list = await loadData();
     const completed = list.filter((u) => u.status === "complete");
     if (completed.length > 0) {
       setActiveUploadId(completed[0].id);

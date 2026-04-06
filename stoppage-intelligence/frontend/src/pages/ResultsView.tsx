@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "../api/client";
+import { isStaticUpload, fetchStatic } from "../api/static";
 import MapTab from "../components/MapTab";
 import InsightsTab from "../components/InsightsTab";
 import DataTab from "../components/DataTab";
@@ -54,9 +55,13 @@ export default function ResultsView({ uploadId }: Props) {
   const [loadingCard, setLoadingCard] = useState(false);
 
   useEffect(() => {
-    api
-      .get("/analytics/summary", { params: { upload_id: uploadId, radius_m: radius } })
-      .then((r) => setSummary(r.data));
+    if (isStaticUpload(uploadId) && radius === 500) {
+      fetchStatic("summary.json").then(setSummary).catch(() => {});
+    } else {
+      api
+        .get("/analytics/summary", { params: { upload_id: uploadId, radius_m: radius } })
+        .then((r) => setSummary(r.data));
+    }
   }, [uploadId, radius]);
 
   // Close expanded card when filters change
