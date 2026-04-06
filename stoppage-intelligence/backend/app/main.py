@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import init_db
+from app.services.seed import seed_if_empty
 from app.spatial.lazy import is_poi_loaded, get_poi_count
 from app.routers import upload, poi, clusters, map_data, analytics, events, live
 
@@ -20,6 +21,7 @@ async def lifespan(app: FastAPI):
     # Startup
     logger.info("Initializing database...")
     init_db()
+    seed_if_empty()  # Pre-load JSW Steel data if DB is empty
     logger.info("Startup complete. POI index will load on first use.")
 
     yield

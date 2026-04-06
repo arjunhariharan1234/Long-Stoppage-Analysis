@@ -7,8 +7,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app/ ./app/
 
-# Copy compressed POI dataset
+# Copy compressed POI dataset and seed data
 COPY data/india_all_pois.csv.gz ./data/india_all_pois.csv.gz
+COPY data/jsw_steel_seed.csv.gz ./data/jsw_steel_seed.csv.gz
 
 # Ensure upload and data directories exist
 RUN mkdir -p ./data/uploads

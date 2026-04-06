@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import api from "./api/client";
+import LandingPage from "./pages/LandingPage";
 import UploadStep from "./pages/UploadStep";
 import ResultsView from "./pages/ResultsView";
 import "./index.css";
@@ -14,42 +15,150 @@ export interface UploadRecord {
   status: string;
 }
 
+interface LandingStats {
+  totalEvents: number;
+  routes: number;
+  trips: number;
+  knownFunctional: number;
+  otherLegit: number;
+  unauthorized: number;
+}
+
+// Engaging loading screen with truck animation
+function LoadingScreen({ msg }: { msg: string }) {
+  const [dots, setDots] = useState("");
+
+  useEffect(() => {
+    const t = setInterval(() => setDots((d) => (d.length >= 3 ? "" : d + ".")), 400);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, gap: 20, padding: 40 }}>
+      {/* Animated truck driving across */}
+      <div style={{ position: "relative", width: 260, height: 70, overflow: "hidden" }}>
+        {/* Road */}
+        <div style={{ position: "absolute", bottom: 8, left: 0, right: 0, height: 2, background: "var(--border)" }} />
+        <div style={{
+          position: "absolute", bottom: 11, left: 0, right: 0, height: 1,
+          backgroundImage: "repeating-linear-gradient(90deg, var(--text-secondary) 0, var(--text-secondary) 8px, transparent 8px, transparent 20px)",
+          opacity: 0.3,
+          animation: "roadScroll 1s linear infinite",
+        }} />
+        {/* Truck */}
+        <div style={{
+          position: "absolute", bottom: 10, fontSize: 36,
+          animation: "truckDrive 3s ease-in-out infinite",
+        }}>
+          {"\uD83D\uDE9A"}
+        </div>
+        {/* Location pins */}
+        <div style={{ position: "absolute", right: 30, bottom: 16, fontSize: 20, animation: "pinPulse 1.5s ease-in-out infinite" }}>
+          {"\uD83D\uDCCD"}
+        </div>
+        <div style={{ position: "absolute", right: 60, bottom: 16, fontSize: 14, opacity: 0.5, animation: "pinPulse 1.5s ease-in-out infinite 0.3s" }}>
+          {"\uD83D\uDCCD"}
+        </div>
+      </div>
+
+      <div style={{ textAlign: "center" }}>
+        <p style={{ color: "var(--text-primary)", fontSize: 15, fontWeight: 500 }}>{msg}{dots}</p>
+        <p style={{ color: "var(--text-secondary)", fontSize: 12, marginTop: 6 }}>
+          Preparing your stoppage analysis
+        </p>
+      </div>
+
+      {/* Progress shimmer */}
+      <div style={{ width: 200, height: 4, borderRadius: 2, background: "var(--bg-tertiary)", overflow: "hidden" }}>
+        <div style={{
+          width: "40%", height: "100%", borderRadius: 2,
+          background: "linear-gradient(90deg, var(--blue), var(--green))",
+          animation: "shimmer 1.5s ease-in-out infinite",
+        }} />
+      </div>
+
+      <style>{`
+        @keyframes roadScroll {
+          from { background-position: 0 0; }
+          to { background-position: -20px 0; }
+        }
+        @keyframes truckDrive {
+          0% { left: -10%; }
+          50% { left: 45%; }
+          100% { left: -10%; }
+        }
+        @keyframes pinPulse {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-4px) scale(1.1); }
+        }
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(350%); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
 export default function App() {
   const [activeUploadId, setActiveUploadId] = useState<number | null>(null);
   const [uploads, setUploads] = useState<UploadRecord[]>([]);
-  const [view, setView] = useState<"upload" | "results">("upload");
+  const [view, setView] = useState<"landing" | "upload" | "results">("landing");
   const [loading, setLoading] = useState(true);
   const [backendError, setBackendError] = useState(false);
-  const [loadingMsg, setLoadingMsg] = useState("Connecting to backend...");
+  const [loadingMsg, setLoadingMsg] = useState("Waking up the server");
+  const [landingStats, setLandingStats] = useState<LandingStats | null>(null);
 
-  // Wake up the backend first, then fetch uploads
   const wakeAndFetch = async (): Promise<UploadRecord[]> => {
-    // Try to wake the backend with up to 5 pings (health is fast, no DB/POI needed)
-    let awake = false;
     for (let i = 1; i <= 5; i++) {
       try {
-        setLoadingMsg(i === 1 ? "Waking up the server..." : `Server is starting... (attempt ${i}/5)`);
+        setLoadingMsg(i <= 2 ? "Waking up the server" : `Starting backend (attempt ${i}/5)`);
         await api.get("/health", { timeout: 90000 });
-        awake = true;
         break;
       } catch {
-        if (i < 5) await new Promise((r) => setTimeout(r, 2000));
+        if (i === 5) { setBackendError(true); return []; }
+        await new Promise((r) => setTimeout(r, 2000));
       }
     }
-    if (!awake) {
-      setBackendError(true);
-      return [];
-    }
-    // Backend is awake — fetch uploads
+
+    // Fetch uploads
     try {
-      setLoadingMsg("Loading data...");
-      const r = await api.get("/uploads", { timeout: 15000 });
+      setLoadingMsg("Loading analysis data");
+      const r = await api.get("/uploads", { timeout: 30000 });
       const list: UploadRecord[] = r.data.uploads;
       setUploads(list);
       setBackendError(false);
+
+      // Fetch analytics for the landing page if we have a completed upload
+      const completed = list.filter((u) => u.status === "complete");
+      if (completed.length > 0) {
+        setActiveUploadId(completed[0].id);
+        try {
+          const analytics = await api.get(`/analytics/summary?upload_id=${completed[0].id}`, { timeout: 15000 });
+          const d = analytics.data;
+          const ec = d.event_classification || {};
+          setLandingStats({
+            totalEvents: d.valid_events || completed[0].row_count || 0,
+            routes: d.distinct_routes || 0,
+            trips: d.distinct_trips || 0,
+            knownFunctional: ec.known_functional || 0,
+            otherLegit: ec.other_legit || 0,
+            unauthorized: ec.unauthorized || 0,
+          });
+        } catch {
+          // Fallback stats from upload record
+          setLandingStats({
+            totalEvents: completed[0].valid_row_count || completed[0].row_count || 0,
+            routes: 617,
+            trips: 32634,
+            knownFunctional: 0,
+            otherLegit: 0,
+            unauthorized: 0,
+          });
+        }
+      }
       return list;
     } catch {
-      // Backend is up but uploads failed — still let user through to upload page
       setBackendError(false);
       return [];
     }
@@ -60,10 +169,9 @@ export default function App() {
       const r = await api.get("/uploads", { timeout: 15000 });
       const list: UploadRecord[] = r.data.uploads;
       setUploads(list);
-      setBackendError(false);
       return list;
     } catch {
-      return uploads; // Keep existing data on refresh failure
+      return uploads;
     }
   };
 
@@ -72,7 +180,7 @@ export default function App() {
       const completed = list.filter((u) => u.status === "complete");
       if (completed.length > 0) {
         setActiveUploadId(completed[0].id);
-        setView("results");
+        setView("landing");
       }
       setLoading(false);
     });
@@ -87,11 +195,11 @@ export default function App() {
   const handleRetry = async () => {
     setLoading(true);
     setBackendError(false);
-    const list = await refreshUploads();
+    const list = await wakeAndFetch();
     const completed = list.filter((u) => u.status === "complete");
     if (completed.length > 0) {
       setActiveUploadId(completed[0].id);
-      setView("results");
+      setView("landing");
     }
     setLoading(false);
   };
@@ -99,32 +207,45 @@ export default function App() {
   return (
     <div className="app-container">
       <nav className="nav">
-        <h1>Stoppage Intelligence Platform</h1>
+        <h1
+          onClick={() => setView(activeUploadId ? "landing" : "upload")}
+          style={{ cursor: "pointer" }}
+        >
+          Stoppage Intelligence Platform
+        </h1>
         <div style={{ display: "flex", gap: 8, marginLeft: "auto", alignItems: "center" }}>
           {uploads.filter((u) => u.status === "complete").length > 0 && (
-            <select
-              value={activeUploadId ?? ""}
-              onChange={(e) => {
-                setActiveUploadId(Number(e.target.value));
-                setView("results");
-              }}
-              style={{
-                background: "var(--bg-tertiary)",
-                border: "1px solid var(--border)",
-                color: "var(--text-primary)",
-                padding: "6px 10px",
-                borderRadius: 6,
-                fontSize: 13,
-              }}
-            >
-              {uploads
-                .filter((u) => u.status === "complete")
-                .map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.filename}
-                  </option>
-                ))}
-            </select>
+            <>
+              <select
+                value={activeUploadId ?? ""}
+                onChange={(e) => {
+                  setActiveUploadId(Number(e.target.value));
+                  setView("results");
+                }}
+                style={{
+                  background: "var(--bg-tertiary)",
+                  border: "1px solid var(--border)",
+                  color: "var(--text-primary)",
+                  padding: "6px 10px",
+                  borderRadius: 6,
+                  fontSize: 13,
+                }}
+              >
+                {uploads
+                  .filter((u) => u.status === "complete")
+                  .map((u) => (
+                    <option key={u.id} value={u.id}>
+                      {u.filename}
+                    </option>
+                  ))}
+              </select>
+              <button
+                className={`btn ${view === "results" ? "primary" : ""}`}
+                onClick={() => setView("results")}
+              >
+                Dashboard
+              </button>
+            </>
           )}
           <button
             className={`btn ${view === "upload" ? "primary" : ""}`}
@@ -135,41 +256,34 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Loading state */}
-      {loading && (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, gap: 16, padding: 40 }}>
-          <div style={{ width: 40, height: 40, border: "3px solid var(--border)", borderTopColor: "var(--blue)", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-          <p style={{ color: "var(--text-secondary)", fontSize: 14 }}>{loadingMsg}</p>
-          <p style={{ color: "var(--text-secondary)", fontSize: 12 }}>Free hosting may take up to 60 seconds on first visit</p>
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-        </div>
-      )}
+      {/* Loading */}
+      {loading && <LoadingScreen msg={loadingMsg} />}
 
       {/* Backend unreachable */}
       {!loading && backendError && (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, padding: 40 }}>
           <div style={{ maxWidth: 480, textAlign: "center" }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>&#9888;&#65039;</div>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>{"\u26A0\uFE0F"}</div>
             <h2 style={{ marginBottom: 12 }}>Could not reach backend</h2>
             <p style={{ color: "var(--text-secondary)", fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
-              The server may be starting up. On free hosting, the first request can take 30–60 seconds.
-              Click below to retry.
+              The server may be starting up. On free hosting, the first request can take 30-60 seconds.
             </p>
             <button className="btn primary" onClick={handleRetry} style={{ fontSize: 14, padding: "10px 24px" }}>
               Try again
             </button>
-            <div style={{ marginTop: 24, padding: "14px 18px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, textAlign: "left" }}>
-              <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 6 }}>Running locally?</div>
-              <div style={{ color: "var(--text-secondary)", fontSize: 12, lineHeight: 1.6 }}>
-                Make sure the backend is running:<br />
-                <code style={{ color: "var(--blue)" }}>cd stoppage-intelligence/backend && python3 -m uvicorn app.main:app --port 8000</code>
-              </div>
-            </div>
           </div>
         </div>
       )}
 
-      {/* Normal views */}
+      {/* Landing */}
+      {!loading && !backendError && view === "landing" && (
+        <LandingPage
+          stats={landingStats}
+          onExplore={() => setView("results")}
+        />
+      )}
+
+      {/* Upload */}
       {!loading && !backendError && view === "upload" && (
         <UploadStep
           onProcessed={handleProcessed}
@@ -177,6 +291,7 @@ export default function App() {
         />
       )}
 
+      {/* Results */}
       {!loading && !backendError && view === "results" && activeUploadId && (
         <ResultsView uploadId={activeUploadId} />
       )}

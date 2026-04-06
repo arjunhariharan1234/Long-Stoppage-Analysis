@@ -50,3 +50,9 @@ KNOWN_FUNCTIONAL_POI_TYPES = {
 KNOWN_FUNCTIONAL_MAX_DISTANCE_M = 500
 
 EARTH_RADIUS_KM = 6371.0
+
+# Seed data — pre-enriched JSW Steel stoppage file (prefer compressed CSV)
+_default_seed = str(BASE_DIR / "data" / "jsw_steel_seed.csv.gz")
+if not os.path.exists(_default_seed):
+    _default_seed = str(PROJECT_ROOT / "jsw_steel_10months_with_poi.xlsx")
+SEED_DATA_PATH = os.environ.get("SEED_DATA_PATH", _default_seed)
