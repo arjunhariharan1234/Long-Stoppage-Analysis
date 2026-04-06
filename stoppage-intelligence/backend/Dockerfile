@@ -17,6 +17,7 @@ RUN mkdir -p ./data/uploads
 ENV POI_CSV_PATH=/app/data/india_all_pois.csv.gz
 ENV DATABASE_URL=sqlite:////app/data/stoppage_intelligence.db
 ENV UPLOAD_DIR=/app/data/uploads
+ENV SEED_DATA_PATH=/app/data/jsw_steel_seed.csv.gz
 
 EXPOSE 8000
 

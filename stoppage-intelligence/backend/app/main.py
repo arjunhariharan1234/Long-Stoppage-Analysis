@@ -21,7 +21,10 @@ async def lifespan(app: FastAPI):
     # Startup
     logger.info("Initializing database...")
     init_db()
-    seed_if_empty()  # Pre-load JSW Steel data if DB is empty
+    try:
+        seed_if_empty()
+    except Exception:
+        logger.exception("Seed failed — server will start without pre-loaded data")
     logger.info("Startup complete. POI index will load on first use.")
 
     yield

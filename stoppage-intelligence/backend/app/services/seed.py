@@ -324,7 +324,6 @@ def seed_if_empty() -> None:
 
     except Exception:
         db.rollback()
-        logger.exception("Seed failed")
-        raise
+        logger.exception("Seed failed — continuing without seed data")
     finally:
         db.close()
