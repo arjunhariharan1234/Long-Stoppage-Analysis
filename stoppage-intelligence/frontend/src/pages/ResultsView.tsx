@@ -60,7 +60,17 @@ export default function ResultsView({ uploadId }: Props) {
     } else {
       api
         .get("/analytics/summary", { params: { upload_id: uploadId, radius_m: radius } })
-        .then((r) => setSummary(r.data));
+        .then((r) => {
+          // If backend returns empty (DB wiped), fall back to static
+          if (r.data.total_events === 0 && radius === 500) {
+            fetchStatic("summary.json").then(setSummary).catch(() => setSummary(r.data));
+          } else {
+            setSummary(r.data);
+          }
+        })
+        .catch(() => {
+          fetchStatic("summary.json").then(setSummary).catch(() => {});
+        });
     }
   }, [uploadId, radius]);
 
@@ -88,6 +98,19 @@ export default function ResultsView({ uploadId }: Props) {
     }
 
     try {
+      // Try static first for known cards
+      const staticFile = card === "clusters" ? "top-clusters-all.json" : `top-clusters-${card}.json`;
+      if (isStaticUpload(uploadId) || radius === 500) {
+        try {
+          const data = await fetchStatic(staticFile);
+          if (data.clusters?.length > 0) {
+            setExpandedData(data.clusters);
+            setLoadingCard(false);
+            return;
+          }
+        } catch { /* fall through to API */ }
+      }
+
       const params: Record<string, string> = {
         upload_id: String(uploadId),
         radius_m: String(radius),
@@ -96,7 +119,6 @@ export default function ResultsView({ uploadId }: Props) {
       if (card === "known_functional" || card === "other_legit") {
         params.classification = card;
       }
-      // For "clusters", no classification filter — show all top clusters
 
       const res = await api.get("/analytics/top-clusters", { params });
       setExpandedData(res.data.clusters);

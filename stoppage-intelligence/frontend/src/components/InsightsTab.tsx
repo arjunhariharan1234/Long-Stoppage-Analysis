@@ -67,7 +67,7 @@ export default function InsightsTab({ uploadId, radius }: Props) {
           setLoading(false);
         });
     } else {
-      // Fall back to backend API for non-static uploads
+      // Try backend API first, fall back to static if empty
       const p = { upload_id: String(uploadId), radius_m: String(radius) };
       Promise.all([
         api.get("/analytics/summary", { params: p }),
@@ -78,6 +78,21 @@ export default function InsightsTab({ uploadId, radius }: Props) {
         api.get("/analytics/top-clusters", { params: { ...p, classification: "unauthorized", limit: "10" } }),
       ])
         .then(([sumRes, hourRes, poiRes, routeRes, topRes, unRes]) => {
+          // If backend returned empty data, fall back to static
+          if (sumRes.data.total_events === 0) {
+            return Promise.all([
+              fetchStatic("summary.json"),
+              fetchStatic("hourly.json"),
+              fetchStatic("poi-breakdown.json"),
+              fetchStatic("route-breakdown.json"),
+              fetchStatic("top-clusters-all.json"),
+              fetchStatic("top-clusters-unauthorized.json"),
+            ]).then(([s, h, poi, rt, tc, un]) => {
+              setSummary(s); setHourly(h.distribution); setPoiBreakdown(poi.breakdown);
+              setTopRoutes(rt.routes); setTopClusters(tc.clusters); setUnauthorized(un.clusters);
+              setLoading(false);
+            });
+          }
           setSummary(sumRes.data);
           setHourly(hourRes.data.distribution);
           setPoiBreakdown(poiRes.data.breakdown);
@@ -86,9 +101,23 @@ export default function InsightsTab({ uploadId, radius }: Props) {
           setUnauthorized(unRes.data.clusters);
           setLoading(false);
         })
-        .catch((e) => {
-          setError(e?.response?.data?.detail || e?.message || "I couldn't load my analysis");
-          setLoading(false);
+        .catch(() => {
+          // Backend unreachable — fall back to static
+          Promise.all([
+            fetchStatic("summary.json"),
+            fetchStatic("hourly.json"),
+            fetchStatic("poi-breakdown.json"),
+            fetchStatic("route-breakdown.json"),
+            fetchStatic("top-clusters-all.json"),
+            fetchStatic("top-clusters-unauthorized.json"),
+          ]).then(([s, h, poi, rt, tc, un]) => {
+            setSummary(s); setHourly(h.distribution); setPoiBreakdown(poi.breakdown);
+            setTopRoutes(rt.routes); setTopClusters(tc.clusters); setUnauthorized(un.clusters);
+            setLoading(false);
+          }).catch((e) => {
+            setError(e?.message || "I couldn't load my analysis");
+            setLoading(false);
+          });
         });
     }
   }, [uploadId, radius]);

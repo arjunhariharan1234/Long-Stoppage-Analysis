@@ -101,8 +101,30 @@ export default function LandingPage({ onExplore, onUpload, stats }: Props) {
         transition: "opacity 0.5s ease-out",
       }}
     >
+      {/* Background floating alert/monitoring graphics */}
+      <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, pointerEvents: "none", overflow: "hidden", zIndex: 0 }}>
+        {/* Alert bells */}
+        <div style={{ position: "absolute", top: "12%", left: "8%", fontSize: 22, opacity: 0.06, animation: "bgFloat 6s ease-in-out infinite" }}>{"\uD83D\uDD14"}</div>
+        <div style={{ position: "absolute", top: "25%", right: "10%", fontSize: 18, opacity: 0.05, animation: "bgFloat 7s ease-in-out infinite 1s" }}>{"\uD83D\uDD14"}</div>
+        {/* Signal/radar */}
+        <div style={{ position: "absolute", top: "40%", left: "5%", fontSize: 24, opacity: 0.05, animation: "bgFloat 8s ease-in-out infinite 2s" }}>{"\uD83D\uDCE1"}</div>
+        <div style={{ position: "absolute", bottom: "30%", right: "6%", fontSize: 20, opacity: 0.04, animation: "bgFloat 9s ease-in-out infinite 0.5s" }}>{"\uD83D\uDCE1"}</div>
+        {/* Shield/compliance */}
+        <div style={{ position: "absolute", top: "15%", right: "20%", fontSize: 20, opacity: 0.05, animation: "bgFloat 7s ease-in-out infinite 3s" }}>{"\uD83D\uDEE1\uFE0F"}</div>
+        <div style={{ position: "absolute", bottom: "20%", left: "15%", fontSize: 16, opacity: 0.04, animation: "bgFloat 6s ease-in-out infinite 1.5s" }}>{"\uD83D\uDEE1\uFE0F"}</div>
+        {/* Location pins */}
+        <div style={{ position: "absolute", top: "55%", right: "15%", fontSize: 16, opacity: 0.04, animation: "bgFloat 5s ease-in-out infinite 2.5s" }}>{"\uD83D\uDCCD"}</div>
+        <div style={{ position: "absolute", bottom: "40%", left: "20%", fontSize: 14, opacity: 0.03, animation: "bgFloat 8s ease-in-out infinite 4s" }}>{"\uD83D\uDCCD"}</div>
+        {/* Warning/alert triangles */}
+        <div style={{ position: "absolute", top: "70%", left: "10%", fontSize: 18, opacity: 0.04, animation: "bgFloat 7s ease-in-out infinite 3.5s" }}>{"\u26A0\uFE0F"}</div>
+        <div style={{ position: "absolute", top: "30%", left: "25%", fontSize: 14, opacity: 0.03, animation: "bgFloat 9s ease-in-out infinite 1s" }}>{"\u26A0\uFE0F"}</div>
+        {/* Phone/calling */}
+        <div style={{ position: "absolute", bottom: "15%", right: "25%", fontSize: 18, opacity: 0.05, animation: "bgFloat 6s ease-in-out infinite 2s" }}>{"\uD83D\uDCDE"}</div>
+        <div style={{ position: "absolute", top: "8%", left: "35%", fontSize: 14, opacity: 0.03, animation: "bgFloat 8s ease-in-out infinite 4.5s" }}>{"\uD83D\uDCDE"}</div>
+      </div>
+
       {/* Hero with truck animation */}
-      <div style={{ padding: "48px 24px 32px", textAlign: "center" }}>
+      <div style={{ padding: "48px 24px 32px", textAlign: "center", position: "relative", zIndex: 1 }}>
         {/* Road scene */}
         <div
           style={{
@@ -211,7 +233,7 @@ export default function LandingPage({ onExplore, onUpload, stats }: Props) {
         </div>
 
         <h1 style={{ fontSize: 38, fontWeight: 700, lineHeight: 1.15, marginBottom: 4 }}>
-          I'm <span style={{ color: "var(--brand)" }}>Sarthak</span>
+          I'm <span style={{ color: "var(--brand)" }}>Agent Sarthak</span>
         </h1>
         <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 12, fontWeight: 500 }}>
           Your Logistics Compliance Officer
@@ -373,10 +395,15 @@ export default function LandingPage({ onExplore, onUpload, stats }: Props) {
 
       {/* Footer */}
       <div style={{ textAlign: "center", padding: "16px 24px 28px", color: "var(--text-muted)", fontSize: 11 }}>
-        Sarthak &middot; Freight Tiger Compliance Intelligence
+        Agent Sarthak &middot; Freight Tiger Compliance Intelligence
       </div>
 
       <style>{`
+        @keyframes bgFloat {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          33% { transform: translateY(-12px) rotate(3deg); }
+          66% { transform: translateY(8px) rotate(-2deg); }
+        }
         @keyframes roadScroll {
           from { background-position: 0 0; }
           to { background-position: -24px 0; }

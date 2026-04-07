@@ -109,7 +109,7 @@ export default function App() {
   const [view, setView] = useState<"landing" | "upload" | "results">("landing");
   const [loading, setLoading] = useState(true);
   const [backendError, setBackendError] = useState(false);
-  const [loadingMsg, setLoadingMsg] = useState("Sarthak is getting ready");
+  const [loadingMsg, setLoadingMsg] = useState("Agent Sarthak is getting ready");
   const [landingStats, setLandingStats] = useState<LandingStats | null>(null);
 
   const loadData = async (): Promise<UploadRecord[]> => {
@@ -146,7 +146,7 @@ export default function App() {
     // Backend fallback
     for (let i = 1; i <= 3; i++) {
       try {
-        setLoadingMsg(i === 1 ? "Sarthak is getting ready" : "Still preparing... hold on");
+        setLoadingMsg(i === 1 ? "Agent Sarthak is getting ready" : "Still preparing... hold on");
         await api.get("/health", { timeout: 90000 });
         break;
       } catch {
@@ -224,7 +224,7 @@ export default function App() {
             flexShrink: 0,
           }}>S</div>
           <span style={{ display: "flex", flexDirection: "column", lineHeight: 1.2 }}>
-            <span style={{ fontSize: 15, fontWeight: 700 }}>Sarthak</span>
+            <span style={{ fontSize: 15, fontWeight: 700 }}>Agent Sarthak</span>
             <span style={{ fontSize: 10, color: "var(--text-secondary)", fontWeight: 400 }}>Logistics Compliance Officer</span>
           </span>
         </h1>
