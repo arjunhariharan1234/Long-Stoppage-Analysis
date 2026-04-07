@@ -1,119 +1,149 @@
 import logging
+import os
 import shutil
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
+from sqlalchemy import insert
 from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, Request, Query
 from sqlalchemy.orm import Session
 
-from app.config import UPLOAD_DIR, CLUSTER_RADII_M
+from app.config import UPLOAD_DIR, DEFAULT_CLUSTER_RADIUS_M, KNOWN_FUNCTIONAL_POI_TYPES, KNOWN_FUNCTIONAL_MAX_DISTANCE_M
 from app.database import get_db
 from app.models import Upload, StoppageEvent, Cluster
 from app.services.ingest import (
     parse_file, detect_column_mapping, validate_mapping, normalize_events,
 )
 from app.services.clustering import cluster_stoppages
-from app.services.poi_lookup import enrich_events, enrich_clusters
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["upload"])
 
+# POI columns that may already exist in uploaded files
+_POI_COL_MAP = {
+    "poi_name": "nearest_poi_name",
+    "poi_amenity_type": "nearest_poi_type",
+    "poi_lat": "nearest_poi_lat",
+    "poi_lon": "nearest_poi_lon",
+    "distance_to_poi_m": "nearest_poi_distance_m",
+}
+
+
+def _classify_series(poi_type: pd.Series, distance: pd.Series) -> pd.Series:
+    """Vectorized classification."""
+    lower = poi_type.fillna("").str.strip().str.lower()
+    no_poi = lower.isin({"no poi within 2km", "", "unidentified"}) | poi_type.isna()
+    known = lower.isin(KNOWN_FUNCTIONAL_POI_TYPES) & (distance.fillna(9999) <= KNOWN_FUNCTIONAL_MAX_DISTANCE_M)
+    out = pd.Series("other_legit", index=poi_type.index)
+    out[no_poi] = "unauthorized"
+    out[known & ~no_poi] = "known_functional"
+    return out
+
 
 def _run_pipeline(upload: Upload, df: pd.DataFrame, mapping: dict, db: Session):
-    """Run the full processing pipeline: normalize → cluster → enrich → classify."""
+    """Lightweight pipeline: normalize → bulk insert → cluster at 500m only.
+    Skips POI enrichment to stay within Render 512MB RAM.
+    If the file already has POI columns, uses them directly."""
     upload.status = "processing"
     upload.column_mapping = mapping
     db.commit()
 
-    logger.info("Processing upload %d (%s) with mapping: %s", upload.id, upload.filename, mapping)
+    logger.info("Processing upload %d (%s)", upload.id, upload.filename)
 
     # Normalize
     normalized = normalize_events(df, mapping)
     valid_count = int(normalized["is_valid"].sum())
     invalid_count = int((~normalized["is_valid"]).sum())
 
-    # Store events in database
-    events = []
-    for _, row in normalized.iterrows():
-        event = StoppageEvent(
-            upload_id=upload.id,
-            external_id=row.get("external_id"),
-            trip_id=row.get("trip_id"),
-            route_code=row.get("route_code"),
-            alert_id=row.get("alert_id"),
-            alert_name=row.get("alert_name"),
-            alert_status=row.get("alert_status"),
-            event_timestamp=row.get("event_timestamp") if row.get("event_timestamp") is not None and str(row.get("event_timestamp")) != "NaT" else None,
-            lat=float(row["lat"]) if row["is_valid"] else None,
-            lon=float(row["lon"]) if row["is_valid"] else None,
-            is_valid=bool(row["is_valid"]),
+    # Check if file already has POI data
+    has_poi = "poi_name" in df.columns or "poi_amenity_type" in df.columns
+    if has_poi:
+        logger.info("File has POI columns — using pre-enriched data")
+        for src, dst in _POI_COL_MAP.items():
+            if src in df.columns:
+                normalized[dst] = df[src].values[:len(normalized)]
+        normalized["classification"] = _classify_series(
+            normalized.get("nearest_poi_type", pd.Series(dtype=str)),
+            normalized.get("nearest_poi_distance_m", pd.Series(dtype=float)),
         )
-        events.append(event)
 
-    db.bulk_save_objects(events)
+    # Build records for bulk insert (vectorized, no iterrows)
+    normalized["upload_id"] = upload.id
+    cols = ["upload_id", "external_id", "trip_id", "route_code",
+            "alert_id", "alert_name", "alert_status", "event_timestamp",
+            "lat", "lon", "is_valid"]
+    if has_poi:
+        cols += ["nearest_poi_name", "nearest_poi_type", "nearest_poi_lat",
+                 "nearest_poi_lon", "nearest_poi_distance_m", "classification"]
+
+    insert_df = normalized[[c for c in cols if c in normalized.columns]].copy()
+    insert_df = insert_df.where(insert_df.notna(), None)
+
+    # Convert timestamps
+    if "event_timestamp" in insert_df.columns and insert_df["event_timestamp"].dtype != object:
+        insert_df["event_timestamp"] = insert_df["event_timestamp"].apply(
+            lambda x: x.to_pydatetime() if pd.notna(x) else None
+        )
+
+    records = insert_df.to_dict(orient="records")
+    for i in range(0, len(records), 5000):
+        db.execute(insert(StoppageEvent.__table__), records[i:i+5000])
+    db.flush()
     db.commit()
 
     upload.valid_row_count = valid_count
     upload.invalid_row_count = invalid_count
 
-    logger.info("Upload %d: %d valid, %d invalid events stored. Starting clustering...", upload.id, valid_count, invalid_count)
+    logger.info("Inserted %d events. Clustering at 500m...", len(records))
 
-    # --- Clustering ---
+    # --- Clustering at 500m only ---
     db_events = (
         db.query(StoppageEvent)
         .filter(StoppageEvent.upload_id == upload.id, StoppageEvent.is_valid == True)
         .all()
     )
     events_df = pd.DataFrame([{
-        "db_id": e.id,
-        "lat": e.lat,
-        "lon": e.lon,
-        "trip_id": e.trip_id,
-        "route_code": e.route_code,
+        "db_id": e.id, "lat": e.lat, "lon": e.lon,
+        "trip_id": e.trip_id, "route_code": e.route_code,
         "event_timestamp": e.event_timestamp,
     } for e in db_events])
 
-    cluster_summary = {}
-    for radius_m in CLUSTER_RADII_M:
-        clusters_result, labels = cluster_stoppages(events_df, radius_m=radius_m)
+    radius_m = DEFAULT_CLUSTER_RADIUS_M
+    clusters_result, labels = cluster_stoppages(events_df, radius_m=radius_m)
 
-        for cr in clusters_result:
-            cluster_obj = Cluster(
-                upload_id=upload.id,
-                radius_meters=radius_m,
-                centroid_lat=cr.centroid_lat,
-                centroid_lon=cr.centroid_lon,
-                event_count=cr.event_count,
-                distinct_trips=cr.distinct_trips,
-                distinct_routes=cr.distinct_routes,
-                first_seen=cr.first_seen,
-                last_seen=cr.last_seen,
-                peak_hour=cr.peak_hour,
-                night_halt_pct=cr.night_halt_pct,
-            )
-            db.add(cluster_obj)
-            db.flush()
+    for cr in clusters_result:
+        cluster_obj = Cluster(
+            upload_id=upload.id, radius_meters=radius_m,
+            centroid_lat=cr.centroid_lat, centroid_lon=cr.centroid_lon,
+            event_count=cr.event_count, distinct_trips=cr.distinct_trips,
+            distinct_routes=cr.distinct_routes,
+            first_seen=cr.first_seen, last_seen=cr.last_seen,
+            peak_hour=cr.peak_hour, night_halt_pct=cr.night_halt_pct,
+        )
+        db.add(cluster_obj)
+        db.flush()
 
-            event_db_ids = [int(events_df.iloc[i]["db_id"]) for i in cr.event_indices]
-            if radius_m == 500:
-                db.query(StoppageEvent).filter(
-                    StoppageEvent.id.in_(event_db_ids)
-                ).update({StoppageEvent.cluster_id: cluster_obj.id}, synchronize_session=False)
-
-        cluster_summary[radius_m] = len(clusters_result)
-        logger.info("Clustering at %dm: %d clusters", radius_m, len(clusters_result))
+        event_db_ids = [int(events_df.iloc[i]["db_id"]) for i in cr.event_indices]
+        db.query(StoppageEvent).filter(
+            StoppageEvent.id.in_(event_db_ids)
+        ).update({StoppageEvent.cluster_id: cluster_obj.id}, synchronize_session=False)
 
     db.commit()
+    logger.info("Created %d clusters at %dm", len(clusters_result), radius_m)
 
-    # --- POI Enrichment + Classification ---
-    from app.spatial.lazy import get_poi_index
-    poi_index = get_poi_index()
-
-    logger.info("Enriching events with POI data...")
-    event_stats = enrich_events(db, upload.id, poi_index)
-
-    logger.info("Enriching clusters with POI data...")
-    cluster_stats = enrich_clusters(db, upload.id, poi_index)
+    # --- Lightweight POI enrichment (only if env allows it) ---
+    event_stats = {}
+    cluster_stats = {}
+    if not has_poi and os.environ.get("ENABLE_POI", "0") == "1":
+        try:
+            from app.spatial.lazy import get_poi_index
+            from app.services.poi_lookup import enrich_events, enrich_clusters
+            poi_index = get_poi_index()
+            event_stats = enrich_events(db, upload.id, poi_index)
+            cluster_stats = enrich_clusters(db, upload.id, poi_index)
+        except Exception:
+            logger.exception("POI enrichment failed — skipping")
 
     upload.status = "complete"
     db.commit()
@@ -124,10 +154,10 @@ def _run_pipeline(upload: Upload, df: pd.DataFrame, mapping: dict, db: Session):
         "total_rows": upload.row_count,
         "valid_events": valid_count,
         "invalid_events": invalid_count,
-        "clusters": cluster_summary,
+        "clusters": {radius_m: len(clusters_result)},
         "event_classification": event_stats,
         "cluster_classification": cluster_stats,
-        "message": f"Processed {valid_count} events → clustered → enriched → classified",
+        "message": f"Processed {valid_count} events → {len(clusters_result)} clusters",
     }
 
 
