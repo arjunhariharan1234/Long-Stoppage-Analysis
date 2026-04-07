@@ -107,12 +107,44 @@ def _run_pipeline(upload: Upload, df: pd.DataFrame, mapping: dict, db: Session):
         "db_id": e.id, "lat": e.lat, "lon": e.lon,
         "trip_id": e.trip_id, "route_code": e.route_code,
         "event_timestamp": e.event_timestamp,
+        "classification": e.classification,
+        "nearest_poi_name": e.nearest_poi_name,
+        "nearest_poi_type": e.nearest_poi_type,
+        "nearest_poi_distance_m": e.nearest_poi_distance_m,
+        "nearest_poi_lat": e.nearest_poi_lat,
+        "nearest_poi_lon": e.nearest_poi_lon,
     } for e in db_events])
 
     radius_m = DEFAULT_CLUSTER_RADIUS_M
     clusters_result, labels = cluster_stoppages(events_df, radius_m=radius_m)
 
     for cr in clusters_result:
+        # Compute majority classification and POI info from member events
+        members = events_df.iloc[cr.event_indices]
+        maj_class = None
+        poi_name = poi_type = None
+        poi_dist = poi_lat = poi_lon = None
+
+        if has_poi and "classification" in members.columns:
+            valid_cls = members["classification"].dropna()
+            if len(valid_cls) > 0:
+                maj_class = valid_cls.mode().iloc[0]
+            poi_names = members["nearest_poi_name"].dropna()
+            if len(poi_names) > 0:
+                poi_name = poi_names.mode().iloc[0]
+            poi_types = members["nearest_poi_type"].dropna()
+            if len(poi_types) > 0:
+                poi_type = poi_types.mode().iloc[0]
+            dists = members["nearest_poi_distance_m"].dropna()
+            if len(dists) > 0:
+                poi_dist = float(dists.median())
+            lats = members["nearest_poi_lat"].dropna()
+            if len(lats) > 0:
+                poi_lat = float(lats.median())
+            lons = members["nearest_poi_lon"].dropna()
+            if len(lons) > 0:
+                poi_lon = float(lons.median())
+
         cluster_obj = Cluster(
             upload_id=upload.id, radius_meters=radius_m,
             centroid_lat=cr.centroid_lat, centroid_lon=cr.centroid_lon,
@@ -120,6 +152,9 @@ def _run_pipeline(upload: Upload, df: pd.DataFrame, mapping: dict, db: Session):
             distinct_routes=cr.distinct_routes,
             first_seen=cr.first_seen, last_seen=cr.last_seen,
             peak_hour=cr.peak_hour, night_halt_pct=cr.night_halt_pct,
+            classification=maj_class,
+            poi_name=poi_name, poi_type=poi_type,
+            poi_distance_m=poi_dist, poi_lat=poi_lat, poi_lon=poi_lon,
         )
         db.add(cluster_obj)
         db.flush()
