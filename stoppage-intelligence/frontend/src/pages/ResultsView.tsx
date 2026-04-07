@@ -37,9 +37,9 @@ interface Props {
 }
 
 const TABS = [
-  { id: "map", label: "Map View" },
-  { id: "insights", label: "Insights" },
-  { id: "data", label: "Data Table" },
+  { id: "map", label: "My Map" },
+  { id: "insights", label: "My Analysis" },
+  { id: "data", label: "Raw Records" },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
@@ -109,19 +109,19 @@ export default function ResultsView({ uploadId }: Props) {
 
   const CARD_DESCRIPTIONS: Record<string, { title: string; desc: string }> = {
     clusters: {
-      title: "Top Cluster Regions",
-      desc: "Highest-frequency halt zones across all classifications, sorted by event count",
+      title: "My Top Findings",
+      desc: "These are the highest-frequency halt zones I've identified",
     },
     known_functional: {
-      title: "Top Known Functional Halts",
-      desc: "Stops near logistics-relevant POIs (fuel stations, toll booths, restaurants, gates, industrial areas) within 500m",
+      title: "Legitimate Logistics Stops",
+      desc: "I've verified these stops are near fuel stations, toll booths, restaurants, or industrial gates within 500m",
     },
     other_legit: {
-      title: "Top Other Legitimate Halts",
-      desc: "Stops near non-logistics POIs (villages, hospitals, shops, temples) within 2km — real but not core logistics stops",
+      title: "Other Verified Stops",
+      desc: "These halts are near non-logistics POIs \u2014 hospitals, villages, shops \u2014 within 2km. Real stops, but not core logistics.",
     },
     unauthorized: {
-      title: "Unauthorized Stops",
+      title: "Stops I've Flagged",
       desc: "",
     },
   };
@@ -144,7 +144,7 @@ export default function ResultsView({ uploadId }: Props) {
               clickable
               active={expanded === "clusters"}
               onClick={() => handleCardClick("clusters")}
-              hint="Click for top regions"
+              hint="See my top findings"
             />
             <KpiCard
               label="Trips"
@@ -163,7 +163,7 @@ export default function ResultsView({ uploadId }: Props) {
               clickable
               active={expanded === "known_functional"}
               onClick={() => handleCardClick("known_functional")}
-              hint="Click for top stops"
+              hint="See what I found"
             />
             <KpiCard
               label="Other Legit"
@@ -172,7 +172,7 @@ export default function ResultsView({ uploadId }: Props) {
               clickable
               active={expanded === "other_legit"}
               onClick={() => handleCardClick("other_legit")}
-              hint="Click for top stops"
+              hint="See what I found"
             />
             <KpiCard
               label="Unauthorized"
@@ -181,7 +181,7 @@ export default function ResultsView({ uploadId }: Props) {
               clickable
               active={expanded === "unauthorized"}
               onClick={() => handleCardClick("unauthorized")}
-              hint="Click for details"
+              hint="Read my assessment"
             />
           </div>
 
@@ -318,7 +318,7 @@ function KpiCard({
       <div className={`value ${color}`}>{value}</div>
       {clickable && hint && (
         <div style={{ fontSize: 10, color: "var(--text-secondary)", marginTop: 4 }}>
-          {active ? "Click to collapse" : hint}
+          {active ? "Close" : hint}
         </div>
       )}
     </div>
@@ -397,27 +397,27 @@ function UnauthorizedExplainer({ count, clusterCount }: { count: number; cluster
           </div>
         </div>
 
-        <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: "var(--red)" }}>What does "Unauthorized" mean?</h4>
+        <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: "var(--red)" }}>Why I've flagged these stops</h4>
         <p style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: 12 }}>
-          These are stoppage locations where <strong style={{ color: "var(--text-primary)" }}>no known Point of Interest exists within a 2km radius</strong>.
-          The vehicle halted in an area with no fuel station, restaurant, toll booth, industrial zone, village, or any other identifiable landmark.
+          These are locations where I found <strong style={{ color: "var(--text-primary)" }}>no known Point of Interest within a 2km radius</strong>.
+          The vehicle halted somewhere I can't explain — no fuel station, restaurant, toll booth, industrial zone, village, or any other identifiable landmark nearby.
         </p>
 
-        <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>Why does this matter?</h4>
+        <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 8 }}>Why you should care</h4>
         <ul style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.8, paddingLeft: 20 }}>
-          <li>No explainable reason for the vehicle to stop at this location</li>
-          <li>Could indicate <strong style={{ color: "var(--text-primary)" }}>theft risk</strong>, pilferage, or unauthorized detours</li>
-          <li>Could indicate <strong style={{ color: "var(--text-primary)" }}>vehicle breakdowns</strong> in remote areas</li>
-          <li>Could indicate <strong style={{ color: "var(--text-primary)" }}>driver rest</strong> in undesignated locations</li>
-          <li>Repeated unauthorized stops at the same location are the <strong style={{ color: "var(--red)" }}>highest-risk pattern</strong></li>
+          <li>I found no explainable reason for the vehicle to stop at this location</li>
+          <li>This could indicate <strong style={{ color: "var(--text-primary)" }}>theft risk</strong>, pilferage, or unauthorized detours</li>
+          <li>It could also mean <strong style={{ color: "var(--text-primary)" }}>vehicle breakdowns</strong> in remote areas</li>
+          <li>Or <strong style={{ color: "var(--text-primary)" }}>driver rest</strong> in undesignated locations</li>
+          <li>Repeated unauthorized stops at the same location are what I consider the <strong style={{ color: "var(--red)" }}>highest-risk pattern</strong></li>
         </ul>
 
-        <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, marginTop: 12 }}>Recommended Actions</h4>
+        <h4 style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, marginTop: 12 }}>What I recommend</h4>
         <ul style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.8, paddingLeft: 20 }}>
-          <li>Review high-frequency unauthorized clusters on the <strong style={{ color: "var(--text-primary)" }}>Map View</strong> (red dots)</li>
-          <li>Cross-reference with route plans — is the stop on or off the planned route?</li>
-          <li>Check night halt percentage — unauthorized stops with &gt;40% night halts need priority review</li>
-          <li>Escalate recurring clusters to operations for on-ground verification</li>
+          <li>Review the high-frequency unauthorized clusters I've marked on <strong style={{ color: "var(--text-primary)" }}>My Map</strong> (red dots)</li>
+          <li>Cross-reference with your route plans — is the stop on or off the planned route?</li>
+          <li>Check the night halt percentage — I flag unauthorized stops with &gt;40% night halts as priority</li>
+          <li>Escalate recurring clusters to your operations team for on-ground verification</li>
         </ul>
       </div>
     </div>

@@ -20,7 +20,7 @@ interface Props {
 const MAX_FILE_SIZE_MB = 50;
 const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024;
 
-const STEP_LABELS = ["Upload File", "Review Schema", "Processing", "Done"];
+const STEP_LABELS = ["Submit File", "I'll Review", "Analyzing", "Briefing Ready"];
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -58,12 +58,12 @@ async function compressFile(file: File): Promise<{ blob: Blob; name: string; ori
 
 // --- Animated processing screen ---
 const PIPELINE_STAGES = [
-  { label: "Uploading file", icon: "\u2B06", duration: 8 },
-  { label: "Parsing & validating schema", icon: "\uD83D\uDCCB", duration: 5 },
-  { label: "Normalizing stoppage events", icon: "\uD83D\uDD27", duration: 10 },
-  { label: "Clustering halts at 200m, 500m, 1km, 2km", icon: "\uD83D\uDCCD", duration: 25 },
-  { label: "Matching nearest POIs from 1.2M locations", icon: "\uD83D\uDDFA\uFE0F", duration: 40 },
-  { label: "Classifying halt types", icon: "\uD83C\uDFF7\uFE0F", duration: 15 },
+  { label: "Uploading file", icon: "\uD83D\uDCC2", duration: 8 },
+  { label: "Reviewing your file format", icon: "\uD83D\uDCCB", duration: 5 },
+  { label: "Organizing your records", icon: "\uD83D\uDDC2\uFE0F", duration: 10 },
+  { label: "Mapping halt locations", icon: "\uD83D\uDCCD", duration: 25 },
+  { label: "Cross-referencing 1.2M POIs", icon: "\uD83D\uDD0D", duration: 40 },
+  { label: "Assigning risk verdicts", icon: "\uD83D\uDEE1\uFE0F", duration: 15 },
 ];
 const TOTAL_EST_SECONDS = PIPELINE_STAGES.reduce((s, p) => s + p.duration, 0);
 
@@ -159,12 +159,12 @@ function ProcessingAnimation({ uploadPct }: { uploadPct: number }) {
 
         {/* Title */}
         <h2 style={{ textAlign: "center", marginBottom: 6, fontSize: 20 }}>
-          Analyzing your stoppages
+          I'm reviewing your stoppages...
         </h2>
         <p style={{ textAlign: "center", color: "var(--text-secondary)", fontSize: 13, marginBottom: 20 }}>
           {remaining > 0
-            ? `Estimated time remaining: ~${remaining > 60 ? `${Math.ceil(remaining / 60)} min` : `${remaining}s`}`
-            : "Almost done, finalizing..."
+            ? `Estimated review time: ~${remaining > 60 ? `${Math.ceil(remaining / 60)} min` : `${remaining}s`}`
+            : "Wrapping up my review..."
           }
         </p>
 
@@ -225,12 +225,12 @@ function ProcessingAnimation({ uploadPct }: { uploadPct: number }) {
           lineHeight: 1.5,
         }}>
           {[
-            "\uD83D\uDCA1 Scanning 1.2 million POIs across India — fuel stations, toll booths, dhabas, and more",
-            "\uD83D\uDE9A The average long-haul truck makes 8-12 unplanned stops per trip",
-            "\uD83D\uDCCA DBSCAN clustering groups halts by proximity — no predefined cluster count needed",
-            "\u26FD A fuel station within 500m is a 'known functional' stop — no alert needed",
-            "\uD83C\uDF19 Night halts (8PM–6AM) at unknown locations are flagged as highest risk",
-            "\uD83D\uDDFA\uFE0F Each stoppage is matched to the nearest point of interest using spatial indexing",
+            "\uD83D\uDCA1 I'm scanning 1.2 million POIs across India \u2014 fuel stations, toll booths, dhabas, and more",
+            "\uD83D\uDE9A In my experience, the average long-haul truck makes 8-12 unplanned stops per trip",
+            "\uD83D\uDCCA I use DBSCAN clustering to group halts by proximity \u2014 no guesswork involved",
+            "\u26FD A fuel station within 500m? That's a known functional stop \u2014 I won't raise an alert",
+            "\uD83C\uDF19 Night halts at unknown locations are what I look for first \u2014 that's where risk hides",
+            "\uD83D\uDDFA\uFE0F Every stoppage gets matched to its nearest point of interest using spatial indexing",
           ][Math.floor(elapsed / 8) % 6]}
         </div>
       </div>
@@ -305,9 +305,9 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
         );
       } else if (msg.includes("Network Error") || msg.includes("timeout") || msg.includes("ECONNREFUSED")) {
         setError(
-          "Could not reach the server. This usually means:\n\n" +
-          "1. The backend is starting up (wait a moment, then retry)\n" +
-          "2. You're on a slow connection — try again"
+          "I can't reach my analysis desk right now. This usually means:\n\n" +
+          "1. I'm just starting up \u2014 give me a moment\n" +
+          "2. Connection is slow \u2014 try again"
         );
       } else {
         setError(msg);
@@ -497,7 +497,7 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
                   marginBottom: 4,
                 }}
               >
-                Something went wrong
+                I ran into an issue
               </p>
               <p
                 style={{
@@ -537,7 +537,7 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
                   marginBottom: 6,
                 }}
               >
-                File is too large to upload directly
+                This file is too large for me to accept directly
               </p>
               <p
                 style={{
@@ -576,7 +576,7 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
                 >
                   {compressing
                     ? "Compressing..."
-                    : "Compress & Upload"}
+                    : "Compress & Submit"}
                 </button>
                 <button
                   className="btn"
@@ -635,11 +635,10 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
               >
                 {uploading
                   ? uploadProgress || "Uploading..."
-                  : "Drop your stoppage alert file here"}
+                  : "Hand me your stoppage report"}
               </p>
               <p style={{ marginTop: 8 }}>
-                Supports .xlsx and .csv files (up to {MAX_FILE_SIZE_MB}MB — larger files
-                will be auto-compressed)
+                I accept .xlsx and .csv files (up to {MAX_FILE_SIZE_MB}MB)
               </p>
             </div>
           </div>
@@ -655,7 +654,7 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
             }}
           >
             <div style={{ fontWeight: 600, marginBottom: 6 }}>
-              Expected schema
+              What I need from you
             </div>
             <div
               style={{
@@ -664,7 +663,7 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
                 fontSize: 12,
               }}
             >
-              The file should contain stoppage alert data with columns like:
+              Your file should have stoppage alert data with columns like:
               <br />
               <code style={{ color: "var(--blue)" }}>Combined Created At</code>{" "}
               (timestamp),{" "}
@@ -673,15 +672,14 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
               <code style={{ color: "var(--blue)" }}>CURRENT_LAT</code> /{" "}
               <code style={{ color: "var(--blue)" }}>CURRENT_LONG</code>
               <br />
-              Column names are auto-detected. Lat/Lon are required for spatial
-              analysis.
+              I'll auto-detect your column names. Lat/Lon are required for my spatial analysis.
             </div>
           </div>
 
           {onSkip && (
             <div style={{ textAlign: "center", marginTop: 16 }}>
               <button className="btn" onClick={onSkip}>
-                Skip — view existing analysis
+                Skip — see my last briefing
               </button>
             </div>
           )}
@@ -731,7 +729,7 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
           )}
 
           <div className="panel" style={{ marginBottom: 20 }}>
-            <h2>Column Mapping</h2>
+            <h2>Here's how I've mapped your columns</h2>
             <p
               style={{
                 color: "var(--text-secondary)",
@@ -739,7 +737,7 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
                 marginBottom: 12,
               }}
             >
-              Auto-detected mapping from your file columns to internal fields
+              I've matched your file columns to my internal fields
             </p>
             <table>
               <thead>
@@ -794,7 +792,7 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
           </div>
 
           <div className="panel" style={{ marginBottom: 20 }}>
-            <h2>Data Preview</h2>
+            <h2>Quick look at your data</h2>
             <div style={{ overflowX: "auto" }}>
               <table>
                 <thead>
@@ -846,7 +844,7 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
               onClick={handleProcess}
               disabled={processing}
             >
-              Process File
+              Begin Analysis
             </button>
           </div>
         </div>
@@ -869,9 +867,9 @@ export default function UploadStep({ onProcessed, onSkip }: Props) {
             <div style={{ fontSize: 48, marginBottom: 16 }}>
               {"\u2705"}
             </div>
-            <h2>Analysis Complete</h2>
+            <h2>Review Complete {"\u2713"}</h2>
             <p style={{ color: "var(--text-secondary)", marginTop: 8 }}>
-              Loading your results...
+              Preparing your briefing...
             </p>
           </div>
         </div>

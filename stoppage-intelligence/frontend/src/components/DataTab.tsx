@@ -63,7 +63,7 @@ export default function DataTab({ uploadId, classification }: Props) {
   if (error) {
     return (
       <div style={{ padding: 40, textAlign: "center" }}>
-        <p style={{ color: "var(--red)", marginBottom: 8 }}>Failed to load data</p>
+        <p style={{ color: "var(--red)", marginBottom: 8 }}>I couldn't retrieve the records</p>
         <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>{error}</p>
       </div>
     );
@@ -74,10 +74,10 @@ export default function DataTab({ uploadId, classification }: Props) {
       {/* Filters */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
         <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>
-          {loading ? "Loading..." : `${total.toLocaleString()} events`}
+          {loading ? "Pulling up records..." : `${total.toLocaleString()} events`}
         </span>
         <input
-          placeholder="Filter by route code..."
+          placeholder="Search by route code..."
           value={routeFilter}
           onChange={(e) => setRouteFilter(e.target.value)}
           style={{
@@ -120,14 +120,14 @@ export default function DataTab({ uploadId, classification }: Props) {
                 <tr>
                   <td colSpan={10} style={{ textAlign: "center", color: "var(--text-secondary)", padding: 40 }}>
                     <span className="status-dot processing" style={{ display: "inline-block", width: 8, height: 8, marginRight: 8 }} />
-                    Loading events...
+                    Pulling up records...
                   </td>
                 </tr>
               ) : events.length === 0 ? (
                 <tr>
                   <td colSpan={10} style={{ textAlign: "center", color: "var(--text-secondary)", padding: 40 }}>
-                    No events found{classification ? ` with classification "${classification.replace("_", " ")}"` : ""}
-                    {routeFilter ? ` and route "${routeFilter}"` : ""}
+                    No records match your filters{classification ? ` (classification: "${classification.replace("_", " ")}")` : ""}
+                    {routeFilter ? ` (route: "${routeFilter}")` : ""}
                   </td>
                 </tr>
               ) : (
@@ -151,7 +151,7 @@ export default function DataTab({ uploadId, classification }: Props) {
                       </span>
                     </td>
                     <td style={{ fontSize: 12, color: e.cluster_id ? "var(--text-primary)" : "var(--text-secondary)" }}>
-                      {e.cluster_id ? `#${e.cluster_id}` : "noise"}
+                      {e.cluster_id ? `#${e.cluster_id}` : "unclustered"}
                     </td>
                   </tr>
                 ))

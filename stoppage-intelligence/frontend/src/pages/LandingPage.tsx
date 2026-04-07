@@ -15,40 +15,40 @@ interface Props {
 
 const ANALYSIS_STEPS = [
   {
-    icon: "\uD83D\uDCC1",
-    title: "Ingest & Validate",
-    desc: "Auto-detect schema, validate coordinates, normalize timestamps across any alert format",
-    value: "Zero manual mapping — works with any fleet alert export",
+    icon: "\uD83D\uDCC2",
+    title: "I receive your file",
+    desc: "I'll auto-detect your schema, validate every coordinate, and flag any issues before I begin.",
+    value: "No manual mapping needed \u2014 just hand me the file",
   },
   {
     icon: "\uD83D\uDCCD",
-    title: "Spatial Clustering",
-    desc: "DBSCAN groups nearby halts into location clusters using haversine distance",
-    value: "Reveals repeat halt zones invisible in raw alert data",
+    title: "I map every halt",
+    desc: "I group nearby stoppages into location clusters using spatial analysis \u2014 revealing patterns you can't see in raw data.",
+    value: "Repeat halt zones become instantly visible",
   },
   {
-    icon: "\u26FD",
-    title: "POI Enrichment",
-    desc: "Matches each halt to the nearest fuel station, toll booth, dhaba, gate, or landmark from 1.2M+ POIs",
-    value: "Answers WHY a vehicle stopped — not just WHERE",
+    icon: "\uD83D\uDD0D",
+    title: "I identify each location",
+    desc: "I match every halt against 1.2 million points of interest \u2014 fuel stations, toll booths, dhabas, industrial gates.",
+    value: "I tell you WHY each vehicle stopped, not just WHERE",
   },
   {
     icon: "\uD83D\uDEE1\uFE0F",
-    title: "Risk Classification",
-    desc: "Categorizes every stop as Known Functional, Other Legitimate, or Unauthorized",
-    value: "Unauthorized = no POI within 2km — highest theft/pilferage risk",
+    title: "I classify the risk",
+    desc: "Each stop gets a verdict: Known Functional, Other Legitimate, or Unauthorized \u2014 based on proximity to known POIs.",
+    value: "Unauthorized = no POI within 2km. That's your highest risk.",
   },
   {
     icon: "\uD83C\uDF19",
-    title: "Night Halt Detection",
-    desc: "Flags clusters with high night halt percentage (8PM\u20136AM) and peak hour analysis",
-    value: "Night stops in unknown locations are the #1 operational risk signal",
+    title: "I flag night halts",
+    desc: "Clusters with high night halt percentage get special attention \u2014 stops between 8PM and 6AM in unknown locations.",
+    value: "Night stops at unidentified locations are the #1 theft signal",
   },
   {
     icon: "\uD83D\uDCCA",
-    title: "Route Intelligence",
-    desc: "Aggregates stoppages by route code — identify problematic corridors and repeat offenders",
-    value: "Prioritize routes that generate the most unauthorized alerts",
+    title: "I brief you on each route",
+    desc: "I aggregate stoppages by route code \u2014 showing you which corridors are problematic and which drivers halt most.",
+    value: "Focus your operations team on routes that matter",
   },
 ];
 
@@ -193,11 +193,29 @@ export default function LandingPage({ onExplore, onUpload, stats }: Props) {
               }}
             />
           )}
+          {/* Sarthak's stamp badge appears when truck stops */}
+          {truckPhase === "stopped" && (
+            <div
+              style={{
+                position: "absolute",
+                left: `${truckLeft + 6}%`,
+                bottom: 50,
+                fontSize: 18,
+                animation: "stampAppear 0.6s ease-out forwards",
+                opacity: 0,
+              }}
+            >
+              {"\uD83D\uDEE1\uFE0F"}
+            </div>
+          )}
         </div>
 
-        <h1 style={{ fontSize: 38, fontWeight: 700, lineHeight: 1.15, marginBottom: 12 }}>
-          Stoppage <span style={{ color: "var(--brand)" }}>Intelligence</span>
+        <h1 style={{ fontSize: 38, fontWeight: 700, lineHeight: 1.15, marginBottom: 4 }}>
+          I'm <span style={{ color: "var(--brand)" }}>Sarthak</span>
         </h1>
+        <p style={{ fontSize: 15, color: "var(--text-secondary)", marginBottom: 12, fontWeight: 500 }}>
+          Your Logistics Compliance Officer
+        </p>
         <p
           style={{
             fontSize: 15,
@@ -207,19 +225,18 @@ export default function LandingPage({ onExplore, onUpload, stats }: Props) {
             margin: "0 auto 28px",
           }}
         >
-          Turn raw stoppage alerts into actionable intelligence.
-          Know where your fleet halts, why it halts, and which stops need attention.
+          Hand me your stoppage alerts — I'll tell you exactly where your fleet is halting, whether each stop is legitimate, and which ones need your immediate attention.
         </p>
 
         {/* CTA */}
         <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
           {hasData && (
             <button onClick={onExplore} className="brand-btn-solid">
-              View Analysis
+              See My Report
             </button>
           )}
           <button onClick={onUpload} className="brand-btn-outline">
-            Upload Stoppage Data
+            Hand Me Your Data
           </button>
         </div>
       </div>
@@ -242,7 +259,7 @@ export default function LandingPage({ onExplore, onUpload, stats }: Props) {
             color: "var(--text-primary)",
           }}
         >
-          What happens when a vehicle stops
+          Here's how I review your stoppages
         </h2>
         <p
           style={{
@@ -252,7 +269,7 @@ export default function LandingPage({ onExplore, onUpload, stats }: Props) {
             marginBottom: 28,
           }}
         >
-          Every halt is analyzed through a 6-step intelligence pipeline
+          Every halt goes through my 6-step review process
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -342,13 +359,13 @@ export default function LandingPage({ onExplore, onUpload, stats }: Props) {
             }}
           >
             <div style={{ fontSize: 14, color: "var(--text-primary)", fontWeight: 600, marginBottom: 6 }}>
-              Analysis ready
+              My report is ready
             </div>
             <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 14, lineHeight: 1.5 }}>
-              {stats!.totalEvents.toLocaleString()} stoppage events across {stats!.routes.toLocaleString()} routes have been analyzed and classified.
+              I've reviewed {stats!.totalEvents.toLocaleString()} stoppage events across {stats!.routes.toLocaleString()} routes. Here's what I found.
             </p>
             <button onClick={onExplore} className="brand-btn-solid">
-              Open Dashboard
+              Read My Briefing
             </button>
           </div>
         </div>
@@ -356,7 +373,7 @@ export default function LandingPage({ onExplore, onUpload, stats }: Props) {
 
       {/* Footer */}
       <div style={{ textAlign: "center", padding: "16px 24px 28px", color: "var(--text-muted)", fontSize: 11 }}>
-        Freight Tiger &middot; Control Centre Intelligence
+        Sarthak &middot; Freight Tiger Compliance Intelligence
       </div>
 
       <style>{`
@@ -372,6 +389,11 @@ export default function LandingPage({ onExplore, onUpload, stats }: Props) {
         @keyframes pulseRing {
           0% { opacity: 0.6; transform: scale(0.5); }
           100% { opacity: 0; transform: scale(2.5); }
+        }
+        @keyframes stampAppear {
+          0% { opacity: 0; transform: scale(2) rotate(-20deg); }
+          60% { opacity: 1; transform: scale(0.9) rotate(5deg); }
+          100% { opacity: 1; transform: scale(1) rotate(0deg); }
         }
         .brand-btn-solid {
           background: var(--brand);

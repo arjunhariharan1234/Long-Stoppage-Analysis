@@ -63,7 +63,7 @@ export default function InsightsTab({ uploadId, radius }: Props) {
           setLoading(false);
         })
         .catch((e) => {
-          setError(e?.message || "Failed to load insights");
+          setError(e?.message || "I couldn't load my analysis");
           setLoading(false);
         });
     } else {
@@ -87,7 +87,7 @@ export default function InsightsTab({ uploadId, radius }: Props) {
           setLoading(false);
         })
         .catch((e) => {
-          setError(e?.response?.data?.detail || e?.message || "Failed to load insights");
+          setError(e?.response?.data?.detail || e?.message || "I couldn't load my analysis");
           setLoading(false);
         });
     }
@@ -98,7 +98,7 @@ export default function InsightsTab({ uploadId, radius }: Props) {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 300 }}>
         <div style={{ textAlign: "center" }}>
           <div className="status-dot processing" style={{ width: 12, height: 12, margin: "0 auto 12px" }} />
-          <p style={{ color: "var(--text-secondary)" }}>Loading insights...</p>
+          <p style={{ color: "var(--text-secondary)" }}>I'm compiling my analysis...</p>
         </div>
       </div>
     );
@@ -107,7 +107,7 @@ export default function InsightsTab({ uploadId, radius }: Props) {
   if (error) {
     return (
       <div style={{ padding: 40, textAlign: "center" }}>
-        <p style={{ color: "var(--red)", marginBottom: 8 }}>Failed to load insights</p>
+        <p style={{ color: "var(--red)", marginBottom: 8 }}>I couldn't load my analysis</p>
         <p style={{ color: "var(--text-secondary)", fontSize: 13 }}>{error}</p>
       </div>
     );
@@ -138,7 +138,7 @@ export default function InsightsTab({ uploadId, radius }: Props) {
         <div style={{ display: "flex", gap: 16 }}>
           {/* Cluster list */}
           <div style={{ width: 300, maxHeight: 350, overflowY: "auto" }}>
-            <h2 style={{ marginBottom: 12, fontSize: 14 }}>Cluster Locations</h2>
+            <h2 style={{ marginBottom: 12, fontSize: 14 }}>Locations I've Identified</h2>
             {topClusters.map((c) => (
               <div
                 key={c.id}
@@ -196,7 +196,7 @@ export default function InsightsTab({ uploadId, radius }: Props) {
               </div>
             ) : (
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 350, color: "var(--text-secondary)", fontSize: 13 }}>
-                Click a cluster to view it on Google Maps
+                Select a cluster to see it on the map
               </div>
             )}
           </div>
@@ -206,7 +206,7 @@ export default function InsightsTab({ uploadId, radius }: Props) {
       <div className="charts-grid" style={{ padding: 0, marginBottom: 20 }}>
         {/* Classification pie */}
         <div className="panel" style={{ margin: 0 }}>
-          <h2>Event Classification</h2>
+          <h2>My Classification Breakdown</h2>
           <ResponsiveContainer width="100%" height={240}>
             <PieChart>
               <Pie
@@ -230,7 +230,7 @@ export default function InsightsTab({ uploadId, radius }: Props) {
 
         {/* Hourly distribution */}
         <div className="panel" style={{ margin: 0 }}>
-          <h2>Stoppage by Hour of Day</h2>
+          <h2>When Your Fleet Stops</h2>
           <ResponsiveContainer width="100%" height={240}>
             <BarChart data={hourly}>
               <XAxis dataKey="hour" tick={{ fill: "#8b949e", fontSize: 11 }} />
@@ -243,7 +243,7 @@ export default function InsightsTab({ uploadId, radius }: Props) {
 
         {/* POI breakdown */}
         <div className="panel" style={{ margin: 0 }}>
-          <h2>Stoppages by POI Type</h2>
+          <h2>What's Near Each Halt</h2>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={poiBreakdown.slice(0, 12)} layout="vertical" margin={{ left: 10 }}>
               <XAxis type="number" tick={{ fill: "#8b949e", fontSize: 11 }} />
@@ -256,7 +256,7 @@ export default function InsightsTab({ uploadId, radius }: Props) {
 
         {/* Top routes */}
         <div className="panel" style={{ margin: 0 }}>
-          <h2>Top Routes by Stoppages</h2>
+          <h2>Routes That Need Attention</h2>
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={topRoutes.slice(0, 12)} layout="vertical" margin={{ left: 10 }}>
               <XAxis type="number" tick={{ fill: "#8b949e", fontSize: 11 }} />
@@ -270,7 +270,7 @@ export default function InsightsTab({ uploadId, radius }: Props) {
 
       {/* Top clusters table */}
       <div className="panel" style={{ margin: "0 0 20px" }}>
-        <h2>Top Halt Clusters</h2>
+        <h2>My Top Findings</h2>
         <div style={{ overflowX: "auto" }}>
           <table>
             <thead>
@@ -282,7 +282,7 @@ export default function InsightsTab({ uploadId, radius }: Props) {
             </thead>
             <tbody>
               {topClusters.length === 0 ? (
-                <tr><td colSpan={10} style={{ textAlign: "center", color: "var(--text-secondary)", padding: 24 }}>No clusters found</td></tr>
+                <tr><td colSpan={10} style={{ textAlign: "center", color: "var(--text-secondary)", padding: 24 }}>I haven't found any clusters matching this filter</td></tr>
               ) : (
                 topClusters.map((c) => (
                   <tr key={c.id}>
@@ -307,9 +307,9 @@ export default function InsightsTab({ uploadId, radius }: Props) {
       {/* Unauthorized hotspots */}
       {unauthorized.length > 0 && (
         <div className="panel" style={{ margin: 0, borderColor: "rgba(248,81,73,0.3)" }}>
-          <h2 style={{ color: "var(--red)" }}>Unauthorized Halt Hotspots</h2>
+          <h2 style={{ color: "var(--red)" }}>Stops I've Flagged as Unauthorized</h2>
           <p style={{ color: "var(--text-secondary)", fontSize: 13, marginBottom: 12 }}>
-            Clusters with no known POI within 2km — highest operational risk
+            These clusters have no identifiable POI within 2km — I consider these your highest risk
           </p>
           <div style={{ overflowX: "auto" }}>
             <table>

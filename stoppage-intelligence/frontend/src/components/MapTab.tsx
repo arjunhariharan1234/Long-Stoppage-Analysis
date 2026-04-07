@@ -317,7 +317,7 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
           }}
         >
           <div style={{ fontSize: 10, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>
-            View Mode
+            View
           </div>
           <div style={{ display: "flex", gap: 4 }}>
             <button
@@ -375,13 +375,11 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
             ))
           ) : (
             <div style={{ fontSize: 11, color: "var(--text-secondary)" }}>
-              Height &amp; color = stoppage density
+              Height &amp; color show halt density
             </div>
           )}
           <div style={{ fontSize: 10, color: "var(--text-secondary)", marginTop: 8, borderTop: "1px solid var(--border)", paddingTop: 6, lineHeight: 1.5 }}>
-            Scroll to zoom<br />
-            Right-drag to tilt &amp; orbit<br />
-            Two-finger rotate to pitch
+            Scroll to zoom &middot; Right-drag to tilt &middot; Two-finger rotate
           </div>
         </div>
       </div>
@@ -436,7 +434,7 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
             <div>
               <div style={{ fontSize: 10, color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: 0.5 }}>Nearest POI</div>
               <div style={{ fontSize: 14, marginTop: 2 }}>
-                {selected.poi_name || "None found within 2km"}
+                {selected.poi_name || "No POI found within 2km"}
                 {selected.poi_distance_m != null && (
                   <span style={{ color: "var(--text-secondary)", fontSize: 12, marginLeft: 6 }}>
                     {selected.poi_distance_m}m

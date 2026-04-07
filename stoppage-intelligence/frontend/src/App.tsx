@@ -25,7 +25,7 @@ interface LandingStats {
   unauthorized: number;
 }
 
-// Engaging loading screen with truck animation
+// Sarthak's review desk loading screen
 function LoadingScreen({ msg }: { msg: string }) {
   const [dots, setDots] = useState("");
 
@@ -36,36 +36,36 @@ function LoadingScreen({ msg }: { msg: string }) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, gap: 20, padding: 40 }}>
-      {/* Animated truck driving across */}
-      <div style={{ position: "relative", width: 260, height: 70, overflow: "hidden" }}>
-        {/* Road */}
-        <div style={{ position: "absolute", bottom: 8, left: 0, right: 0, height: 2, background: "var(--border)" }} />
+      {/* Clipboard and stamp animation */}
+      <div style={{ position: "relative", width: 260, height: 70, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {/* Clipboard */}
         <div style={{
-          position: "absolute", bottom: 11, left: 0, right: 0, height: 1,
-          backgroundImage: "repeating-linear-gradient(90deg, var(--text-secondary) 0, var(--text-secondary) 8px, transparent 8px, transparent 20px)",
-          opacity: 0.3,
-          animation: "roadScroll 1s linear infinite",
-        }} />
-        {/* Truck */}
-        <div style={{
-          position: "absolute", bottom: 10, fontSize: 36,
-          animation: "truckDrive 3s ease-in-out infinite",
+          fontSize: 42,
+          animation: "clipboardFloat 2s ease-in-out infinite",
         }}>
-          {"\uD83D\uDE9A"}
+          {"\uD83D\uDCCB"}
         </div>
-        {/* Location pins */}
-        <div style={{ position: "absolute", right: 30, bottom: 16, fontSize: 20, color: "var(--brand)", animation: "pinPulse 1.5s ease-in-out infinite" }}>
-          {"\uD83D\uDCCD"}
+        {/* Pen writing */}
+        <div style={{
+          position: "absolute", right: 70, bottom: 8, fontSize: 24,
+          animation: "penWrite 1.5s ease-in-out infinite",
+        }}>
+          {"\u270D\uFE0F"}
         </div>
-        <div style={{ position: "absolute", right: 60, bottom: 16, fontSize: 14, opacity: 0.5, color: "var(--brand)", animation: "pinPulse 1.5s ease-in-out infinite 0.3s" }}>
-          {"\uD83D\uDCCD"}
+        {/* Stamp appearing */}
+        <div style={{
+          position: "absolute", left: 70, top: 4, fontSize: 20,
+          color: "var(--brand)",
+          animation: "stampPulse 2s ease-in-out infinite",
+        }}>
+          {"\uD83D\uDEE1\uFE0F"}
         </div>
       </div>
 
       <div style={{ textAlign: "center" }}>
         <p style={{ color: "var(--text-primary)", fontSize: 15, fontWeight: 500 }}>{msg}{dots}</p>
         <p style={{ color: "var(--text-secondary)", fontSize: 12, marginTop: 6 }}>
-          Preparing your stoppage analysis
+          Setting up my review desk
         </p>
       </div>
 
@@ -79,18 +79,20 @@ function LoadingScreen({ msg }: { msg: string }) {
       </div>
 
       <style>{`
-        @keyframes roadScroll {
-          from { background-position: 0 0; }
-          to { background-position: -20px 0; }
+        @keyframes clipboardFloat {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-4px); }
         }
-        @keyframes truckDrive {
-          0% { left: -10%; }
-          50% { left: 45%; }
-          100% { left: -10%; }
+        @keyframes penWrite {
+          0%, 100% { transform: translate(0, 0) rotate(0deg); }
+          25% { transform: translate(4px, -2px) rotate(-5deg); }
+          50% { transform: translate(-2px, 2px) rotate(3deg); }
+          75% { transform: translate(3px, -1px) rotate(-3deg); }
         }
-        @keyframes pinPulse {
-          0%, 100% { transform: translateY(0) scale(1); }
-          50% { transform: translateY(-4px) scale(1.1); }
+        @keyframes stampPulse {
+          0%, 70% { opacity: 0.3; transform: scale(0.8); }
+          80% { opacity: 1; transform: scale(1.2); }
+          100% { opacity: 0.6; transform: scale(1); }
         }
         @keyframes shimmer {
           0% { transform: translateX(-100%); }
@@ -107,13 +109,13 @@ export default function App() {
   const [view, setView] = useState<"landing" | "upload" | "results">("landing");
   const [loading, setLoading] = useState(true);
   const [backendError, setBackendError] = useState(false);
-  const [loadingMsg, setLoadingMsg] = useState("Waking up the server");
+  const [loadingMsg, setLoadingMsg] = useState("Sarthak is getting ready");
   const [landingStats, setLandingStats] = useState<LandingStats | null>(null);
 
   const loadData = async (): Promise<UploadRecord[]> => {
     // Try static JSON first (instant, no backend needed)
     try {
-      setLoadingMsg("Loading analysis");
+      setLoadingMsg("Reviewing your records");
       const [uploadsData, summaryData] = await Promise.all([
         fetchStatic("uploads.json"),
         fetchStatic("summary.json"),
@@ -138,13 +140,13 @@ export default function App() {
       return list;
     } catch {
       // Static not available — fall back to backend API
-      setLoadingMsg("Connecting to backend");
+      setLoadingMsg("Connecting to the analysis desk");
     }
 
     // Backend fallback
     for (let i = 1; i <= 3; i++) {
       try {
-        setLoadingMsg(i === 1 ? "Waking up the server" : `Starting backend (attempt ${i}/3)`);
+        setLoadingMsg(i === 1 ? "Sarthak is getting ready" : "Still preparing... hold on");
         await api.get("/health", { timeout: 90000 });
         break;
       } catch {
@@ -154,7 +156,7 @@ export default function App() {
     }
 
     try {
-      setLoadingMsg("Loading data from server");
+      setLoadingMsg("Pulling up your case files");
       const r = await api.get("/uploads", { timeout: 30000 });
       const list: UploadRecord[] = r.data.uploads;
       setUploads(list);
@@ -215,8 +217,16 @@ export default function App() {
           onClick={() => setView("landing")}
           style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}
         >
-          <span style={{ color: "var(--brand)", fontSize: 18 }}>{"\uD83D\uDE9A"}</span>
-          <span>Stoppage <span style={{ color: "var(--brand)" }}>Intelligence</span></span>
+          <div style={{
+            width: 28, height: 28, borderRadius: "50%", background: "#1a1d23",
+            border: "2px solid var(--brand)", display: "flex", alignItems: "center",
+            justifyContent: "center", fontSize: 13, fontWeight: 700, color: "var(--brand)",
+            flexShrink: 0,
+          }}>S</div>
+          <span style={{ display: "flex", flexDirection: "column", lineHeight: 1.2 }}>
+            <span style={{ fontSize: 15, fontWeight: 700 }}>Sarthak</span>
+            <span style={{ fontSize: 10, color: "var(--text-secondary)", fontWeight: 400 }}>Logistics Compliance Officer</span>
+          </span>
         </h1>
         <div style={{ display: "flex", gap: 8, marginLeft: "auto", alignItems: "center" }}>
           {activeUploadId && view !== "results" && (
@@ -225,7 +235,7 @@ export default function App() {
               onClick={() => setView("results")}
               style={{ fontSize: 13, borderColor: "var(--brand)", color: "var(--brand)" }}
             >
-              Dashboard
+              My Briefing
             </button>
           )}
           {view !== "upload" && (
@@ -240,7 +250,7 @@ export default function App() {
                 fontWeight: 600,
               }}
             >
-              + Upload Data
+              Submit Report
             </button>
           )}
         </div>
