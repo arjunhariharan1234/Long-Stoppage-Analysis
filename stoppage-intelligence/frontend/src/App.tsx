@@ -54,10 +54,10 @@ function LoadingScreen({ msg }: { msg: string }) {
           {"\uD83D\uDE9A"}
         </div>
         {/* Location pins */}
-        <div style={{ position: "absolute", right: 30, bottom: 16, fontSize: 20, animation: "pinPulse 1.5s ease-in-out infinite" }}>
+        <div style={{ position: "absolute", right: 30, bottom: 16, fontSize: 20, color: "var(--brand)", animation: "pinPulse 1.5s ease-in-out infinite" }}>
           {"\uD83D\uDCCD"}
         </div>
-        <div style={{ position: "absolute", right: 60, bottom: 16, fontSize: 14, opacity: 0.5, animation: "pinPulse 1.5s ease-in-out infinite 0.3s" }}>
+        <div style={{ position: "absolute", right: 60, bottom: 16, fontSize: 14, opacity: 0.5, color: "var(--brand)", animation: "pinPulse 1.5s ease-in-out infinite 0.3s" }}>
           {"\uD83D\uDCCD"}
         </div>
       </div>
@@ -73,7 +73,7 @@ function LoadingScreen({ msg }: { msg: string }) {
       <div style={{ width: 200, height: 4, borderRadius: 2, background: "var(--bg-tertiary)", overflow: "hidden" }}>
         <div style={{
           width: "40%", height: "100%", borderRadius: 2,
-          background: "linear-gradient(90deg, var(--blue), var(--green))",
+          background: "linear-gradient(90deg, var(--brand), #ffdb4d)",
           animation: "shimmer 1.5s ease-in-out infinite",
         }} />
       </div>
@@ -210,73 +210,55 @@ export default function App() {
 
   return (
     <div className="app-container">
-      <nav className="nav">
+      <nav className="nav" style={{ background: "var(--bg-secondary)", borderBottom: "1px solid var(--border)" }}>
         <h1
-          onClick={() => setView(activeUploadId ? "landing" : "upload")}
-          style={{ cursor: "pointer" }}
+          onClick={() => setView("landing")}
+          style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}
         >
-          Stoppage Intelligence Platform
+          <span style={{ color: "var(--brand)", fontSize: 18 }}>{"\uD83D\uDE9A"}</span>
+          <span>Stoppage <span style={{ color: "var(--brand)" }}>Intelligence</span></span>
         </h1>
         <div style={{ display: "flex", gap: 8, marginLeft: "auto", alignItems: "center" }}>
-          {uploads.filter((u) => u.status === "complete").length > 0 && (
-            <>
-              <select
-                value={activeUploadId ?? ""}
-                onChange={(e) => {
-                  setActiveUploadId(Number(e.target.value));
-                  setView("results");
-                }}
-                style={{
-                  background: "var(--bg-tertiary)",
-                  border: "1px solid var(--border)",
-                  color: "var(--text-primary)",
-                  padding: "6px 10px",
-                  borderRadius: 6,
-                  fontSize: 13,
-                }}
-              >
-                {uploads
-                  .filter((u) => u.status === "complete")
-                  .map((u) => (
-                    <option key={u.id} value={u.id}>
-                      {u.filename}
-                    </option>
-                  ))}
-              </select>
-              <button
-                className={`btn ${view === "results" ? "primary" : ""}`}
-                onClick={() => setView("results")}
-              >
-                Dashboard
-              </button>
-            </>
+          {activeUploadId && view !== "results" && (
+            <button
+              className="btn"
+              onClick={() => setView("results")}
+              style={{ fontSize: 13, borderColor: "var(--brand)", color: "var(--brand)" }}
+            >
+              Dashboard
+            </button>
           )}
-          <button
-            className={`btn ${view === "upload" ? "primary" : ""}`}
-            onClick={() => setView("upload")}
-          >
-            + New Upload
-          </button>
+          {view !== "upload" && (
+            <button
+              className="btn"
+              onClick={() => setView("upload")}
+              style={{
+                fontSize: 13,
+                background: "var(--brand)",
+                color: "#0f1117",
+                border: "none",
+                fontWeight: 600,
+              }}
+            >
+              + Upload Data
+            </button>
+          )}
         </div>
       </nav>
 
       {/* Loading */}
       {loading && <LoadingScreen msg={loadingMsg} />}
 
-      {/* Backend unreachable */}
+      {/* Backend unreachable — still show landing */}
       {!loading && backendError && (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, padding: 40 }}>
-          <div style={{ maxWidth: 480, textAlign: "center" }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>{"\u26A0\uFE0F"}</div>
-            <h2 style={{ marginBottom: 12 }}>Could not reach backend</h2>
-            <p style={{ color: "var(--text-secondary)", fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
-              The server may be starting up. On free hosting, the first request can take 30-60 seconds.
-            </p>
-            <button className="btn primary" onClick={handleRetry} style={{ fontSize: 14, padding: "10px 24px" }}>
-              Try again
-            </button>
-          </div>
-        </div>
+        <LandingPage
+          stats={null}
+          onExplore={() => {}}
+          onUpload={() => {
+            setBackendError(false);
+            setView("upload");
+          }}
+        />
       )}
 
       {/* Landing */}
@@ -284,6 +266,7 @@ export default function App() {
         <LandingPage
           stats={landingStats}
           onExplore={() => setView("results")}
+          onUpload={() => setView("upload")}
         />
       )}
 
