@@ -117,12 +117,13 @@ function ProcessingAnimation({ uploadPct }: { uploadPct: number }) {
             {"\uD83D\uDCCD"}
           </div>
 
-          {/* Truck */}
+          {/* Truck (flipped to face right) */}
           <div style={{
             position: "absolute",
             left: `${Math.min(55, progressPct * 0.6)}%`,
             bottom: 22,
             fontSize: 44,
+            transform: "scaleX(-1)",
             transition: "left 1s ease-out",
             filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.4))",
           }}>

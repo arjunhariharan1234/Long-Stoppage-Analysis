@@ -98,6 +98,10 @@ function LoadingScreen({ msg }: { msg: string }) {
           0% { transform: translateX(-100%); }
           100% { transform: translateX(350%); }
         }
+        @keyframes beacon {
+          0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+          50% { opacity: 0.6; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
+        }
       `}</style>
     </div>
   );
@@ -217,12 +221,24 @@ export default function App() {
           onClick={() => setView("landing")}
           style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}
         >
-          <div style={{
-            width: 28, height: 28, borderRadius: "50%", background: "#1a1d23",
-            border: "2px solid var(--brand)", display: "flex", alignItems: "center",
-            justifyContent: "center", fontSize: 13, fontWeight: 700, color: "var(--brand)",
-            flexShrink: 0,
-          }}>S</div>
+          <div style={{ position: "relative", flexShrink: 0 }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: "50%", overflow: "hidden",
+              border: "2px solid var(--brand)",
+              background: "linear-gradient(135deg, #1a1d23, #2a2d3a)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <span style={{ fontSize: 18 }}>{"\uD83D\uDC68\u200D\uD83D\uDCBC"}</span>
+            </div>
+            {/* Blinking beacon */}
+            <div style={{
+              position: "absolute", top: -1, right: -1,
+              width: 10, height: 10, borderRadius: "50%",
+              background: "#10b981",
+              border: "2px solid var(--bg-secondary)",
+              animation: "beacon 2s ease-in-out infinite",
+            }} />
+          </div>
           <span style={{ display: "flex", flexDirection: "column", lineHeight: 1.2 }}>
             <span style={{ fontSize: 15, fontWeight: 700 }}>Agent Sarthak</span>
             <span style={{ fontSize: 10, color: "var(--text-secondary)", fontWeight: 400 }}>Logistics Compliance Officer</span>
@@ -250,7 +266,7 @@ export default function App() {
                 fontWeight: 600,
               }}
             >
-              Submit Report
+              Upload
             </button>
           )}
         </div>

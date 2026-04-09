@@ -191,7 +191,7 @@ export default function LandingPage({ onExplore, onUpload, stats }: Props) {
               left: `${truckLeft}%`,
               bottom: 16,
               fontSize: 36,
-              transform: "scaleX(-1)", // flip to face right
+              transform: "scaleX(-1)", // flip emoji to face right
               filter: "drop-shadow(0 2px 6px rgba(0,0,0,0.5))",
               transition: truckPhase === "stopped" ? "none" : "left 0.03s linear",
             }}
@@ -258,7 +258,7 @@ export default function LandingPage({ onExplore, onUpload, stats }: Props) {
             </button>
           )}
           <button onClick={onUpload} className="brand-btn-outline">
-            Hand Me Your Data
+            Upload Data
           </button>
         </div>
       </div>

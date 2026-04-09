@@ -224,3 +224,9 @@ tr:hover { background: var(--bg-tertiary); }
 }
 .page-header h2 { font-size: 20px; font-weight: 600; }
 .page-header p { color: var(--text-secondary); font-size: 14px; margin-top: 4px; }
+
+/* Agent beacon */
+@keyframes beacon {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  50% { opacity: 0.6; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0); }
+}
