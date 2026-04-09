@@ -97,6 +97,7 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
   const [viewMode, setViewMode] = useState<ViewMode>("hexbin");
   const [hexRadius, setHexRadius] = useState(3000);
   const [count, setCount] = useState(0);
+  const [tooltip, setTooltip] = useState<{ x: number; y: number; text: string } | null>(null);
 
   // Init map once
   useEffect(() => {
@@ -230,6 +231,38 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
             diffuse: 0.6,
             shininess: 40,
           },
+          onHover: ((info: any) => {
+            if (info.object && info.x !== undefined) {
+              const points: ClusterData[] = info.object.points?.map((p: any) => p.source) || [];
+              const totalEvents = points.reduce((s: number, p: ClusterData) => s + p.event_count, 0);
+              const clusterCount = points.length;
+
+              const labels: string[] = [];
+              const classCount: Record<string, number> = {};
+              points.forEach((p: ClusterData) => {
+                const cls = p.classification || "unknown";
+                classCount[cls] = (classCount[cls] || 0) + p.event_count;
+                if (p.poi_name && p.classification !== "unauthorized") {
+                  labels.push(p.poi_name);
+                }
+              });
+
+              const lines: string[] = [`${totalEvents.toLocaleString()} stoppages (${clusterCount} clusters)`];
+              const uniqueLabels = [...new Set(labels)].slice(0, 3);
+              if (uniqueLabels.length > 0) lines.push(uniqueLabels.join(", "));
+
+              const parts: string[] = [];
+              if (classCount.known_functional) parts.push(`${classCount.known_functional} authorized`);
+              if (classCount.other_legit) parts.push(`${classCount.other_legit} legit`);
+              if (classCount.unauthorized) parts.push(`${classCount.unauthorized} unauthorized`);
+              if (parts.length > 0) lines.push(parts.join(" · "));
+
+              setTooltip({ x: info.x, y: info.y, text: lines.join("\n") });
+            } else {
+              setTooltip(null);
+            }
+            return true;
+          }) as any,
         })
       );
 
@@ -255,6 +288,21 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
           stroked: true,
           pickable: true,
           onClick: handleClick,
+          onHover: ((info: any) => {
+            if (info.object && info.x !== undefined) {
+              const d = info.object as ClusterData;
+              const label = d.classification === "unauthorized"
+                ? "Unauthorized"
+                : d.poi_name || d.poi_type || "Unknown";
+              setTooltip({
+                x: info.x, y: info.y,
+                text: `${label}\n${d.event_count} stoppages · ${d.distinct_trips} trips`,
+              });
+            } else {
+              setTooltip(null);
+            }
+            return true;
+          }) as any,
           radiusMinPixels: 4,
           radiusMaxPixels: 60,
           autoHighlight: true,
@@ -374,15 +422,54 @@ export default function MapTab({ uploadId, radius, classification }: Props) {
               </div>
             ))
           ) : (
-            <div style={{ fontSize: 11, color: "var(--text-secondary)" }}>
-              Height &amp; color show halt density
-            </div>
+            <>
+              <div style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 6 }}>
+                Height &amp; color = halt density
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 4 }}>
+                <span style={{ fontSize: 10, color: "var(--text-muted)" }}>Low</span>
+                <div style={{
+                  flex: 1, height: 8, borderRadius: 4,
+                  background: "linear-gradient(90deg, rgb(35,51,64), rgb(29,82,79), rgb(46,137,75), rgb(110,183,54), rgb(210,153,34), rgb(248,81,73))",
+                }} />
+                <span style={{ fontSize: 10, color: "var(--text-muted)" }}>High</span>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "var(--text-muted)" }}>
+                <span>Few stops</span>
+                <span>Hotspot</span>
+              </div>
+            </>
           )}
           <div style={{ fontSize: 10, color: "var(--text-secondary)", marginTop: 8, borderTop: "1px solid var(--border)", paddingTop: 6, lineHeight: 1.5 }}>
             Scroll to zoom &middot; Right-drag to tilt &middot; Two-finger rotate
           </div>
         </div>
       </div>
+
+      {/* Hover tooltip */}
+      {tooltip && (
+        <div
+          style={{
+            position: "absolute",
+            left: tooltip.x + 12,
+            top: tooltip.y - 12,
+            background: "rgba(13,17,23,0.95)",
+            border: "1px solid var(--border-light)",
+            borderRadius: 6,
+            padding: "8px 12px",
+            fontSize: 12,
+            color: "var(--text-primary)",
+            whiteSpace: "pre-line",
+            lineHeight: 1.5,
+            pointerEvents: "none",
+            zIndex: 20,
+            maxWidth: 260,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+          }}
+        >
+          {tooltip.text}
+        </div>
+      )}
 
       {/* Map */}
       <div ref={containerRef} style={{ width: "100%", height: "100%", minHeight: 550 }} />
