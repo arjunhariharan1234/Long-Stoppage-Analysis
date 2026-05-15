@@ -34,7 +34,7 @@ export function ZeptoApp() {
           <div className="zepto-brand-logo">Z</div>
           <div className="zepto-brand-text">
             <div className="top">Long Stoppage Intelligence</div>
-            <div className="sub">Zepto · Stoppage risk &amp; assurance</div>
+            <div className="sub">Stoppage risk &amp; assurance</div>
           </div>
         </div>
         <div className="zepto-nav-tabs">
@@ -42,10 +42,6 @@ export function ZeptoApp() {
           <button className={`zepto-nav-tab ${page === "investigation" ? "active" : ""}`} onClick={() => { setInvestPreselect(null); setPage("investigation"); }}>Investigate</button>
           <button className={`zepto-nav-tab ${page === "map" ? "active" : ""}`} onClick={() => { setMapFocus(null); setPage("map"); }}>Hotspot map</button>
           <button className={`zepto-nav-tab ${page === "theft-zones" ? "active" : ""}`} onClick={() => setPage("theft-zones")}>Risk zones</button>
-        </div>
-        <div className="zepto-nav-right">
-          <div className="zepto-pulse-dot" />
-          <span>Computed on Zepto fleet data</span>
         </div>
       </nav>
 

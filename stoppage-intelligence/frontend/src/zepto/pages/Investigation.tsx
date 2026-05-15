@@ -147,11 +147,7 @@ export function Investigation({ preselect }: Props) {
 
   return (
     <div className="zepto-page">
-      <div className="zepto-eyebrow">Investigation workbench</div>
-      <h1 className="zepto-headline">Drill into any <em>driver, vehicle, transporter or route</em></h1>
-      <p className="zepto-sub">
-        Same dataset, four lenses. Choose a lens, search or scroll, select an entity — the right panel surfaces their halt pattern, recurring locations, top combinations and the underlying events.
-      </p>
+      <h1 className="zepto-headline">Investigation Workbench</h1>
 
       <div className="zepto-lens-tabs" style={{ marginTop: 18 }}>
         {(["driver", "vehicle", "transporter", "route", "trip"] as Lens[]).map(l => (
@@ -261,17 +257,28 @@ function InvestigationDetail({ lens, meta, events, drivers, onJumpTo }: {
     })).sort((a, b) => b.halts_on_trip - a.halts_on_trip);
   }, [lens, events, drivers]);
 
-  // Pattern summary
-  const totalHalts = events.length;
-  const nightShare = totalHalts > 0 ? events.filter(e => +e.is_night === 1).length / totalHalts : 0;
-  const reeferShare = totalHalts > 0 ? events.filter(e => +e.is_reefer === 1).length / totalHalts : 0;
-  const medianDur = totalHalts > 0 ? sortNumeric(events.map(e => +e.long_stoppage_duration_hrs))[Math.floor(totalHalts / 2)] : 0;
+  // Sample stats from the slim events visible in this dataset
+  const sampleHalts = events.length;
+  const sampleNight = sampleHalts > 0 ? events.filter(e => +e.is_night === 1).length / sampleHalts : 0;
+  const sampleReefer = sampleHalts > 0 ? events.filter(e => +e.is_reefer === 1).length / sampleHalts : 0;
+  const sampleMedian = sampleHalts > 0 ? sortNumeric(events.map(e => +e.long_stoppage_duration_hrs))[Math.floor(sampleHalts / 2)] : 0;
   const clusters = new Set(events.map(e => e.cluster_id));
   const unknownEvents = events.filter(e => {
     const d = +e.distance_to_poi_km;
     return d > 0.3 && !["fuel", "toll_booth", "restaurant", "fast_food", "cafe", "hotel", "motel", "rest_area"].includes((e.nearest_poi_type || "").toLowerCase());
   });
-  const unknownShare = totalHalts > 0 ? unknownEvents.length / totalHalts : 0;
+  const unknownShare = sampleHalts > 0 ? unknownEvents.length / sampleHalts : 0;
+
+  // Authoritative pattern stats — driver/vehicle/transporter/route lenses use the rollup
+  // (drivers.json etc. carry full-population stats; events-in-transit.json is a slim sample
+  // of 10k events from top entities, so deriving stats from events alone yields zeros for
+  // entities whose halts weren't sampled).
+  const isTrip = lens === "trip";
+  const totalHalts = isTrip ? sampleHalts : (meta?.halt_count ?? sampleHalts);
+  const nightShare = isTrip ? sampleNight : (meta?.night_share ?? sampleNight);
+  const reeferShare = isTrip ? sampleReefer : (meta?.reefer_share ?? sampleReefer);
+  const medianDur = isTrip ? sampleMedian : (meta?.median_duration_hrs ?? sampleMedian);
+  const distinctClusters = isTrip ? clusters.size : (meta?.unique_clusters ?? clusters.size);
 
   // Top combinations
   const comboMap = new Map<string, { count: number; driver: string; vehicle: string; transporter: string; cluster: string; lat?: number; lng?: number }>();
@@ -328,11 +335,18 @@ function InvestigationDetail({ lens, meta, events, drivers, onJumpTo }: {
       {/* Pattern summary KPIs */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10, marginTop: 18 }}>
         <Stat label="In-transit halts" value={totalHalts.toLocaleString()} />
-        <Stat label="Distinct locations" value={clusters.size.toLocaleString()} />
+        <Stat label="Distinct locations" value={distinctClusters.toLocaleString()} />
         <Stat label="Median duration" value={`${medianDur.toFixed(1)} hr`} />
         <Stat label="Night share" value={`${Math.round(nightShare * 100)}%`} />
-        <Stat label="Unknown POI share" value={`${Math.round(unknownShare * 100)}%`} highlight={unknownShare >= 0.4} />
+        <Stat label="Unknown POI share" value={sampleHalts > 0 ? `${Math.round(unknownShare * 100)}%` : "—"} highlight={sampleHalts > 0 && unknownShare >= 0.4} />
       </div>
+
+      {/* Sample-coverage note when full rollup is larger than the slim events sample */}
+      {!isTrip && sampleHalts < totalHalts && (
+        <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginTop: 8, fontStyle: "italic" }}>
+          Aggregate stats above are from the full rollup. The event table and recurring locations below reflect the {sampleHalts.toLocaleString()} events visible in the slim sample (of {totalHalts.toLocaleString()} total).
+        </div>
+      )}
 
       {/* Pattern note */}
       {totalHalts > 0 && (
@@ -340,8 +354,8 @@ function InvestigationDetail({ lens, meta, events, drivers, onJumpTo }: {
           <strong>Pattern read.</strong>{" "}
           {nightShare >= 0.5 ? "Stops are night-dominant. " : "Stops span both day and night. "}
           {reeferShare >= 0.5 ? "Predominantly reefer vehicles, raising cold-chain exposure. " : ""}
-          {unknownShare >= 0.4 ? `${Math.round(unknownShare * 100)}% of stops have no logistics POI within range — risk profile is elevated. ` : ""}
-          {clusters.size === 1 ? "All halts occur at a single location." : clusters.size <= 5 ? `Concentrated on ${clusters.size} locations.` : `Spread across ${clusters.size} locations.`}
+          {sampleHalts > 0 && unknownShare >= 0.4 ? `${Math.round(unknownShare * 100)}% of sampled stops have no logistics POI within range — risk profile is elevated. ` : ""}
+          {distinctClusters === 1 ? "All halts occur at a single location." : distinctClusters <= 5 ? `Concentrated on ${distinctClusters} locations.` : `Spread across ${distinctClusters} locations.`}
         </div>
       )}
 
