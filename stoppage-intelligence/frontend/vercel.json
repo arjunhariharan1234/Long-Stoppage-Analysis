@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "dist",
+  "cleanUrls": false,
+  "rewrites": [
+    { "source": "/", "destination": "/v10/stoppage-intelligence/index.html" },
+    { "source": "/v10/stoppage-intelligence", "destination": "/v10/stoppage-intelligence/index.html" },
+    { "source": "/v10/stoppage-intelligence/:path*", "destination": "/v10/stoppage-intelligence/index.html" }
+  ]
+}

@@ -1,0 +1,983 @@
+/* Zepto Long Stoppage Intelligence — FT design system aligned.
+   Tokens follow ftdesignsystem.vercel.app (primary slate scale, Inter, light mode). */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+:root {
+  /* Brand */
+  --brand-yellow: #ffbe07;
+  --brand-yellow-dim: rgba(255, 190, 7, 0.14);
+  --brand-yellow-fade: rgba(255, 190, 7, 0.32);
+  --brand-blue: #1e64e6;
+  --brand-blue-dim: rgba(30, 100, 230, 0.10);
+  --brand-blue-dark: #1750b3;
+
+  /* Slate (FT primary scale) */
+  --slate-100: #f0f1f7;
+  --slate-200: #e4e7ec;
+  --slate-300: #ced1d7;
+  --slate-400: #a7afb9;
+  --slate-500: #838c9d;
+  --slate-600: #5f697b;
+  --slate-700: #434f64;
+  --slate-800: #2c3547;
+  --slate-900: #1a2330;
+
+  /* Surfaces */
+  --bg-base: #f5f7fa;
+  --bg-surface: #ffffff;
+  --bg-subtle: #f8f8f9;
+  --bg-elevated: #ffffff;
+
+  /* Text */
+  --text-primary: #1a2330;
+  --text-secondary: #434f64;
+  --text-tertiary: #5f697b;
+  --text-muted: #838c9d;
+  --text-on-yellow: #1a2330;
+  --text-on-blue: #ffffff;
+
+  /* Borders */
+  --border: #e4e7ec;
+  --border-strong: #ced1d7;
+  --border-focus: #1e64e6;
+
+  /* Semantic */
+  --critical: #d92d20;
+  --critical-bg: #fef3f2;
+  --critical-border: #fecdca;
+  --warning: #ef6820;
+  --warning-bg: #fff4ed;
+  --warning-border: #ffd6ae;
+  --success: #079455;
+  --success-bg: #ecfdf3;
+  --success-border: #abefc6;
+  --info: #1e64e6;
+  --info-bg: #eff5ff;
+  --info-border: #b9d4fc;
+
+  /* Spacing primitives */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --shadow-md: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-lg: 0 4px 8px -2px rgba(16, 24, 40, 0.08), 0 2px 4px -2px rgba(16, 24, 40, 0.04);
+}
+
+* { box-sizing: border-box; }
+
+body, .zepto-app {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-feature-settings: "cv11", "ss01", "ss03";
+  -webkit-font-smoothing: antialiased;
+  color: var(--text-primary);
+  background: var(--bg-base);
+  letter-spacing: -0.005em;
+}
+
+.zepto-app {
+  min-height: 100vh;
+}
+
+/* ---------- Top navigation ---------- */
+.zepto-nav {
+  display: flex;
+  align-items: center;
+  padding: 12px 24px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.zepto-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.zepto-brand-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  background: var(--brand-yellow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--text-on-yellow);
+  letter-spacing: -0.02em;
+}
+
+.zepto-brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+.zepto-brand-text .top {
+  font-size: 14px; font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+.zepto-brand-text .sub {
+  font-size: 11px; font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
+  margin-top: 1px;
+}
+
+.zepto-nav-tabs {
+  display: flex;
+  gap: 2px;
+  margin-left: 32px;
+}
+
+.zepto-nav-tab {
+  padding: 7px 12px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid transparent;
+  font-family: inherit;
+  transition: background-color 0.12s, color 0.12s;
+}
+.zepto-nav-tab:hover {
+  background: var(--slate-100);
+  color: var(--text-primary);
+}
+.zepto-nav-tab.active {
+  background: var(--brand-blue);
+  color: var(--text-on-blue);
+}
+
+.zepto-nav-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.zepto-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 0 rgba(7, 148, 85, 0.45);
+  animation: zepto-pulse 2.4s ease-in-out infinite;
+}
+@keyframes zepto-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(7, 148, 85, 0.45); }
+  50% { box-shadow: 0 0 0 6px rgba(7, 148, 85, 0); }
+}
+
+/* ---------- Page ---------- */
+.zepto-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 28px 80px;
+}
+
+.zepto-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.zepto-headline {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin-top: 8px;
+  color: var(--text-primary);
+}
+.zepto-headline em {
+  font-style: normal;
+  color: var(--brand-blue);
+}
+
+/* Compact title block used on the findings landing */
+.zepto-title-block { margin-bottom: 4px; }
+.zepto-headline-xl {
+  font-size: 44px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-top: 8px;
+  color: var(--text-primary);
+}
+.zepto-headline-xl em {
+  font-style: normal;
+  display: inline-block;
+  background: var(--brand-yellow);
+  color: var(--text-on-yellow);
+  padding: 0 10px;
+  border-radius: 8px;
+  margin-right: 4px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.zepto-sub-short {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+.zepto-methodology-trigger {
+  background: transparent;
+  border: none;
+  color: var(--brand-blue);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 6px;
+}
+.zepto-methodology-trigger:hover { text-decoration: underline; }
+
+.zepto-sub {
+  margin-top: 10px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  max-width: 820px;
+  line-height: 1.55;
+}
+
+/* ---------- KPI strip ---------- */
+.zepto-kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-top: 24px;
+}
+.zepto-kpi {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+}
+.zepto-kpi .label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.zepto-kpi .value {
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 4px;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+.zepto-kpi .value.accent { color: var(--brand-blue); }
+.zepto-kpi .value.warn { color: var(--warning); }
+.zepto-kpi .value.critical { color: var(--critical); }
+
+/* ---------- Themes panel ---------- */
+.zepto-themes {
+  margin-top: 28px;
+  padding: 16px 18px;
+  background: var(--info-bg);
+  border: 1px solid var(--info-border);
+  border-radius: var(--radius-lg);
+}
+.zepto-themes .title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand-blue-dark);
+  margin-bottom: 10px;
+}
+.zepto-themes ul { list-style: none; padding: 0; margin: 0; }
+.zepto-themes li {
+  padding: 4px 0;
+  font-size: 13.5px;
+  color: var(--text-primary);
+  line-height: 1.5;
+  display: flex;
+  gap: 10px;
+}
+.zepto-themes li::before {
+  content: "•";
+  color: var(--brand-blue);
+  font-weight: 700;
+}
+
+/* ---------- Section heading ---------- */
+.zepto-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 36px;
+  margin-bottom: 16px;
+}
+.zepto-section-head h2 {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+.zepto-section-head .count {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ---------- Finding card ---------- */
+.zepto-verdict {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+.zepto-verdict:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+}
+.zepto-verdict.expanded {
+  border-color: var(--brand-blue);
+  box-shadow: var(--shadow-md);
+}
+
+.zepto-verdict-header {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.zepto-verdict-rank {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  min-width: 32px;
+  margin-top: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.zepto-verdict-body { flex: 1; min-width: 0; }
+
+.zepto-verdict-type {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--slate-100);
+  color: var(--slate-700);
+  margin-bottom: 6px;
+}
+.zepto-verdict-type.shadow {
+  background: var(--brand-yellow-dim);
+  color: #8a5a00;
+}
+
+.zepto-verdict-headline {
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-primary);
+  letter-spacing: -0.005em;
+}
+
+.zepto-verdict-stats {
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.zepto-verdict-stats strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.zepto-verdict-right {
+  text-align: right;
+  min-width: 110px;
+  flex-shrink: 0;
+}
+.zepto-verdict-score {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.zepto-verdict-score-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+/* Score color tiers */
+.zepto-verdict.score-critical .zepto-verdict-score { color: var(--critical); }
+.zepto-verdict.score-high .zepto-verdict-score { color: var(--warning); }
+.zepto-verdict.score-medium .zepto-verdict-score { color: var(--brand-blue); }
+
+/* ---------- Expanded detail ---------- */
+.zepto-verdict-detail {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 22px;
+}
+
+.zepto-verdict-detail .narrative {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.zepto-verdict-detail .recommended {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--brand-yellow-dim);
+  border-left: 3px solid var(--brand-yellow);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-primary);
+}
+.zepto-verdict-detail .recommended-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a5a00;
+  margin-bottom: 4px;
+}
+
+.zepto-verdict-detail .exposure {
+  margin-top: 10px;
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+}
+.zepto-verdict-detail .exposure strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ---------- Score breakdown bars ---------- */
+.zepto-score-bars { display: flex; flex-direction: column; gap: 6px; }
+.zepto-score-bar {
+  display: grid;
+  grid-template-columns: 120px 1fr 28px;
+  gap: 10px;
+  align-items: center;
+  font-size: 11.5px;
+}
+.zepto-score-bar .label { color: var(--text-tertiary); }
+.zepto-score-bar .bar-bg {
+  height: 6px;
+  background: var(--slate-100);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.zepto-score-bar .bar-fg {
+  height: 100%;
+  background: var(--brand-blue);
+  border-radius: 3px;
+}
+.zepto-score-bar .value {
+  color: var(--text-primary);
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Evidence table ---------- */
+.zepto-evidence {
+  margin-top: 14px;
+  font-size: 12.5px;
+  width: 100%;
+  border-collapse: collapse;
+}
+.zepto-evidence th {
+  text-align: left;
+  font-weight: 500;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-subtle);
+}
+.zepto-evidence td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.zepto-evidence tr:last-child td { border-bottom: none; }
+
+/* ---------- Buttons ---------- */
+.zepto-btn {
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.zepto-btn:hover {
+  background: var(--slate-100);
+  border-color: var(--slate-400);
+}
+.zepto-btn.primary {
+  background: var(--brand-yellow);
+  border-color: var(--brand-yellow);
+  font-weight: 600;
+  color: var(--text-on-yellow);
+}
+.zepto-btn.primary:hover {
+  background: #ffcb33;
+  border-color: #ffcb33;
+}
+.zepto-btn.secondary {
+  background: var(--brand-blue);
+  border-color: var(--brand-blue);
+  color: var(--text-on-blue);
+  font-weight: 600;
+}
+.zepto-btn.secondary:hover {
+  background: var(--brand-blue-dark);
+  border-color: var(--brand-blue-dark);
+}
+
+/* ---------- Loading ---------- */
+.zepto-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: 16px;
+  background: var(--bg-base);
+}
+.zepto-loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 2.5px solid var(--slate-200);
+  border-top-color: var(--brand-blue);
+  border-radius: 50%;
+  animation: zepto-spin 0.85s linear infinite;
+}
+@keyframes zepto-spin { to { transform: rotate(360deg); } }
+.zepto-loading-text {
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+/* ---------- Investigation workbench ---------- */
+.zepto-lens-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--slate-100);
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+  width: fit-content;
+}
+.zepto-lens-tab {
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.12s;
+}
+.zepto-lens-tab:hover { color: var(--text-primary); }
+.zepto-lens-tab.active {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+.zepto-workbench {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
+}
+
+.zepto-workbench-list {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 10px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.zepto-workbench-item {
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid transparent;
+  margin-bottom: 2px;
+  transition: background-color 0.1s;
+}
+.zepto-workbench-item:hover { background: var(--bg-subtle); }
+.zepto-workbench-item.selected {
+  background: var(--info-bg);
+  border-color: var(--info-border);
+}
+.zepto-workbench-item .name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: -0.005em;
+}
+.zepto-workbench-item .meta {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.zepto-workbench-item .score-pill {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: var(--slate-100);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.zepto-workbench-item.selected .score-pill {
+  background: var(--brand-blue);
+  color: var(--text-on-blue);
+}
+
+.zepto-workbench-detail {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+/* ---------- Search ---------- */
+.zepto-search {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 13px;
+  margin-bottom: 8px;
+  font-family: inherit;
+  transition: border-color 0.12s, box-shadow 0.12s;
+}
+.zepto-search:focus {
+  outline: none;
+  border-color: var(--brand-blue);
+  box-shadow: 0 0 0 3px var(--brand-blue-dim);
+}
+.zepto-search::placeholder { color: var(--text-muted); }
+
+/* ---------- Map page (dark mode module) ---------- */
+.zepto-map-shell {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  height: calc(100vh - 60px);
+  background: #0a0d12;
+  --map-bg: #0f141c;
+  --map-panel: #161b25;
+  --map-border: #232a36;
+  --map-border-strong: #2f3744;
+  --map-text: #e7ebf2;
+  --map-text-dim: #9aa3b2;
+  --map-text-muted: #6f7787;
+}
+.zepto-map-filters {
+  padding: 20px;
+  background: var(--map-panel);
+  border-right: 1px solid var(--map-border);
+  overflow-y: auto;
+  color: var(--map-text);
+}
+.zepto-map-filters h3 {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--map-text-muted);
+  margin-bottom: 8px;
+  margin-top: 18px;
+}
+.zepto-map-filters h3:first-child { margin-top: 0; }
+.zepto-map-filters input[type="range"] { accent-color: var(--brand-yellow); }
+
+.zepto-chip {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  font-weight: 500;
+  background: transparent;
+  color: var(--map-text-dim);
+  border: 1px solid var(--map-border-strong);
+  cursor: pointer;
+  margin: 0 4px 4px 0;
+  transition: all 0.12s;
+}
+.zepto-chip:hover { background: var(--map-bg); color: var(--map-text); }
+.zepto-chip.active {
+  background: var(--brand-yellow);
+  border-color: var(--brand-yellow);
+  color: var(--text-on-yellow);
+  font-weight: 600;
+}
+
+.zepto-map-area { position: relative; }
+
+.zepto-map-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(15, 20, 28, 0.96);
+  border: 1px solid var(--map-border-strong);
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  color: var(--map-text);
+  max-width: 280px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.55);
+  z-index: 50;
+  line-height: 1.45;
+  backdrop-filter: blur(6px);
+}
+.zepto-map-tooltip .tt-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--map-text-muted);
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.zepto-legend {
+  position: absolute;
+  bottom: 18px;
+  right: 18px;
+  background: rgba(15, 20, 28, 0.92);
+  border: 1px solid var(--map-border);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  color: var(--map-text-dim);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.45);
+  backdrop-filter: blur(6px);
+}
+.zepto-legend .lg-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 3px 0;
+}
+.zepto-legend .lg-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* Map module's risk-tier colours override the global tier dots for dark legend */
+.zepto-map-shell .tier-critical { background: #ff5046; }
+.zepto-map-shell .tier-high     { background: #ffbe07; }
+.zepto-map-shell .tier-medium   { background: #1e64e6; }
+.zepto-map-shell .tier-low      { background: #6f7787; }
+
+/* Filter labels readable on dark */
+.zepto-map-filters label {
+  color: var(--map-text-dim) !important;
+}
+.zepto-map-filters label input[type="checkbox"] {
+  accent-color: var(--brand-yellow);
+}
+
+/* ---------- Theft zones page ---------- */
+.zepto-dropzone {
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-xl);
+  padding: 56px 24px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--bg-surface);
+  transition: all 0.15s;
+}
+.zepto-dropzone:hover, .zepto-dropzone.active {
+  border-color: var(--brand-blue);
+  background: var(--info-bg);
+}
+.zepto-dropzone h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.zepto-dropzone p {
+  color: var(--text-tertiary);
+  font-size: 13px;
+  margin-top: 8px;
+}
+.zepto-dropzone .icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+  opacity: 0.7;
+}
+
+.zepto-zone-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  margin-bottom: 8px;
+}
+.zepto-zone-card.high { border-left: 3px solid var(--critical); }
+.zepto-zone-card.medium { border-left: 3px solid var(--warning); }
+.zepto-zone-card.low { border-left: 3px solid var(--success); }
+
+.zepto-zone-card .zone-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+}
+.zepto-zone-card .zone-stats {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.zepto-zone-card .zone-stats strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+.zepto-zone-card .zone-tops {
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-primary);
+}
+.zepto-zone-card .zone-tops .label {
+  color: var(--text-muted);
+  margin-right: 6px;
+  font-weight: 500;
+}
+.zepto-zone-card .zone-tops .row { padding: 2px 0; }
+
+/* ---------- Badges ---------- */
+.zepto-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.zepto-badge.reefer { background: var(--info-bg); color: var(--brand-blue-dark); }
+.zepto-badge.night  { background: var(--warning-bg); color: #8a3d10; }
+.zepto-badge.high-cargo { background: var(--brand-yellow-dim); color: #8a5a00; }
+.zepto-badge.dedicated-no { background: var(--critical-bg); color: var(--critical); }
+
+/* Risk tier dots / chips */
+.tier-critical { background: var(--critical); }
+.tier-high     { background: var(--warning); }
+.tier-medium   { background: var(--brand-blue); }
+.tier-low      { background: var(--slate-400); }
+
+/* ---------- Pattern read panel ---------- */
+.zepto-pattern-read {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--info-bg);
+  border: 1px solid var(--info-border);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-primary);
+}
+.zepto-pattern-read strong { font-weight: 600; }
+
+/* Stat tile inside investigation detail */
+.zepto-stat-tile {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+}
+.zepto-stat-tile.highlight { border-color: var(--brand-yellow); background: var(--brand-yellow-dim); }
+.zepto-stat-tile .label {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.zepto-stat-tile .value {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 4px;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.zepto-stat-tile.highlight .value { color: #8a5a00; }
+
+/* ---------- Generic table reset for investigation ---------- */
+.zepto-data-table {
+  width: 100%;
+  font-size: 12.5px;
+  border-collapse: collapse;
+}
+.zepto-data-table thead {
+  position: sticky;
+  top: 0;
+  background: var(--bg-subtle);
+  z-index: 1;
+}
+.zepto-data-table th {
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+.zepto-data-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.zepto-data-table tr:hover td { background: var(--bg-subtle); }
+.zepto-data-table .num { text-align: right; }

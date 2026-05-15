@@ -10,7 +10,7 @@ export function isStaticUpload(uploadId: number): boolean {
 }
 
 export async function fetchStatic(path: string): Promise<any> {
-  const res = await fetch(`/data/${path}`);
+  const res = await fetch(`${import.meta.env.BASE_URL}data/${path}`);
   if (!res.ok) throw new Error(`Static fetch failed: ${res.status}`);
   return res.json();
 }
