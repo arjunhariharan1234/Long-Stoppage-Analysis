@@ -5,13 +5,24 @@ import type {
 } from "../types";
 import { MiniMap } from "../components/MiniMap";
 
-type Lens = "driver" | "vehicle" | "transporter" | "route";
+type Lens = "driver" | "vehicle" | "transporter" | "route" | "trip";
 
 interface PreselectInfo {
   driver?: string;        // driver_number
   vehicle?: string;       // vehicle_number
   transporter?: string;   // transporter_branch
   route?: string;
+  trip?: string;          // trip_id
+}
+
+interface TripSummary {
+  trip_id: string;
+  halt_count: number;
+  drivers: Set<string>;
+  vehicles: Set<string>;
+  transporters: Set<string>;
+  first_ts?: string;
+  last_ts?: string;
 }
 
 interface Props { preselect?: PreselectInfo | null; }
@@ -42,7 +53,30 @@ export function Investigation({ preselect }: Props) {
     else if (preselect.vehicle) { setLens("vehicle"); setSelectedKey(preselect.vehicle); }
     else if (preselect.transporter) { setLens("transporter"); setSelectedKey(preselect.transporter); }
     else if (preselect.route) { setLens("route"); setSelectedKey(preselect.route); }
+    else if (preselect.trip) { setLens("trip"); setSelectedKey(preselect.trip); }
   }, [loading, preselect]);
+
+  // Build trip summaries from events (only needed for trip lens, but cheap enough)
+  const trips = useMemo<TripSummary[]>(() => {
+    const map = new Map<string, TripSummary>();
+    for (const e of events) {
+      if (!e.trip_id) continue;
+      let t = map.get(e.trip_id);
+      if (!t) {
+        t = { trip_id: e.trip_id, halt_count: 0, drivers: new Set(), vehicles: new Set(), transporters: new Set() };
+        map.set(e.trip_id, t);
+      }
+      t.halt_count += 1;
+      if (e.driver_number) t.drivers.add(e.driver_number);
+      if (e.vehicle_number) t.vehicles.add(e.vehicle_number);
+      if (e.transporter_branch) t.transporters.add(e.transporter_branch);
+      if (e.alert_created_at) {
+        if (!t.first_ts || e.alert_created_at < t.first_ts) t.first_ts = e.alert_created_at;
+        if (!t.last_ts || e.alert_created_at > t.last_ts) t.last_ts = e.alert_created_at;
+      }
+    }
+    return [...map.values()].sort((a, b) => b.halt_count - a.halt_count);
+  }, [events]);
 
   // Build the list for the current lens
   const list = useMemo(() => {
@@ -62,8 +96,11 @@ export function Investigation({ preselect }: Props) {
         !q || t.transporter_branch.toLowerCase().includes(q)
       ).slice(0, 200);
     }
+    if (lens === "trip") {
+      return trips.filter(t => !q || t.trip_id.toLowerCase().includes(q)).slice(0, 250);
+    }
     return routes.filter(r => !q || r.route_key.toLowerCase().includes(q)).slice(0, 200);
-  }, [lens, query, drivers, vehicles, transporters, routes]);
+  }, [lens, query, drivers, vehicles, transporters, routes, trips]);
 
   // Auto-select first if nothing selected
   useEffect(() => {
@@ -72,6 +109,7 @@ export function Investigation({ preselect }: Props) {
       const key = lens === "driver" ? first.driver_number
                 : lens === "vehicle" ? first.vehicle_number
                 : lens === "transporter" ? first.transporter_branch
+                : lens === "trip" ? first.trip_id
                 : first.route_key;
       setSelectedKey(key);
     }
@@ -83,6 +121,7 @@ export function Investigation({ preselect }: Props) {
     if (lens === "driver") return events.filter(e => e.driver_number === selectedKey);
     if (lens === "vehicle") return events.filter(e => e.vehicle_number === selectedKey);
     if (lens === "transporter") return events.filter(e => e.transporter_branch === selectedKey);
+    if (lens === "trip") return events.filter(e => e.trip_id === selectedKey);
     return events.filter(e => e.route_key === selectedKey);
   }, [events, lens, selectedKey]);
 
@@ -91,8 +130,11 @@ export function Investigation({ preselect }: Props) {
     if (lens === "driver") return drivers.find(d => d.driver_number === selectedKey);
     if (lens === "vehicle") return vehicles.find(v => v.vehicle_number === selectedKey);
     if (lens === "transporter") return transporters.find(t => t.transporter_branch === selectedKey);
+    if (lens === "trip") return trips.find(t => t.trip_id === selectedKey);
     return routes.find(r => r.route_key === selectedKey);
-  }, [lens, selectedKey, drivers, vehicles, transporters, routes]);
+  }, [lens, selectedKey, drivers, vehicles, transporters, routes, trips]);
+
+  const jumpTo = (l: Lens, key: string) => { setLens(l); setSelectedKey(key); setQuery(""); };
 
   if (loading) {
     return (
@@ -112,9 +154,9 @@ export function Investigation({ preselect }: Props) {
       </p>
 
       <div className="zepto-lens-tabs" style={{ marginTop: 18 }}>
-        {(["driver", "vehicle", "transporter", "route"] as Lens[]).map(l => (
+        {(["driver", "vehicle", "transporter", "route", "trip"] as Lens[]).map(l => (
           <button key={l} className={`zepto-lens-tab ${lens === l ? "active" : ""}`} onClick={() => { setLens(l); setSelectedKey(null); setQuery(""); }}>
-            {l === "driver" ? "Drivers" : l === "vehicle" ? "Vehicles" : l === "transporter" ? "Transporters" : "Routes"}
+            {l === "driver" ? "Drivers" : l === "vehicle" ? "Vehicles" : l === "transporter" ? "Transporters" : l === "route" ? "Routes" : "Trips"}
           </button>
         ))}
       </div>
@@ -123,7 +165,13 @@ export function Investigation({ preselect }: Props) {
         <div className="zepto-workbench-list">
           <input
             className="zepto-search"
-            placeholder={lens === "driver" ? "Search by name or number…" : lens === "vehicle" ? "Search by vehicle number…" : lens === "transporter" ? "Search transporter…" : "Search route…"}
+            placeholder={
+              lens === "driver" ? "Search by name or number…"
+              : lens === "vehicle" ? "Search by vehicle number…"
+              : lens === "transporter" ? "Search transporter…"
+              : lens === "trip" ? "Search by trip ID…"
+              : "Search route…"
+            }
             value={query}
             onChange={e => setQuery(e.target.value)}
           />
@@ -131,15 +179,19 @@ export function Investigation({ preselect }: Props) {
             const key = lens === "driver" ? item.driver_number
                       : lens === "vehicle" ? item.vehicle_number
                       : lens === "transporter" ? item.transporter_branch
+                      : lens === "trip" ? item.trip_id
                       : item.route_key;
             const primary = lens === "driver" ? `${item.driver_name} (${item.driver_number})`
                           : lens === "vehicle" ? item.vehicle_number
                           : lens === "transporter" ? item.transporter_branch
+                          : lens === "trip" ? `Trip ${item.trip_id}`
                           : item.route_key;
             const meta = lens === "driver" ? `${item.halt_count} halts · ${item.unique_vehicles} vehicles`
                        : lens === "vehicle" ? `${item.halt_count} halts · ${item.vehicle_type}`
                        : lens === "transporter" ? `${item.halt_count} halts · ${item.unique_drivers} drivers`
+                       : lens === "trip" ? `${item.halt_count} halts · ${item.drivers.size} driver(s) · ${item.vehicles.size} vehicle(s)`
                        : `${item.halt_count} halts · ${item.unique_drivers} drivers`;
+            const scoreLabel = lens === "trip" ? item.halt_count : item.risk_score;
             return (
               <div
                 key={key}
@@ -150,7 +202,7 @@ export function Investigation({ preselect }: Props) {
                   <div className="name">{primary}</div>
                   <div className="meta">{meta}</div>
                 </div>
-                <div className="score-pill">{item.risk_score}</div>
+                <div className="score-pill">{scoreLabel}</div>
               </div>
             );
           })}
@@ -167,6 +219,8 @@ export function Investigation({ preselect }: Props) {
               lens={lens}
               meta={selectedMeta as any}
               events={selectedEvents}
+              drivers={drivers}
+              onJumpTo={jumpTo}
               key={selectedKey || ""}
             />
           )}
@@ -176,11 +230,36 @@ export function Investigation({ preselect }: Props) {
   );
 }
 
-function InvestigationDetail({ lens, meta, events }: { lens: Lens; meta: any; events: EventRow[] }) {
+function InvestigationDetail({ lens, meta, events, drivers, onJumpTo }: {
+  lens: Lens;
+  meta: any;
+  events: EventRow[];
+  drivers?: DriverRollup[];
+  onJumpTo?: (lens: Lens, key: string) => void;
+}) {
   const title = lens === "driver" ? `${meta.driver_name} · ${meta.driver_number}`
               : lens === "vehicle" ? meta.vehicle_number
               : lens === "transporter" ? meta.transporter_branch
+              : lens === "trip" ? `Trip ${meta.trip_id}`
               : meta.route_key;
+
+  // For trip lens: build per-driver breakdown from this trip's events + driver rollups
+  const driverPatterns = useMemo(() => {
+    if (lens !== "trip") return [];
+    const counts = new Map<string, { halts: number; name: string }>();
+    for (const e of events) {
+      if (!e.driver_number) continue;
+      const cur = counts.get(e.driver_number);
+      if (cur) cur.halts += 1;
+      else counts.set(e.driver_number, { halts: 1, name: e.driver_name || "" });
+    }
+    return [...counts.entries()].map(([num, c]) => ({
+      driver_number: num,
+      driver_name: c.name,
+      halts_on_trip: c.halts,
+      rollup: drivers?.find(d => d.driver_number === num),
+    })).sort((a, b) => b.halts_on_trip - a.halts_on_trip);
+  }, [lens, events, drivers]);
 
   // Pattern summary
   const totalHalts = events.length;
@@ -237,11 +316,12 @@ function InvestigationDetail({ lens, meta, events }: { lens: Lens; meta: any; ev
             {lens === "vehicle" && `${meta.vehicle_type} · ${meta.dedicated === "Yes" ? "Dedicated" : meta.dedicated === "No" ? "Non-dedicated" : "—"} · ${meta.top_transporter || "—"}`}
             {lens === "transporter" && `${meta.unique_drivers} drivers · ${meta.unique_vehicles} vehicles`}
             {lens === "route" && `${meta.unique_drivers} drivers · ${meta.unique_vehicles} vehicles`}
+            {lens === "trip" && `${meta.drivers.size} driver(s) · ${meta.vehicles.size} vehicle(s) · ${meta.transporters.size} transporter(s)${meta.first_ts ? ` · ${meta.first_ts}${meta.last_ts && meta.last_ts !== meta.first_ts ? ` → ${meta.last_ts}` : ""}` : ""}`}
           </div>
         </div>
         <div style={{ textAlign: "right" }}>
-          <div className="zepto-verdict-score">{meta.risk_score}</div>
-          <div className="zepto-verdict-score-label">Risk score</div>
+          <div className="zepto-verdict-score">{lens === "trip" ? meta.halt_count : meta.risk_score}</div>
+          <div className="zepto-verdict-score-label">{lens === "trip" ? "Halts on trip" : "Risk score"}</div>
         </div>
       </div>
 
@@ -289,6 +369,58 @@ function InvestigationDetail({ lens, meta, events }: { lens: Lens; meta: any; ev
             </div>
           ))}
           {topClusters.length === 0 && <div style={{ color: "var(--text-muted)", fontSize: 13 }}>No location data.</div>}
+
+          {lens === "trip" && driverPatterns.length > 0 && (
+            <>
+              <h3 style={{ fontSize: 13, fontWeight: 600, marginTop: 22, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--text-muted)" }}>
+                Driver patterns on this trip
+              </h3>
+              {driverPatterns.map(dp => (
+                <div
+                  key={dp.driver_number}
+                  style={{ padding: "10px 0", borderBottom: "1px solid var(--border)", fontSize: 13 }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 600, color: "var(--text-primary)" }}>
+                        {dp.driver_name || dp.rollup?.driver_name || "—"} <span style={{ color: "var(--text-muted)", fontWeight: 400 }}>({dp.driver_number})</span>
+                      </div>
+                      <div style={{ color: "var(--text-muted)", fontSize: 11.5, marginTop: 3 }}>
+                        <strong style={{ color: "var(--text-primary)", fontWeight: 600 }}>{dp.halts_on_trip}</strong> halt{dp.halts_on_trip === 1 ? "" : "s"} on this trip
+                        {dp.rollup && (
+                          <>
+                            {" · "}{dp.rollup.halt_count} total halts
+                            {" · "}{dp.rollup.unique_vehicles} vehicles
+                            {" · "}{Math.round(dp.rollup.night_share * 100)}% night
+                            {" · "}{dp.rollup.median_duration_hrs.toFixed(1)} hr median
+                          </>
+                        )}
+                      </div>
+                      {dp.rollup && (
+                        <div style={{ color: "var(--text-muted)", fontSize: 11.5, marginTop: 2 }}>
+                          Top transporter: <span style={{ color: "var(--text-primary)" }}>{dp.rollup.top_transporter || "—"}</span>
+                          {" · "}Reefer share: {Math.round(dp.rollup.reefer_share * 100)}%
+                          {" · "}{dp.rollup.unique_clusters} distinct cluster{dp.rollup.unique_clusters === 1 ? "" : "s"}
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, padding: "3px 9px", borderRadius: 10, background: "var(--slate-100)", color: "var(--text-secondary)", fontVariantNumeric: "tabular-nums" }}>
+                        Risk {dp.rollup?.risk_score ?? "—"}
+                      </div>
+                      <button
+                        className="zepto-btn"
+                        style={{ fontSize: 11, padding: "4px 10px" }}
+                        onClick={() => onJumpTo?.("driver", dp.driver_number)}
+                      >
+                        Open driver →
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
 
           {topCombos.length > 0 && (
             <>
@@ -343,7 +475,18 @@ function InvestigationDetail({ lens, meta, events }: { lens: Lens; meta: any; ev
           <tbody>
             {events.slice(0, 400).map((e, i) => (
               <tr key={`${e.trip_id}-${i}`}>
-                <td>{e.trip_id}</td>
+                <td>
+                  {lens === "trip" || !e.trip_id ? e.trip_id : (
+                    <button
+                      type="button"
+                      onClick={() => onJumpTo?.("trip", e.trip_id)}
+                      style={{ background: "none", border: "none", padding: 0, color: "var(--zepto-accent, #1e64e6)", cursor: "pointer", font: "inherit", textAlign: "left" }}
+                      title="Open trip pattern"
+                    >
+                      {e.trip_id}
+                    </button>
+                  )}
+                </td>
                 <td>{e.alert_created_at}</td>
                 <td className="num">{(+e.long_stoppage_duration_hrs).toFixed(1)} hr</td>
                 {lens !== "driver" && <td>{e.driver_name}</td>}
