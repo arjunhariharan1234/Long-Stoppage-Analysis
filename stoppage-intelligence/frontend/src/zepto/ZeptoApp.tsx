@@ -39,8 +39,8 @@ export function ZeptoApp() {
         </div>
         <div className="zepto-nav-tabs">
           <button className={`zepto-nav-tab ${page === "landing" ? "active" : ""}`} onClick={() => setPage("landing")}>Findings</button>
-          <button className={`zepto-nav-tab ${page === "map" ? "active" : ""}`} onClick={() => { setMapFocus(null); setPage("map"); }}>Hotspot map</button>
           <button className={`zepto-nav-tab ${page === "investigation" ? "active" : ""}`} onClick={() => { setInvestPreselect(null); setPage("investigation"); }}>Investigate</button>
+          <button className={`zepto-nav-tab ${page === "map" ? "active" : ""}`} onClick={() => { setMapFocus(null); setPage("map"); }}>Hotspot map</button>
           <button className={`zepto-nav-tab ${page === "theft-zones" ? "active" : ""}`} onClick={() => setPage("theft-zones")}>Risk zones</button>
         </div>
         <div className="zepto-nav-right">

@@ -38,8 +38,6 @@ export function ZeptoLanding({ onInvestigate, onOpenInMap }: Props) {
   const exposureSum = verdicts.reduce((acc, v) => acc + (v.estimated_exposure_inr || 0), 0);
   const exposureLakh = (exposureSum / 100000).toFixed(1);
 
-  const fromShort = new Date(summary.data_window.from).toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
-  const toShort = new Date(summary.data_window.to).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
 
   return (
     <div className="zepto-page">
@@ -48,10 +46,6 @@ export function ZeptoLanding({ onInvestigate, onOpenInMap }: Props) {
         <h1 className="zepto-headline-xl">
           <em>{summary.priority_finding_count}</em> priority findings.
         </h1>
-        <p className="zepto-sub-short">
-          {fmt(summary.in_transit_events)} in-transit halts · {fromShort} – {toShort}
-          {" "}<button className="zepto-methodology-trigger" type="button" title="How findings are scored">ⓘ Methodology</button>
-        </p>
       </div>
 
       {/* KPI strip */}

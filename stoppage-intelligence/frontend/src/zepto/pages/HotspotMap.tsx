@@ -107,8 +107,13 @@ export function HotspotMap({ focus }: Props) {
       container: containerRef.current,
       style: DARK_BASEMAP,
       ...initial,
+      pitch: 45,
+      bearing: -15,
+      maxPitch: 75,
+      dragRotate: true,
       attributionControl: false,
     });
+    map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "top-right");
     map.on("load", () => {
       const overlay = new MapboxOverlay({ layers: [] });
       map.addControl(overlay as any);
