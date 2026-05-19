@@ -1,7 +1,9 @@
 /* Zepto Long Stoppage Intelligence — FT design system aligned.
    Tokens follow ftdesignsystem.vercel.app (primary slate scale, Inter, light mode). */
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+/* Inter font is loaded via <link> in index.html (Tailwind @import must be first
+   statement in the file so we can't also @import the Google Fonts URL here). */
+@import "tailwindcss";
 
 :root {
   /* Brand */
