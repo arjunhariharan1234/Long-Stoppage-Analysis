@@ -10,15 +10,6 @@ from brain.features import (
 )
 
 
-@pytest.fixture
-def sample_polyline():
-    """Encoded polyline for (26.7619, 80.8514), (26.7625, 80.8520), (26.7630, 80.8530).
-
-    Overrides the conftest fixture; verified via polyline.encode().
-    """
-    return "{|ibDghnlNwBwBcBgE"
-
-
 def test_decode_polyline_returns_list_of_lat_lng(sample_polyline):
     pts = decode_polyline(sample_polyline)
     assert len(pts) == 3

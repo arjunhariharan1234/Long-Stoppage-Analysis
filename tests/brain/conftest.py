@@ -16,10 +16,10 @@ def cases_parsed():
 @pytest.fixture
 def sample_polyline():
     """A short, hand-known encoded polyline.
-    Encodes: (26.7619, 80.8514), (26.7625, 80.8520), (26.7630, 80.8530)
+    Encodes: (26.7619, 80.8514), (26.7625, 80.8520), (26.7630, 80.8530).
+    Verified via polyline.encode() — decode round-trips to the same points.
     """
-    # polyline.encode([(26.7619, 80.8514), (26.7625, 80.8520), (26.7630, 80.8530)])
-    return "iigjCgvz}LMOKQ"
+    return "{|ibDghnlNwBwBcBgE"
 
 
 @pytest.fixture
@@ -43,5 +43,5 @@ def sample_trip_row():
         "window_closure_mode": "manual",
         "window_auto_closure_type": None,
         "ping_count": 120,
-        "ping_polyline": "iigjCgvz}LMOKQ",
+        "ping_polyline": "{|ibDghnlNwBwBcBgE",
     }
