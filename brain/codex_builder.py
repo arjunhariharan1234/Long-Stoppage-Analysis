@@ -14,6 +14,7 @@ Produces theft_codex.json shape:
 from __future__ import annotations
 
 import json
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Iterable
@@ -52,12 +53,27 @@ def _hit_rate(signal: dict, rows: Iterable[dict], ctx: dict) -> float:
 
 def build_codex(positives: list[dict], negatives: list[dict], blacklist: dict,
                 training_meta: dict | None = None) -> dict:
-    """Build the codex by training each signal against positive vs negative sets."""
+    """Build the codex by training each signal against positive vs negative sets.
+
+    Edge case: when ``negatives`` is empty we have no clean fleet sample, so
+    ``false_match_proxy`` is forced to 0.0 and weights derive from positive
+    hit-rate alone — acceptable for the v1 forensic brain.
+    """
+    if len(negatives) == 0:
+        print(
+            "[brain] WARNING: codex built with no negative sample; "
+            "weights derived from positive hit-rate only.",
+            file=sys.stderr,
+        )
     ctx = {"blacklist": blacklist}
     signals_out = []
     for sig in SIGNAL_REGISTRY:
         hit = _hit_rate(sig, positives, ctx)
         fm = _hit_rate(sig, negatives, ctx)
+        if len(negatives) == 0:
+            # No negative pool → force the proxy to 0 (idempotent: _hit_rate
+            # already returns 0.0 for an empty iterable, but explicit is better).
+            fm = 0.0
         weight = compute_weight(hit, fm)
         weight = _apply_overfit_guard(weight, sig.get("source_cases", []))
         if weight < MIN_SHIPPABLE_WEIGHT:

@@ -4,7 +4,9 @@ dataset, write four JSON files to frontend/public/zepto/brain/.
 Usage:
     python -m brain.build_brain
 
-No arguments — all paths are hard-coded against the repo layout.
+No arguments — all paths are hard-coded against the repo layout. The training
+xlsx doubles as the target dataset: it is the only source we have that carries
+the trip-level ``window_*`` schema the brain's feature extractor expects.
 """
 from __future__ import annotations
 
@@ -27,7 +29,6 @@ from brain.scorer import score_dataset, rollup_by_entity
 ROOT = Path(__file__).resolve().parents[1]
 TRAINING_XLSX = ROOT / "zepto_theft_cases_base_data.xlsx"
 CASES_JSON = ROOT / "confirmed_thefts" / "cases_parsed.json"
-TARGET_CSV = ROOT / "Feb_May_Zepto_trips_with_poi.csv"
 OUT_DIR = ROOT / "stoppage-intelligence" / "frontend" / "public" / "zepto" / "brain"
 
 
@@ -40,10 +41,6 @@ def _load_blacklist(training_df: pd.DataFrame) -> dict:
     return {"drivers": drivers, "vehicles": vehicles, "transporters": transporters}
 
 
-def _rows_to_features(df: pd.DataFrame) -> list[dict]:
-    return [extract_trip_features(r._asdict() if hasattr(r, "_asdict") else dict(r._asdict()) if hasattr(r, "_asdict") else r) for r in df.to_dict(orient="records")]
-
-
 def main() -> None:
     print(f"=== brain build_brain · codex {CODEX_VERSION} · {datetime.utcnow().isoformat(timespec='seconds')} ===")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -52,21 +49,16 @@ def main() -> None:
     training_df = pd.read_excel(TRAINING_XLSX)
     print(f"  → {len(training_df):,} positive-class trips")
 
-    print(f"Loading target dataset: {TARGET_CSV.name}")
-    target_df = pd.read_csv(TARGET_CSV, low_memory=False)
-    print(f"  → {len(target_df):,} target rows")
+    # The training xlsx is the only trip-level source we have. It carries the
+    # window_* schema the feature extractor expects. The halt-event CSV is
+    # event-level (1M rows, alert_lat / trip_id / driver_name) and produces
+    # empty feature dicts — so we score the trips we have features for.
+    target_df = training_df
+    print(f"Target dataset (same as training): {len(target_df):,} rows")
 
-    # Positive feature dicts
     positives = [extract_trip_features(r) for r in training_df.to_dict(orient="records")]
-
-    # Negative = target rows not in the positive trip-id set
-    positive_trip_ids = {p["trip_id"] for p in positives if p["trip_id"]}
-    target_records = target_df.to_dict(orient="records")
-    negatives = []
-    for r in target_records:
-        f = extract_trip_features(r)
-        if f["trip_id"] and f["trip_id"] not in positive_trip_ids:
-            negatives.append(f)
+    # No clean negative pool — see brain.codex_builder.build_codex.
+    negatives: list[dict] = []
     print(f"  → {len(positives):,} positives · {len(negatives):,} negatives")
 
     blacklist = _load_blacklist(training_df)
@@ -90,7 +82,7 @@ def main() -> None:
     print(f"  → {len(case_idx['cases'])} cases indexed")
 
     print("Scoring target dataset…")
-    target_feats = [extract_trip_features(r) for r in target_records]
+    target_records = target_df.to_dict(orient="records")
     scores = score_dataset(target_records, codex, case_idx["cases"], blacklist)
     (OUT_DIR / "brain_scores.json").write_text(json.dumps({
         "version": CODEX_VERSION,
