@@ -8,3 +8,5 @@ scikit-learn==1.5.2
 openpyxl==3.1.5
 sqlalchemy==2.0.35
 pydantic==2.9.2
+polyline==2.0.2
+pytest==8.3.3
