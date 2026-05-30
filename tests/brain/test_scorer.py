@@ -56,3 +56,29 @@ def test_nearest_cases_returns_topk_sorted_by_similarity():
     assert res[0]["similarity"] == pytest.approx(1.0)
     sims = [r["similarity"] for r in res]
     assert sims == sorted(sims, reverse=True)
+
+
+def test_self_recall_top1_each_case():
+    """Each case's own signature vector must rank top-1 in its own retrieval.
+
+    Coarse sanity check on retrieval wiring. Skips if the CLI has not run yet.
+    """
+    from pathlib import Path
+    import json
+    root = Path(__file__).resolve().parents[2]
+    case_index_path = root / "stoppage-intelligence" / "frontend" / "public" / "zepto" / "brain" / "case_index.json"
+    codex_path = root / "stoppage-intelligence" / "frontend" / "public" / "zepto" / "brain" / "theft_codex.json"
+    if not (case_index_path.exists() and codex_path.exists()):
+        pytest.skip("brain CLI has not run yet")
+    idx = json.loads(case_index_path.read_text())
+    codex = json.loads(codex_path.read_text())
+    cases = idx["cases"]
+    if len(cases) < 2:
+        pytest.skip("need ≥2 cases")
+    from brain.scorer import nearest_cases, _feature_weights_from_codex
+    weights = _feature_weights_from_codex(codex)
+    for held_out in cases:
+        ranked = nearest_cases(held_out["signature_vector"], cases, weights, k=3)
+        assert ranked[0]["case_id"] == held_out["case_id"], (
+            f"self-recall failed: top-1 for {held_out['case_id']} was {ranked[0]['case_id']}"
+        )
