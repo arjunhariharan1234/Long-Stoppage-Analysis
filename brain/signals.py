@@ -43,9 +43,27 @@ def _eval_long_stoppage_share(feats: dict) -> dict:
     return {"fires": fires, "evidence": {"stoppage_share": round(share, 2)}}
 
 
-# --- entity_state (filled in Task 4) ------------------------------------------
+# --- entity_state --------------------------------------------------------------
 
-# --- temporal (filled in Task 4) ----------------------------------------------
+def _eval_driver_blacklisted(feats: dict, ctx: dict) -> dict:
+    bl = (ctx.get("blacklist") or {}).get("drivers") or set()
+    drv = str(feats.get("driver_number") or "").strip()
+    return {"fires": drv in bl, "evidence": {"driver_number": drv}}
+
+
+def _eval_vehicle_blacklisted(feats: dict, ctx: dict) -> dict:
+    bl = (ctx.get("blacklist") or {}).get("vehicles") or set()
+    v = (feats.get("vehicle") or "").upper().replace(" ", "")
+    return {"fires": v in bl, "evidence": {"vehicle": v}}
+
+
+def _eval_transporter_repeat(feats: dict, ctx: dict) -> dict:
+    bl = (ctx.get("blacklist") or {}).get("transporters") or set()
+    t = (feats.get("transporter") or "").lower().strip()
+    return {"fires": t in bl, "evidence": {"transporter": t}}
+
+
+# --- temporal (filled in later task) ------------------------------------------
 
 # --- geofence ------------------------------------------------------------------
 
@@ -115,6 +133,33 @@ SIGNAL_REGISTRY: list[dict] = [
         "evaluator": _eval_long_stoppage_share,
     },
     {
+        "id": "S-04",
+        "name": "Driver on blacklist",
+        "category": "entity_state",
+        "rationale": "Driver number appears in the confirmed-theft/blacklisted-driver set.",
+        "source_cases": ["CT-001", "CT-007"],
+        "default_weight": 35,
+        "evaluator": _eval_driver_blacklisted,
+    },
+    {
+        "id": "S-05",
+        "name": "Vehicle on blacklist",
+        "category": "entity_state",
+        "rationale": "Vehicle number appears in the confirmed-theft/blacklisted-vehicle set.",
+        "source_cases": ["CT-001"],
+        "default_weight": 35,
+        "evaluator": _eval_vehicle_blacklisted,
+    },
+    {
+        "id": "S-06",
+        "name": "Transporter is a repeat offender",
+        "category": "entity_state",
+        "rationale": "Transporter branch has multiple trips in the positive set.",
+        "source_cases": ["CT-001", "CT-004"],
+        "default_weight": 20,
+        "evaluator": _eval_transporter_repeat,
+    },
+    {
         "id": "S-08",
         "name": "Geofence breached",
         "category": "geofence",
@@ -153,9 +198,15 @@ SIGNAL_REGISTRY: list[dict] = [
 ]
 
 
-def evaluate_signal(signal: dict, feats: dict) -> dict:
+def evaluate_signal(signal: dict, feats: dict, context: dict | None = None) -> dict:
     """Run a single signal's evaluator. Returns {fires, evidence, id, name, weight}."""
-    out = signal["evaluator"](feats)
+    ctx = context or {}
+    evaluator = signal["evaluator"]
+    # Backwards-compat: evaluators that only take feats still work.
+    try:
+        out = evaluator(feats, ctx)
+    except TypeError:
+        out = evaluator(feats)
     return {
         "id": signal["id"],
         "name": signal["name"],
@@ -166,7 +217,8 @@ def evaluate_signal(signal: dict, feats: dict) -> dict:
     }
 
 
-def evaluate_all_signals(feats: dict, signals: list[dict] | None = None) -> dict:
+def evaluate_all_signals(feats: dict, signals: list[dict] | None = None,
+                          context: dict | None = None) -> dict:
     """Apply every signal in the registry (or a passed list) to a feature dict.
 
     Returns {"score": int, "matched": [signal-dicts that fired]}.
@@ -175,7 +227,7 @@ def evaluate_all_signals(feats: dict, signals: list[dict] | None = None) -> dict
     matched = []
     score = 0
     for sig in pool:
-        result = evaluate_signal(sig, feats)
+        result = evaluate_signal(sig, feats, context)
         if result["fires"]:
             matched.append(result)
             score += result["weight"]
