@@ -10,6 +10,7 @@ import { hash, syntheticSeries, forecast, outlierWeeks, trajectory, halfLife } f
 import { ActionModal } from "../components/ActionModal";
 import { activeForTarget, subscribe as subscribeActions, type ActionKind } from "../lib/actionsStore";
 import { TripDetail } from "../components/TripDetail";
+import { BrainPanel } from "../components/BrainPanel";
 
 type Lens = "driver" | "vehicle" | "transporter" | "route" | "trip";
 
@@ -62,6 +63,7 @@ export function Investigation({ preselect }: Props) {
   const [drillStack, setDrillStack] = useState<DrillStep[]>([]);
   const [loading, setLoading] = useState(true);
   const [detailTrip, setDetailTrip] = useState<TripRow | null>(null);
+  const [tripSubTab, setTripSubTab] = useState<"detail" | "brain">("detail");
   const selectedRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
@@ -259,8 +261,22 @@ export function Investigation({ preselect }: Props) {
     // row reference may be a partial snapshot from before the data refresh).
     const fullTrip = tripRows.find(t => t.trip_id === detailTrip.trip_id) || detailTrip;
     return (
-      <div className="z-trip-detail-wrap">
-        <TripDetail trip={fullTrip} onBack={() => setDetailTrip(null)} aliasLocation={aliasLocation} />
+      <div className="z-trip-detail-wrap trip-detail-wrap">
+        <div className="trip-detail-tabs">
+          <button
+            className={tripSubTab === "detail" ? "is-active" : ""}
+            onClick={() => setTripSubTab("detail")}
+          >Detail</button>
+          <button
+            className={tripSubTab === "brain" ? "is-active" : ""}
+            onClick={() => setTripSubTab("brain")}
+          >Brain</button>
+        </div>
+        {tripSubTab === "detail" ? (
+          <TripDetail trip={fullTrip} onBack={() => setDetailTrip(null)} aliasLocation={aliasLocation} />
+        ) : (
+          <BrainPanel tripId={fullTrip.trip_id} />
+        )}
       </div>
     );
   }

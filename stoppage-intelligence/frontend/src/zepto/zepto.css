@@ -4836,3 +4836,30 @@ html, body {
 .z-entity-events tbody td.num { text-align: right; font-variant-numeric: tabular-nums; }
 .z-entity-events tbody td.mono { font-family: ui-monospace, SFMono-Regular, monospace; font-size: 11.5px; }
 .z-entity-events tbody tr:last-child td { border-bottom: none; }
+
+/* Brain panel — used in Investigate */
+.brain-panel { display: flex; flex-direction: column; gap: 16px; padding: 12px; }
+.brain-panel-header { display: flex; align-items: center; gap: 24px;
+  padding-bottom: 12px; border-bottom: 1px solid var(--zepto-border, #e5e7eb); }
+.brain-score { display: flex; align-items: center; gap: 8px; }
+.brain-score-value { font-size: 28px; font-weight: 600; }
+.brain-context { display: flex; flex-direction: column; gap: 2px; font-size: 12px;
+  color: var(--zepto-muted, #6b7280); }
+.brain-section h4 { margin: 0 0 8px 0; font-size: 12px; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--zepto-muted, #6b7280); }
+.brain-signal-list, .brain-case-list { list-style: none; padding: 0; margin: 0;
+  display: flex; flex-direction: column; gap: 8px; }
+.brain-signal-item, .brain-case-item { padding: 8px;
+  border: 1px solid var(--zepto-border, #e5e7eb); border-radius: 6px; }
+.brain-signal-head, .brain-case-head { display: flex; align-items: center; gap: 8px; }
+.brain-signal-name { font-weight: 500; flex: 1; }
+.brain-signal-evidence { font-size: 11px; background: var(--zepto-bg-soft, #f9fafb);
+  padding: 6px; border-radius: 4px; margin: 6px 0 0 0; overflow-x: auto; }
+.brain-case-rca { font-size: 12px; color: var(--zepto-muted, #6b7280); margin: 6px 0 0 0; }
+.brain-panel-footer { font-size: 10px; color: var(--zepto-muted, #6b7280);
+  margin-top: 12px; padding-top: 8px; border-top: 1px dashed var(--zepto-border, #e5e7eb); }
+.trip-detail-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--zepto-border, #e5e7eb); margin-bottom: 8px; }
+.trip-detail-tabs button { background: transparent; border: 0; padding: 8px 12px;
+  font-size: 12px; cursor: pointer; color: var(--zepto-muted, #6b7280); }
+.trip-detail-tabs button.is-active { color: var(--zepto-fg, #111827);
+  border-bottom: 2px solid var(--zepto-accent, #facc15); margin-bottom: -1px; }
