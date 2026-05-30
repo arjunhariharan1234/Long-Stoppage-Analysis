@@ -75,6 +75,9 @@ def build_codex(positives: list[dict], negatives: list[dict], blacklist: dict,
             # already returns 0.0 for an empty iterable, but explicit is better).
             fm = 0.0
         weight = compute_weight(hit, fm)
+        # If no negative sample, cap at default_weight to prevent inflation.
+        if not negatives:
+            weight = min(weight, sig.get("default_weight", 10))
         weight = _apply_overfit_guard(weight, sig.get("source_cases", []))
         if weight < MIN_SHIPPABLE_WEIGHT:
             continue

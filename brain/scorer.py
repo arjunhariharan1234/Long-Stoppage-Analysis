@@ -162,7 +162,28 @@ def score_dataset(rows, codex: dict, cases: list[dict], blacklist: dict) -> list
     for r in rows:
         feats = extract_trip_features(r)
         out.append(score_trip(feats, codex, cases, ctx))
+    _retier_by_percentile(out)
     return out
+
+
+def _retier_by_percentile(scores: list[dict]) -> None:
+    """Override absolute tiers with within-cohort percentile tiers.
+
+    Top 20% → high, next 30% → medium, bottom 50% → low. For small cohorts
+    (< 10 trips) the absolute tier from _tier() is kept as-is.
+    """
+    if len(scores) < 10:
+        return
+    ordered = sorted((s["brain_score"] for s in scores), reverse=True)
+    p20 = ordered[int(len(ordered) * 0.20)]
+    p50 = ordered[int(len(ordered) * 0.50)]
+    for s in scores:
+        if s["brain_score"] >= p20:
+            s["tier"] = "high"
+        elif s["brain_score"] >= p50:
+            s["tier"] = "medium"
+        else:
+            s["tier"] = "low"
 
 
 def rollup_by_entity(scores: list[dict]) -> dict:
