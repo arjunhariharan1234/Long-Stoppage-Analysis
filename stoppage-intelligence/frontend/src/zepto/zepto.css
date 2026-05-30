@@ -4863,3 +4863,20 @@ html, body {
   font-size: 12px; cursor: pointer; color: var(--zepto-muted, #6b7280); }
 .trip-detail-tabs button.is-active { color: var(--zepto-fg, #111827);
   border-bottom: 2px solid var(--zepto-accent, #facc15); margin-bottom: -1px; }
+
+.brain-rail { padding: 12px; border: 1px solid var(--zepto-border, #e5e7eb);
+  border-radius: 8px; background: var(--zepto-bg-soft, #f9fafb); margin: 12px 0; }
+.brain-rail-list { list-style: none; padding: 0; margin: 8px 0 0 0;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; }
+.brain-rail-card { background: #fff; border: 1px solid var(--zepto-border, #e5e7eb);
+  border-radius: 6px; padding: 10px; display: flex; gap: 10px; }
+.brain-rail-score { display: flex; flex-direction: column; align-items: center; gap: 4px;
+  min-width: 48px; }
+.brain-rail-num { font-size: 22px; font-weight: 600; }
+.brain-rail-body { flex: 1; display: flex; flex-direction: column; gap: 4px;
+  font-size: 12px; }
+.brain-rail-trip { font-weight: 500; }
+.brain-rail-meta { color: var(--zepto-muted, #6b7280); }
+.brain-rail-narrative { font-size: 11px; color: var(--zepto-muted, #6b7280); }
+.brain-rail-signals { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+.brain-rail-more { font-size: 11px; color: var(--zepto-muted, #6b7280); }

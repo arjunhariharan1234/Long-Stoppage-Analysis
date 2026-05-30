@@ -5,6 +5,7 @@ import type {
   Summary, Verdict, HotspotFC, DriverRollup, VehicleRollup,
   TransporterRollup, EventRow,
 } from "../types";
+import type { BrainScore } from "../types";
 import { PulseMiniMap } from "../components/PulseMiniMap";
 import { Sparkline } from "../components/Sparkline";
 import {
@@ -42,16 +43,23 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots }
   const [vehicles, setVehicles] = useState<VehicleRollup[]>([]);
   const [transporters, setTransporters] = useState<TransporterRollup[]>([]);
   const [events, setEvents] = useState<EventRow[]>([]);
+  const [brainTop, setBrainTop] = useState<BrainScore[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       api.summary(), api.verdicts(), api.hotspots(),
       api.drivers(), api.vehicles(), api.transporters(), api.events(),
+      api.brainScores().catch(() => ({ scores: [] as BrainScore[] })),
     ])
-      .then(([s, v, h, d, vh, t, e]) => {
+      .then(([s, v, h, d, vh, t, e, brain]) => {
         setSummary(s); setVerdicts(v); setHotspots(h);
         setDrivers(d); setVehicles(vh); setTransporters(t); setEvents(e);
+        const top = brain.scores
+          .filter(x => x.tier === "high")
+          .sort((a, b) => b.brain_score - a.brain_score)
+          .slice(0, 5);
+        setBrainTop(top);
         setLoading(false);
       })
       .catch(e => { console.error(e); setLoading(false); });
@@ -168,6 +176,46 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots }
           delta={{ direction: "up", value: "+2pp", baseline: "vs last week" }}
         />
       </div>
+
+      {brainTop.length > 0 && (
+        <section className="pulse-rail brain-rail">
+          <header className="pulse-rail-header">
+            <h3>Brain-flagged this period</h3>
+            <span className="pulse-rail-count">{brainTop.length} of top 5</span>
+          </header>
+          <ul className="brain-rail-list">
+            {brainTop.map(b => (
+              <li key={b.trip_id} className="brain-rail-card">
+                <div className="brain-rail-score">
+                  <span className="brain-rail-num">{b.brain_score}</span>
+                  <Badge className="is-critical">HIGH</Badge>
+                </div>
+                <div className="brain-rail-body">
+                  <div className="brain-rail-trip">Trip {b.trip_id}</div>
+                  <div className="brain-rail-meta">
+                    {b.vehicle} · {b.transporter}
+                  </div>
+                  {b.similar_cases.length > 0 && (
+                    <div className="brain-rail-narrative">
+                      Looks like <strong>{b.similar_cases[0].case_id}</strong>
+                      {b.similar_cases[0].city ? ` (${b.similar_cases[0].city})` : ""} —
+                      {" "}{Math.round(b.similar_cases[0].similarity * 100)}% similar
+                    </div>
+                  )}
+                  <div className="brain-rail-signals">
+                    {b.matched_signals.slice(0, 3).map(s => (
+                      <Badge key={s.id} className="is-low">{s.id}</Badge>
+                    ))}
+                    {b.matched_signals.length > 3 && (
+                      <span className="brain-rail-more">+{b.matched_signals.length - 3}</span>
+                    )}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* Two-column: Hotspot mini-map + Time-of-day */}
       <div className="z-pulse-split">
