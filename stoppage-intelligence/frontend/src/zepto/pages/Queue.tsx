@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Badge, Button } from "ft-design-system";
 import { api } from "../api";
-import type { Verdict } from "../types";
+import type { Verdict, BrainScore } from "../types";
 import {
   STATUS_LABELS, statusVariant, getState, listStates, assign, snooze,
   close, setStatus, assigneeOptions, slaHoursLeft, useFindingStateChanges,
@@ -28,15 +28,33 @@ function slaBadge(hoursLeft: number | null) {
   return <Badge variant="neutral">SLA in {hoursLeft.toFixed(0)}h</Badge>;
 }
 
+function pickBrainForVerdict(v: Verdict, brainByTrip: Map<string, BrainScore>): BrainScore | null {
+  let best: BrainScore | null = null;
+  for (const ev of v.evidence) {
+    const b = brainByTrip.get(ev.trip_id);
+    if (!b) continue;
+    if (!best || b.brain_score > best.brain_score) best = b;
+  }
+  return best;
+}
+
 export function Queue({ onInvestigate, onOpenInMap }: Props) {
   const [verdicts, setVerdicts] = useState<Verdict[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<StatusFilter>("open");
   const [, forceTick] = useState(0);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [brainByTrip, setBrainByTrip] = useState<Map<string, BrainScore>>(new Map());
 
   useEffect(() => {
     api.verdicts().then(v => { setVerdicts(v); setLoading(false); }).catch(e => { console.error(e); setLoading(false); });
+    api.brainScores()
+      .then(file => {
+        const m = new Map<string, BrainScore>();
+        for (const s of file.scores) m.set(s.trip_id, s);
+        setBrainByTrip(m);
+      })
+      .catch(() => setBrainByTrip(new Map()));
   }, []);
 
   useEffect(() => useFindingStateChanges(() => forceTick(t => t + 1)), []);
@@ -98,6 +116,7 @@ export function Queue({ onInvestigate, onOpenInMap }: Props) {
               status={s.status}
               assignee={s.assignee}
               slaHrsLeft={sla}
+              brain={pickBrainForVerdict(v, brainByTrip)}
               isOpen={openId === v.verdict_id}
               onToggle={() => setOpenId(openId === v.verdict_id ? null : v.verdict_id)}
               onInvestigate={() => onInvestigate(v)}
@@ -119,9 +138,10 @@ function FilterChip({ label, active, onClick }: { label: string; active: boolean
 }
 
 function QueueRow({
-  verdict: v, status, assignee, slaHrsLeft, isOpen, onToggle, onInvestigate, onOpenInMap,
+  verdict: v, status, assignee, slaHrsLeft, brain, isOpen, onToggle, onInvestigate, onOpenInMap,
 }: {
   verdict: Verdict; status: Status; assignee: string | null; slaHrsLeft: number | null;
+  brain: BrainScore | null;
   isOpen: boolean; onToggle: () => void; onInvestigate: () => void; onOpenInMap: () => void;
 }) {
   const tierVariant: "danger" | "warning" | "info" =
@@ -139,6 +159,17 @@ function QueueRow({
             <Badge variant={tierVariant}>{tierLabel}</Badge>
             <Badge variant={statusVariant(status) as any}>{STATUS_LABELS[status]}</Badge>
             {slaBadge(slaHrsLeft)}
+            {brain && (() => {
+              const cls = brain.tier === "high" ? "is-critical" : brain.tier === "medium" ? "is-medium" : "is-low";
+              return (
+                <span
+                  className={`brain-pill ${cls}`}
+                  title={`Brain ${brain.brain_score} · ${brain.matched_signals.map(s => s.id).join(", ")}`}
+                >
+                  Brain {brain.brain_score}
+                </span>
+              );
+            })()}
             {assignee && (
               <span style={{ fontSize: 12, color: "#838c9d" }}>
                 → <span style={{ color: "#434f64" }}>{assignee}</span>

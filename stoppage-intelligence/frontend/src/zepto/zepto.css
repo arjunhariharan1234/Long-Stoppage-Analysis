@@ -4880,3 +4880,11 @@ html, body {
 .brain-rail-narrative { font-size: 11px; color: var(--zepto-muted, #6b7280); }
 .brain-rail-signals { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
 .brain-rail-more { font-size: 11px; color: var(--zepto-muted, #6b7280); }
+
+/* Brain score pill (Queue rows etc) */
+.brain-pill { display: inline-block; min-width: 28px; padding: 2px 6px;
+  border-radius: 10px; font-size: 11px; font-weight: 600; text-align: center;
+  line-height: 1.4; }
+.brain-pill.is-critical { background: #fee2e2; color: #991b1b; }
+.brain-pill.is-medium { background: #fef3c7; color: #92400e; }
+.brain-pill.is-low { background: #e5e7eb; color: #4b5563; }
