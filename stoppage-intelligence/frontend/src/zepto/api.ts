@@ -1,6 +1,7 @@
 import type {
   Summary, Verdict, HotspotFC, DriverRollup, VehicleRollup,
   TransporterRollup, RouteRollup, EventRow, TheftZoneResult, TripRow,
+  BrainScoresFile, BrainCodexFile, BrainCaseIndexFile, BrainRollupsFile,
 } from "./types";
 
 const BASE = `${import.meta.env.BASE_URL}zepto`;
@@ -22,4 +23,8 @@ export const api = {
   trips: () => load<{ trips: TripRow[] }>("entities/trips.json").then(r => r.trips),
   events: () => load<{ events: EventRow[] }>("events-in-transit.json").then(r => r.events),
   theftZoneResult: () => load<TheftZoneResult>("theft_zone_demo_result.json"),
+  brainScores: () => load<BrainScoresFile>("brain/brain_scores.json"),
+  brainCodex: () => load<BrainCodexFile>("brain/theft_codex.json"),
+  brainCases: () => load<BrainCaseIndexFile>("brain/case_index.json"),
+  brainRollups: () => load<BrainRollupsFile>("brain/brain_entity_rollups.json"),
 };

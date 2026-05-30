@@ -278,3 +278,91 @@ export interface TheftZoneResult {
   }[];
   total_zone_halts: number;
 }
+
+// --- Brain (theft codex + classifier) ---------------------------------------
+
+export interface BrainSignal {
+  id: string;
+  name: string;
+  category: string;
+  weight: number;
+  evidence: Record<string, unknown>;
+}
+
+export interface BrainSimilarCase {
+  case_id: string;
+  similarity: number;
+  city?: string;
+  rca_summary?: string;
+}
+
+export interface BrainScore {
+  trip_id: string;
+  vehicle: string;
+  driver_number: string;
+  transporter: string;
+  brain_score: number;
+  tier: "low" | "medium" | "high";
+  matched_signals: BrainSignal[];
+  similar_cases: BrainSimilarCase[];
+  recommended_action?: string;
+}
+
+export interface BrainScoresFile {
+  version: string;
+  generated_at: string;
+  scores: BrainScore[];
+}
+
+export interface BrainCodexSignalDef {
+  id: string;
+  name: string;
+  category: string;
+  rationale: string;
+  source_cases: string[];
+  weight: number;
+  training_hit_rate: number;
+  false_match_proxy: number;
+}
+
+export interface BrainCodexFile {
+  version: string;
+  generated_at: string;
+  training_set: Record<string, unknown>;
+  signals: BrainCodexSignalDef[];
+}
+
+export interface BrainCase {
+  case_id: string;
+  type: string;
+  city: string;
+  vehicle: string;
+  transporter: string;
+  loss_inr: number;
+  rca_summary: string;
+  signature_vector: Record<string, number>;
+}
+
+export interface BrainCaseIndexFile {
+  version: string;
+  generated_at: string;
+  cases: BrainCase[];
+}
+
+export interface BrainEntityRollup {
+  driver_number?: string;
+  vehicle?: string;
+  transporter?: string;
+  trips: number;
+  trips_with_brain_hit: number;
+  risk_score: number;
+  top_signal_ids: string[];
+}
+
+export interface BrainRollupsFile {
+  version: string;
+  generated_at: string;
+  drivers: BrainEntityRollup[];
+  vehicles: BrainEntityRollup[];
+  transporters: BrainEntityRollup[];
+}
