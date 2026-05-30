@@ -22,13 +22,12 @@ warnings.filterwarnings("ignore")
 from brain import CODEX_VERSION
 from brain.features import extract_trip_features
 from brain.codex_builder import build_codex, write_codex
-from brain.case_index import build_case_index, write_case_index
+from brain.case_index import write_case_index
 from brain.scorer import score_dataset, rollup_by_entity
 
 
 ROOT = Path(__file__).resolve().parents[1]
 TRAINING_XLSX = ROOT / "zepto_theft_cases_base_data.xlsx"
-CASES_JSON = ROOT / "confirmed_thefts" / "cases_parsed.json"
 OUT_DIR = ROOT / "stoppage-intelligence" / "frontend" / "public" / "zepto" / "brain"
 
 
@@ -73,11 +72,9 @@ def main() -> None:
     write_codex(codex, OUT_DIR / "theft_codex.json")
     print(f"  → {len(codex['signals'])} signals shipped (weight ≥ 5)")
 
-    print("Building case index…")
-    cases_raw = json.loads(CASES_JSON.read_text())
-    if isinstance(cases_raw, dict):
-        cases_raw = cases_raw.get("cases", [])
-    case_idx = build_case_index(cases_raw)
+    print("Building case index from training xlsx…")
+    from brain.case_index import build_case_index_from_xlsx
+    case_idx = build_case_index_from_xlsx(training_df, extract_trip_features)
     write_case_index(case_idx, OUT_DIR / "case_index.json")
     print(f"  → {len(case_idx['cases'])} cases indexed")
 

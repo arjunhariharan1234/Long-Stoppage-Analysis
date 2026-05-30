@@ -47,3 +47,50 @@ def test_build_case_index_emits_per_case_entry():
     assert c["type"] == "confirmed_theft"
     assert "signature_vector" in c
     assert set(c["signature_vector"].keys()) == set(SIGNATURE_FEATURES)
+
+
+def test_build_case_index_from_xlsx_groups_by_incident_trip_id():
+    """Synthetic mini-dataset: 2 incidents, 3 trips each → 2 cases."""
+    import pandas as pd
+    from brain.features import extract_trip_features
+    from brain.case_index import build_case_index_from_xlsx, SIGNATURE_FEATURES
+
+    rows = []
+    for tid in [54448970, 54448970, 54448970]:  # case 1, 3 trips
+        rows.append({"incident_trip_id": tid, "city": "Lucknow",
+                     "vehicle_number_clean": "UP32QT2997",
+                     "window_transporter": "A&A", "theft_type": "en-route",
+                     "rca_summary": "narcotics", "incident_loss_value": 50000,
+                     "window_trip_id": 100 + tid, "ping_polyline": "",
+                     "window_distance_travelled_km": 90,
+                     "window_google_distance_km": 65,
+                     "window_stoppage_hrs": 2.0, "window_transit_time_hrs": 3.0,
+                     "window_unloading_time_hrs": 0.05,
+                     "window_geofence_breached": False,
+                     "window_closure_mode": "manual", "window_total_pings": 100,
+                     "ping_count": 0, "window_driver_number": 9999})
+    for tid in [11111111, 11111111, 11111111]:  # case 2
+        rows.append({"incident_trip_id": tid, "city": "Delhi",
+                     "vehicle_number_clean": "DL01XX0000",
+                     "window_transporter": "MHS", "theft_type": "concealment",
+                     "rca_summary": "seal tamper", "incident_loss_value": 30000,
+                     "window_trip_id": 200 + tid, "ping_polyline": "",
+                     "window_distance_travelled_km": 50,
+                     "window_google_distance_km": 48,
+                     "window_stoppage_hrs": 0.5, "window_transit_time_hrs": 2.0,
+                     "window_unloading_time_hrs": 1.0,
+                     "window_geofence_breached": False,
+                     "window_closure_mode": "manual", "window_total_pings": 80,
+                     "ping_count": 0, "window_driver_number": 8888})
+    df = pd.DataFrame(rows)
+    idx = build_case_index_from_xlsx(df, extract_trip_features)
+    assert len(idx["cases"]) == 2
+    case_ids = [c["case_id"] for c in idx["cases"]]
+    assert all(cid.startswith("CT-") for cid in case_ids)
+    case1 = next(c for c in idx["cases"] if "Lucknow" == c["city"])
+    assert case1["transporter"] == "A&A"
+    assert case1["loss_inr"] == 50000
+    assert case1["matched_trip_count"] == 3
+    assert set(case1["signature_vector"].keys()) == set(SIGNATURE_FEATURES)
+    # Averaged stoppage_share for case 1: 2.0/3.0 ≈ 0.667
+    assert case1["signature_vector"]["stoppage_share"] == pytest.approx(2.0/3.0, abs=0.01)
