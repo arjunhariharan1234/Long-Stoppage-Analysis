@@ -53,6 +53,20 @@ def _safe_float(v: Any, default: float = 0.0) -> float:
         return default
 
 
+def _safe_str(v: Any, default: str = "") -> str:
+    """Coerce to string, treating NaN / None / non-strings as the default."""
+    if v is None:
+        return default
+    if isinstance(v, float) and math.isnan(v):
+        return default
+    if not isinstance(v, str):
+        try:
+            return str(v)
+        except Exception:
+            return default
+    return v
+
+
 def _safe_bool(v: Any) -> bool:
     if isinstance(v, bool):
         return v
@@ -68,18 +82,18 @@ def extract_trip_features(row: dict | Any) -> dict:
     """
     g = row.get if isinstance(row, dict) else (lambda k, d=None: getattr(row, k, d) if hasattr(row, k) else row[k] if k in row else d)
 
-    polyline_enc = g("ping_polyline", "") or ""
+    polyline_enc = _safe_str(g("ping_polyline", ""))
     poly_len = polyline_length_km(polyline_enc)
     transit_km = _safe_float(g("window_distance_travelled_km"))
     google_km = _safe_float(g("window_google_distance_km"))
 
     return {
-        "trip_id": str(g("window_trip_id", "")),
-        "vehicle": g("vehicle_number_clean", "") or "",
-        "driver_number": str(g("window_driver_number", "") or ""),
-        "transporter": g("window_transporter", "") or "",
-        "origin": g("window_origin", "") or "",
-        "destination": g("window_destination", "") or "",
+        "trip_id": _safe_str(g("window_trip_id", "")),
+        "vehicle": _safe_str(g("vehicle_number_clean", "")),
+        "driver_number": _safe_str(g("window_driver_number", "")),
+        "transporter": _safe_str(g("window_transporter", "")),
+        "origin": _safe_str(g("window_origin", "")),
+        "destination": _safe_str(g("window_destination", "")),
         "transit_distance_km": transit_km,
         "google_distance_km": google_km,
         "detour_ratio": (transit_km / google_km) if google_km > 0 else 1.0,
@@ -91,6 +105,6 @@ def extract_trip_features(row: dict | Any) -> dict:
         "polyline_available": len(polyline_enc) > 0,
         "polyline_length_km": poly_len,
         "geofence_breached": _safe_bool(g("window_geofence_breached")),
-        "closure_mode": (g("window_closure_mode", "") or "").lower(),
-        "auto_closure_type": (g("window_auto_closure_type", "") or "") or "",
+        "closure_mode": _safe_str(g("window_closure_mode", "")).lower(),
+        "auto_closure_type": _safe_str(g("window_auto_closure_type", "")),
     }

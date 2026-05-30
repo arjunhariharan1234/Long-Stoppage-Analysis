@@ -1,0 +1,586 @@
+{
+  "version": "2026-05-30.1",
+  "generated_at": "2026-05-30T03:37:32",
+  "cases": [
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "DELHI",
+      "vehicle": null,
+      "transporter": "MHS",
+      "loss_inr": null,
+      "rca_summary": "",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Lucknow",
+      "vehicle": null,
+      "transporter": "A&A Transport",
+      "loss_inr": null,
+      "rca_summary": "Based on footage, shortage data, this case strongly indicates a suspected en-route theft involving vehicle UP32YN0914.",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Lucknow",
+      "vehicle": null,
+      "transporter": "Bhagwati Service & Suppliers",
+      "loss_inr": null,
+      "rca_summary": "Based on footage, shortage data, this case strongly indicates a suspected en-route theft involving vehicle UP33DT2972.",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Bengaluru",
+      "vehicle": null,
+      "transporter": "SLN Transport",
+      "loss_inr": null,
+      "rca_summary": "",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Mumbai",
+      "vehicle": null,
+      "transporter": "Searchex Transport",
+      "loss_inr": null,
+      "rca_summary": "Based on the investigation and review of CCTV footage, it is confirmed that the theft was committed by the vehicle driver. between intransit..",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Noida",
+      "vehicle": null,
+      "transporter": "JSP",
+      "loss_inr": null,
+      "rca_summary": "Based on footage, shortage data, this case strongly indicates a suspected en-route theft involving vehicle.",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Delhi",
+      "vehicle": null,
+      "transporter": "MHS",
+      "loss_inr": null,
+      "rca_summary": "An in-transit theft was identified for Vehicle HR55BA4578 (Vendor: MHS) en route from JJR-DRY-MH-LUHARI to DEL\u2013Kirti Nagar Network-2 DH, resulting in a total loss of \u20b931,575. CCTV evidence confirms pr",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Mumbai",
+      "vehicle": null,
+      "transporter": "Trustech Supply Chain PVT LTD",
+      "loss_inr": null,
+      "rca_summary": "The investigation, based on CCTV footage from both DH and MH, register entries, and POD validation, clearly establishes that an in-transit theft occurred at the DH during vehicle unloading, specifical",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "DELHI",
+      "vehicle": null,
+      "transporter": "Maa Durga",
+      "loss_inr": null,
+      "rca_summary": "Based on footage, shortage data, this case strongly indicates a suspected en-route theft involving vehicle.",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Delhi",
+      "vehicle": null,
+      "transporter": "Maa Durga",
+      "loss_inr": null,
+      "rca_summary": "The investigation, based on CCTV footage, register entries, POD validation, and the driver\u2019s admission, clearly establishes that in-transit theft occurred in the vehicle, specifically targeting empty ",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Delhi",
+      "vehicle": null,
+      "transporter": "Maa Durga",
+      "loss_inr": null,
+      "rca_summary": "The investigation, based on both side(DH-MH)  CCTV footage, register entries, POD validation, clearly establishes that in-transit theft occurred in the vehicle, specifically targeting empty totes.",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Delhi",
+      "vehicle": null,
+      "transporter": "Maa Durga",
+      "loss_inr": null,
+      "rca_summary": "The investigation, based on CCTV footage, register entries, POD validation, and the driver\u2019s admission, clearly establishes that in-transit theft occurred in the vehicle, specifically targeting empty ",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Delhi",
+      "vehicle": null,
+      "transporter": "Maa Durga",
+      "loss_inr": null,
+      "rca_summary": "The investigation, based on both side(DH-MH)  CCTV footage, register entries, POD validation, clearly establishes that in-transit theft occurred in the vehicle, specifically targeting empty totes.",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Delhi",
+      "vehicle": null,
+      "transporter": "Urja Transport",
+      "loss_inr": null,
+      "rca_summary": "Based on footage, NYR data, this case strongly indicates a suspected en-route theft involving vehicle.",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Bengaluru",
+      "vehicle": null,
+      "transporter": "JD Transport",
+      "loss_inr": null,
+      "rca_summary": "The short putaway occurred due to deployment of an unauthorized spare driver, tampering of chocolate crate seals after first unloading, lack of strict seal verification at route stores, continuous use",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Haryana",
+      "vehicle": null,
+      "transporter": "AVN Transport",
+      "loss_inr": null,
+      "rca_summary": "\uf0b7During the six-side vehicle inspection, the Security Supervisor found items inside the driver\u2019s cabin.\n\uf0b7As part of the investigation, the driver was interviewed.\n\uf0b7During the interview, the driver sta",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Gurugram",
+      "vehicle": null,
+      "transporter": "SRCV",
+      "loss_inr": null,
+      "rca_summary": "Based on the driver\u2019s written confession, CCTV footage of loading and unloading operations, QC verification footage, GPS movement reports indicating unauthorized halts, and the correlated shortage dat",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Bengaluru",
+      "vehicle": null,
+      "transporter": "SLN Transport",
+      "loss_inr": null,
+      "rca_summary": "\u2022        There were no discrepancies at the Mother Hub (MH) dispatch level.\n\u2022        No stock variance was identified during the DH physical audit.\n\u2022        The shrinkage occurred between the unloadin",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Delhi",
+      "vehicle": null,
+      "transporter": "MHS",
+      "loss_inr": null,
+      "rca_summary": "This is to inform you that a shortage of approximately \u20b96,000 was identified in the vehicle on 5th February at DH DEL_Janta Market.\n\nAdditionally, we observed a tote mismatch pattern. Based on these f",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Bengaluru",
+      "vehicle": null,
+      "transporter": "SLR Transport",
+      "loss_inr": null,
+      "rca_summary": "",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Bengaluru",
+      "vehicle": null,
+      "transporter": "BCB Transport",
+      "loss_inr": null,
+      "rca_summary": "On 01-03-2026, the Cold MH SLP Team received a call from the Micro Layout AOR SLP Manager stating that during a vehicle\ncabin check, 1 Qty of Amul Kaju Katri was found inside the driver cabin of vehic",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Delhi",
+      "vehicle": null,
+      "transporter": "Shree Laxmi",
+      "loss_inr": null,
+      "rca_summary": "1. Loss Analysis: A detailed analysis of the transit loss between the source and destination revealed that the highlighted vehicle\nwas responsible for a significant loss originating from MH.\n2. Origin",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Ahmedabad",
+      "vehicle": null,
+      "transporter": "Aditya Services",
+      "loss_inr": null,
+      "rca_summary": "1. Driver stopped the vehicle at isolated locations during transit.\n\n2. He tampered with or broke by rinch pana vehicle seal to access the cargo area.\n\n3. Milk SKUs were selectively removed to avoid i",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Patiala",
+      "vehicle": null,
+      "transporter": "Navneet Transport",
+      "loss_inr": null,
+      "rca_summary": "1. Transport supervisors opened the IKIN locks with the help of LPA.\n2. They moved the vehicles into gray area in MH parking and opened the doors for theft.",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Bengaluru",
+      "vehicle": null,
+      "transporter": "SLN transport",
+      "loss_inr": null,
+      "rca_summary": "Two drivers from SLN Transport were found involved in repeated theft of inventory during unloading operations, confirmed through CCTV evidence and confession, with the vendor agreeing to compensate th",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Lucknow",
+      "vehicle": null,
+      "transporter": "A&A",
+      "loss_inr": null,
+      "rca_summary": "Several suspicious halts were observed during transit. The driver picked up blacklisted driver Raju while en route. During transit, he consumed gutkha/ganja and narcotic substances, then handed over t",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Delhi",
+      "vehicle": null,
+      "transporter": "Shree Laxmi",
+      "loss_inr": null,
+      "rca_summary": "The investigation confirms an in-transit theft involving Vehicle No. DL01LAC8928, with a shortage loss of \u20b948,713. Evidence from CCTV, crate condition mismatch, and GPS stoppages strongly indicates dr",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Kolkata",
+      "vehicle": null,
+      "transporter": "Goodwill",
+      "loss_inr": null,
+      "rca_summary": "The investigation confirms that there might be  in-transit theft involving Vehicle No. WB091182, with a shortage loss of \u20b920000. Evidence from CCTV, crate condition mismatch, and GPS stoppages strongl",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    },
+    {
+      "case_id": null,
+      "type": "confirmed_theft",
+      "city": "Chennai",
+      "vehicle": null,
+      "transporter": "MSN Transport",
+      "loss_inr": null,
+      "rca_summary": "All LPNs were correctly manifested and loaded at MH\u00a0\n\n6 LPNs were short at DH during receiving\u00a0\n\nMissing LPNs were not found during unloading\u00a0\n\nInner shortages were also observed\u00a0\n\nVehicle broke down ",
+      "matched_trip_count": 0,
+      "signature_vector": {
+        "detour_ratio": 1.0,
+        "stoppage_share": 0.0,
+        "max_halt_hrs": 0.0,
+        "halt_count_per_100km": 0.0,
+        "transit_distance_km": 0.0,
+        "unloading_time_hrs": 0.0,
+        "ping_density_per_km": 0.0,
+        "geofence_breached": 0.0
+      }
+    }
+  ]
+}

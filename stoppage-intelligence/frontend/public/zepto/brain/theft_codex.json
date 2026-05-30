@@ -1,0 +1,105 @@
+{
+  "version": "2026-05-30.1",
+  "generated_at": "2026-05-30T03:37:32",
+  "training_set": {
+    "training_xlsx": "zepto_theft_cases_base_data.xlsx",
+    "positive_trips": 5036,
+    "negative_trips": 0
+  },
+  "signals": [
+    {
+      "id": "S-01",
+      "name": "Significant detour (transit \u226b planned)",
+      "category": "ping_pattern",
+      "rationale": "Trip travelled >25% more than the Google route \u2014 off-route detour.",
+      "source_cases": [
+        "CT-001"
+      ],
+      "default_weight": 15,
+      "weight": 10,
+      "training_hit_rate": 0.125,
+      "false_match_proxy": 0.0
+    },
+    {
+      "id": "S-03",
+      "name": "Stoppage dominates transit time",
+      "category": "halt_signature",
+      "rationale": "Stoppage hours \u2265 40% of transit hours with min 1hr stoppage.",
+      "source_cases": [
+        "CT-001",
+        "CT-004"
+      ],
+      "default_weight": 20,
+      "weight": 30,
+      "training_hit_rate": 0.295,
+      "false_match_proxy": 0.0
+    },
+    {
+      "id": "S-04",
+      "name": "Driver on blacklist",
+      "category": "entity_state",
+      "rationale": "Driver number appears in the confirmed-theft/blacklisted-driver set.",
+      "source_cases": [
+        "CT-001",
+        "CT-007"
+      ],
+      "default_weight": 35,
+      "weight": 100,
+      "training_hit_rate": 1.0,
+      "false_match_proxy": 0.0
+    },
+    {
+      "id": "S-05",
+      "name": "Vehicle on blacklist",
+      "category": "entity_state",
+      "rationale": "Vehicle number appears in the confirmed-theft/blacklisted-vehicle set.",
+      "source_cases": [
+        "CT-001"
+      ],
+      "default_weight": 35,
+      "weight": 10,
+      "training_hit_rate": 1.0,
+      "false_match_proxy": 0.0
+    },
+    {
+      "id": "S-06",
+      "name": "Transporter is a repeat offender",
+      "category": "entity_state",
+      "rationale": "Transporter branch has multiple trips in the positive set.",
+      "source_cases": [
+        "CT-001",
+        "CT-004"
+      ],
+      "default_weight": 20,
+      "weight": 100,
+      "training_hit_rate": 0.997,
+      "false_match_proxy": 0.0
+    },
+    {
+      "id": "S-09",
+      "name": "Transit distance far exceeds Google distance",
+      "category": "geofence",
+      "rationale": "Driven distance > planned + 15km.",
+      "source_cases": [
+        "CT-001"
+      ],
+      "default_weight": 15,
+      "weight": 8,
+      "training_hit_rate": 0.083,
+      "false_match_proxy": 0.0
+    },
+    {
+      "id": "S-10",
+      "name": "Suspicious low unloading time",
+      "category": "closure_anomaly",
+      "rationale": "Cargo offloaded in < 6 minutes after a multi-hour transit \u2014 likely concealed offload.",
+      "source_cases": [
+        "CT-001"
+      ],
+      "default_weight": 22,
+      "weight": 10,
+      "training_hit_rate": 0.143,
+      "false_match_proxy": 0.0
+    }
+  ]
+}
