@@ -82,7 +82,7 @@ export interface Summary {
   in_transit_events: number;
   dropped_near_origin: number;
   dropped_near_destination: number;
-  dropped_under_30min: number;
+  dropped_under_15min: number;
   unique_trips: number;
   unique_drivers: number;
   unique_vehicles: number;
@@ -177,6 +177,57 @@ export interface RouteRollup {
   reefer_share: number;
   median_duration_hrs: number;
   risk_score: number;
+}
+
+export interface TripRow {
+  trip_id: string;
+  master_trip_id: string;
+  origin: string;
+  destination: string;
+  origin_lat: number | null;
+  origin_lng: number | null;
+  destination_lat: number | null;
+  destination_lng: number | null;
+  vehicle_number: string;
+  vehicle_type: string;
+  transporter_branch: string;
+  driver_name: string;
+  driver_number: string;
+  zone: string;
+  inbound_or_outbound: string;
+  trip_status: string;
+  halt_count: number;
+  max_stoppage_hrs: number;
+  total_stoppage_hrs: number;
+  max_escalation: number;
+  first_alert_at: string;
+  latest_alert_at: string;
+  total_planned_distance: number | null;
+  total_transit_distance: number | null;
+  is_reefer: boolean;
+  night_share: number;
+  top_poi_name: string;
+  top_poi_type: string;
+  top_poi_category: string;
+  top_poi_distance_km: number | null;
+  unmapped_halts: number;
+  halts?: TripHalt[];
+}
+
+export interface TripHalt {
+  ts: string;
+  lat: number | null;
+  lng: number | null;
+  duration_hrs: number;
+  escalation: number;
+  poi_name: string;
+  poi_type: string;
+  poi_category: string;
+  distance_to_poi_km: number | null;
+  cluster_id: string;
+  cluster_halt_count: number;
+  is_night: boolean;
+  address: string;
 }
 
 export interface EventRow {

@@ -23,3 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Local env (never commit secrets)
+.env
+.env.local
+.env.production

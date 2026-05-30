@@ -1,6 +1,6 @@
 import type {
   Summary, Verdict, HotspotFC, DriverRollup, VehicleRollup,
-  TransporterRollup, RouteRollup, EventRow, TheftZoneResult,
+  TransporterRollup, RouteRollup, EventRow, TheftZoneResult, TripRow,
 } from "./types";
 
 const BASE = `${import.meta.env.BASE_URL}zepto`;
@@ -19,6 +19,7 @@ export const api = {
   vehicles: () => load<{ vehicles: VehicleRollup[] }>("entities/vehicles.json").then(r => r.vehicles),
   transporters: () => load<{ transporters: TransporterRollup[] }>("entities/transporters.json").then(r => r.transporters),
   routes: () => load<{ routes: RouteRollup[] }>("entities/routes.json").then(r => r.routes),
+  trips: () => load<{ trips: TripRow[] }>("entities/trips.json").then(r => r.trips),
   events: () => load<{ events: EventRow[] }>("events-in-transit.json").then(r => r.events),
   theftZoneResult: () => load<TheftZoneResult>("theft_zone_demo_result.json"),
 };

@@ -103,13 +103,7 @@ export function TheftZoneUpload() {
   }, [phase, result]);
 
   return (
-    <div className="zepto-page">
-      <div className="zepto-eyebrow">Customer risk zones</div>
-      <h1 className="zepto-headline">Upload your <em>risk zones</em> — we intersect them with the halt dataset</h1>
-      <p className="zepto-sub">
-        Drop a CSV or XLSX of the zones your security team already tracks. We intersect them with the in-transit halt dataset and return per-zone breakdowns:
-        top transporters, top drivers, top vehicles, halt density, night-share and the pattern-level findings inside each zone.
-      </p>
+    <div className="z-container z-page">
 
       {phase === "idle" && (
         <div

@@ -1,18 +1,6 @@
-import { useEffect, useRef } from "react";
-import maplibregl from "maplibre-gl";
+import { useEffect, useRef, useState } from "react";
 
-const LIGHT_BASEMAP: maplibregl.StyleSpecification = {
-  version: 8,
-  sources: {
-    carto: {
-      type: "raster",
-      tiles: ["https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png"],
-      tileSize: 256,
-      attribution: "© CARTO © OpenStreetMap",
-    },
-  },
-  layers: [{ id: "carto", type: "raster", source: "carto" }],
-};
+const GOOGLE_KEY = (import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined) || "";
 
 interface Props {
   lat: number;
@@ -23,48 +11,139 @@ interface Props {
   extraPoints?: { lat: number; lng: number; size?: number }[];
 }
 
-export function MiniMap({ lat, lng, zoom = 13, height = 160, markerColor = "#1e64e6", extraPoints = [] }: Props) {
+/* Lazy-load the Google Maps JS API once. Resolves to window.google when ready. */
+let mapsLoader: Promise<any> | null = null;
+function loadGoogleMaps(): Promise<any> {
+  if (typeof window === "undefined") return Promise.reject(new Error("SSR"));
+  if ((window as any).google?.maps) return Promise.resolve((window as any).google);
+  if (mapsLoader) return mapsLoader;
+  if (!GOOGLE_KEY) return Promise.reject(new Error("VITE_GOOGLE_MAPS_API_KEY not set"));
+  mapsLoader = new Promise((resolve, reject) => {
+    const cbName = "__zeptoGmapsReady";
+    (window as any)[cbName] = () => resolve((window as any).google);
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_KEY}&callback=${cbName}&libraries=marker&v=weekly`;
+    script.async = true;
+    script.defer = true;
+    script.onerror = () => reject(new Error("Failed to load Google Maps"));
+    document.head.appendChild(script);
+  });
+  return mapsLoader;
+}
+
+/* Minimal, low-saturation map style — quiet enough for a dashboard. */
+const QUIET_STYLE: any[] = [
+  { elementType: "geometry", stylers: [{ color: "#f5f7fa" }] },
+  { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#5f697b" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
+  { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#ced1d7" }] },
+  { featureType: "administrative.land_parcel", stylers: [{ visibility: "off" }] },
+  { featureType: "poi", stylers: [{ visibility: "off" }] },
+  { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#e4e7ec" }] },
+  { featureType: "transit", stylers: [{ visibility: "off" }] },
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#dfe3e9" }] },
+];
+
+export function MiniMap({ lat, lng, zoom = 13, height = 240, markerColor = "#1e64e6", extraPoints = [] }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
+  const mapRef = useRef<any>(null);
+  const markersRef = useRef<any[]>([]);
+  const [status, setStatus] = useState<"loading" | "ready" | "no-key" | "error">("loading");
 
+  // JS API path
   useEffect(() => {
-    if (!containerRef.current) return;
-    const map = new maplibregl.Map({
-      container: containerRef.current,
-      style: LIGHT_BASEMAP,
-      center: [lng, lat],
-      zoom,
-      attributionControl: false,
-      interactive: false,
-    });
-    mapRef.current = map;
+    if (!GOOGLE_KEY) { setStatus("no-key"); return; }
+    let cancelled = false;
+    loadGoogleMaps()
+      .then(google => {
+        if (cancelled || !containerRef.current) return;
+        if (!mapRef.current) {
+          mapRef.current = new google.maps.Map(containerRef.current, {
+            center: { lat, lng },
+            zoom,
+            disableDefaultUI: true,
+            zoomControl: true,
+            gestureHandling: "cooperative",
+            styles: QUIET_STYLE,
+            backgroundColor: "#f5f7fa",
+          });
+        } else {
+          mapRef.current.setCenter({ lat, lng });
+          mapRef.current.setZoom(zoom);
+        }
+        // Clear old markers
+        markersRef.current.forEach(m => m.setMap(null));
+        markersRef.current = [];
 
-    map.on("load", () => {
-      // primary marker
-      const el = document.createElement("div");
-      el.style.width = "14px";
-      el.style.height = "14px";
-      el.style.borderRadius = "50%";
-      el.style.background = markerColor;
-      el.style.boxShadow = `0 0 0 4px ${markerColor}44, 0 0 14px ${markerColor}`;
-      el.style.animation = "zepto-pulse 1.8s ease-in-out infinite";
-      new maplibregl.Marker({ element: el }).setLngLat([lng, lat]).addTo(map);
+        // Evidence dots
+        extraPoints.forEach(p => {
+          const m = new google.maps.Marker({
+            position: { lat: p.lat, lng: p.lng },
+            map: mapRef.current,
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: Math.max(4, Math.min(10, (p.size ?? 6) * 0.8)),
+              fillColor: "#FFBE07",
+              fillOpacity: 0.9,
+              strokeColor: "#1a2330",
+              strokeWeight: 1,
+            },
+          });
+          markersRef.current.push(m);
+        });
 
-      // evidence dots
-      extraPoints.forEach(p => {
-        const d = document.createElement("div");
-        const sz = p.size ?? 6;
-        d.style.width = `${sz}px`;
-        d.style.height = `${sz}px`;
-        d.style.borderRadius = "50%";
-        d.style.background = "rgba(255, 190, 7, 0.85)";
-        d.style.border = "1px solid #1a2330";
-        new maplibregl.Marker({ element: d }).setLngLat([p.lng, p.lat]).addTo(map);
-      });
-    });
+        // Primary marker (pulse)
+        const primary = new google.maps.Marker({
+          position: { lat, lng },
+          map: mapRef.current,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 9,
+            fillColor: markerColor,
+            fillOpacity: 1,
+            strokeColor: "#ffffff",
+            strokeWeight: 3,
+          },
+          zIndex: 999,
+        });
+        markersRef.current.push(primary);
 
-    return () => { map.remove(); mapRef.current = null; };
+        setStatus("ready");
+      })
+      .catch(() => setStatus("error"));
+    return () => { cancelled = true; };
   }, [lat, lng, zoom, markerColor, JSON.stringify(extraPoints)]);
 
-  return <div ref={containerRef} style={{ width: "100%", height, borderRadius: 8, overflow: "hidden", border: "1px solid var(--border)" }} />;
+  // Fallback: Google Maps embed iframe (no key required, no custom markers)
+  if (status === "no-key" || status === "error") {
+    const z = Math.max(2, Math.min(20, Math.round(zoom)));
+    const src = `https://maps.google.com/maps?q=${lat.toFixed(6)},${lng.toFixed(6)}&z=${z}&output=embed`;
+    return (
+      <iframe
+        src={src}
+        width="100%"
+        height={height}
+        style={{ border: "1px solid #e4e7ec", borderRadius: 8, display: "block" }}
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        title="Google Maps"
+      />
+    );
+  }
+
+  return (
+    <div
+      ref={containerRef}
+      style={{
+        width: "100%",
+        height,
+        borderRadius: 8,
+        overflow: "hidden",
+        border: "1px solid #e4e7ec",
+        background: "#f5f7fa",
+      }}
+    />
+  );
 }
