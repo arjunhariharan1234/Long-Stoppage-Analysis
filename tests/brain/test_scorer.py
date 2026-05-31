@@ -24,16 +24,16 @@ def test_weighted_euclidean_responds_to_weight():
 
 
 def test_score_trip_returns_contract_shape():
+    # Use a behavioural signal so we don't depend on entity blacklists.
     codex = {
         "version": "test",
         "signals": [
-            {"id": "S-04", "name": "x", "category": "entity_state", "weight": 30,
-             "source_cases": ["CT-001"]},
+            {"id": "S-18", "name": "Night gate-out", "category": "temporal",
+             "weight": 30, "source_cases": ["CT-001"]},
         ],
     }
-    feats = {"driver_number": "7459901375"}
-    ctx = {"blacklist": {"drivers": {"7459901375"}, "vehicles": set(), "transporters": set()}}
-    out = score_trip(feats, codex, [], ctx)
+    feats = {"gate_out_hour": 23}
+    out = score_trip(feats, codex, [], {})
     assert out["brain_score"] >= 30
     assert out["tier"] in ("low", "medium", "high")
     assert isinstance(out["matched_signals"], list)

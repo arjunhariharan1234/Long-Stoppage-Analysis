@@ -14,6 +14,7 @@ def test_compute_weight_formula():
 
 
 def test_build_codex_returns_versioned_dict():
+    # Positives have a 1.4 detour with 90km transit and 65km Google → S-01 fires.
     positives = [
         {"driver_number": "7459901375", "vehicle": "UP32QT2997",
          "transporter": "A&A Associates - Zepto",
@@ -22,7 +23,11 @@ def test_build_codex_returns_versioned_dict():
          "geofence_breached": False, "unloading_time_hrs": 0.05,
          "closure_mode": "manual", "total_pings": 100,
          "polyline_available": False, "polyline_length_km": 0,
-         "ping_count": 0},
+         "ping_count": 0,
+         "loading_time_hrs": 0.0, "tracking_health": 1.0,
+         "gate_out_hour": 14, "gate_to_first_ping_min": 0.0,
+         "alerts_count": 0, "eta_breach_hrs": 0.0,
+         "destination_entry_present": True},
     ]
     negatives = [
         {"driver_number": "0000000000", "vehicle": "AB00XX0000",
@@ -32,21 +37,24 @@ def test_build_codex_returns_versioned_dict():
          "geofence_breached": False, "unloading_time_hrs": 0.5,
          "closure_mode": "manual", "total_pings": 200,
          "polyline_available": False, "polyline_length_km": 0,
-         "ping_count": 0},
+         "ping_count": 0,
+         "loading_time_hrs": 0.0, "tracking_health": 1.0,
+         "gate_out_hour": 14, "gate_to_first_ping_min": 0.0,
+         "alerts_count": 0, "eta_breach_hrs": 0.0,
+         "destination_entry_present": True},
     ]
-    blacklist = {"drivers": {"7459901375"}, "vehicles": {"UP32QT2997"},
-                 "transporters": {"a&a associates - zepto"}}
+    blacklist = {"drivers": set(), "vehicles": set(), "transporters": set()}
     codex = build_codex(positives, negatives, blacklist,
-                        training_meta={"confirmed_thefts": 1, "blacklisted_drivers": 1,
-                                       "blacklisted_vehicles": 1})
+                        training_meta={"confirmed_thefts": 1})
     assert "version" in codex
     assert "generated_at" in codex
     assert isinstance(codex["signals"], list)
-    assert any(s["id"] == "S-04" for s in codex["signals"])
-    s4 = next(s for s in codex["signals"] if s["id"] == "S-04")
-    assert s4["weight"] >= 5
-    assert s4["training_hit_rate"] == 1.0
-    assert s4["false_match_proxy"] == 0.0
+    # S-01 should appear: positive hit-rate 1.0, negative 0.0 → high weight.
+    assert any(s["id"] == "S-01" for s in codex["signals"])
+    s1 = next(s for s in codex["signals"] if s["id"] == "S-01")
+    assert s1["weight"] >= 5
+    assert s1["training_hit_rate"] == 1.0
+    assert s1["false_match_proxy"] == 0.0
 
 
 def test_build_codex_drops_low_weight_signals():

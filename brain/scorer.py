@@ -48,13 +48,17 @@ def _feature_weights_from_codex(codex: dict) -> dict[str, float]:
         "S-01": ["detour_ratio"],
         "S-02": ["ping_density_per_km"],
         "S-03": ["stoppage_share", "max_halt_hrs"],
-        "S-04": [],  # entity match — not in signature vector
-        "S-05": [],
-        "S-06": [],
         "S-08": ["geofence_breached"],
         "S-09": ["detour_ratio", "transit_distance_km"],
         "S-10": ["unloading_time_hrs"],
         "S-11": ["ping_density_per_km"],
+        "S-12": [],   # loading time — not in signature vector v1
+        "S-13": [],   # tracking health — not in signature vector v1
+        "S-14": [],   # gate-out delay — not in signature vector v1
+        "S-15": [],   # destination entry — not in signature vector v1
+        "S-16": [],   # ETA breach — not in signature vector v1
+        "S-17": [],   # alerts — not in signature vector v1
+        "S-18": [],   # night gate-out — not in signature vector v1
     }
     weights = {f: 1.0 for f in SIGNATURE_FEATURES}  # floor
     for sig in codex.get("signals", []):
@@ -142,13 +146,11 @@ def _recommended_action(matched: list[dict], similar: list[dict]) -> str:
     """Tiny canned recommender — points the analyst at the highest-leverage next step."""
     if not matched:
         return "No brain hit — review only if other surfaces flag."
-    has_entity = any(m["category"] == "entity_state" for m in matched)
-    if has_entity and similar:
+    has_high_weight = any(m["weight"] >= 15 for m in matched)
+    if has_high_weight and similar:
         c = similar[0]
-        return (f"Open case packet · cross-check against {c.get('case_id')}"
+        return (f"Open case packet · compare with {c.get('case_id')}"
                 f" ({c.get('city', '')})")
-    if has_entity:
-        return "Driver/vehicle/transporter on blacklist — pull recent trips for the entity."
     if similar:
         c = similar[0]
         return (f"Compare ping pattern with {c.get('case_id')}"

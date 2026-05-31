@@ -6,8 +6,10 @@ evaluator and case-index builder both consume.
 from __future__ import annotations
 
 import math
+from datetime import datetime
 from typing import Any
 
+import pandas as pd
 import polyline as _polyline
 
 
@@ -75,6 +77,103 @@ def _safe_bool(v: Any) -> bool:
     return False
 
 
+def _safe_int(v: Any, default: int = 0) -> int:
+    """Coerce to int, parsing numeric strings; default for None/NaN/non-numeric."""
+    if v is None:
+        return default
+    if isinstance(v, bool):
+        return int(v)
+    if isinstance(v, (int, float)):
+        try:
+            if isinstance(v, float) and math.isnan(v):
+                return default
+            return int(v)
+        except (TypeError, ValueError):
+            return default
+    if isinstance(v, str):
+        s = v.strip()
+        if not s:
+            return default
+        try:
+            return int(float(s))
+        except (TypeError, ValueError):
+            return default
+    try:
+        return int(v)
+    except (TypeError, ValueError):
+        return default
+
+
+def _safe_datetime(v: Any) -> datetime | None:
+    """Parse a value into a Python datetime, or None for NaT/NaN/missing/invalid."""
+    if v is None:
+        return None
+    # pandas NaT / numeric NaN guard
+    if isinstance(v, float) and math.isnan(v):
+        return None
+    try:
+        if pd.isna(v):
+            return None
+    except (TypeError, ValueError):
+        pass
+    if isinstance(v, datetime):
+        return v
+    if isinstance(v, pd.Timestamp):
+        try:
+            return v.to_pydatetime()
+        except Exception:
+            return None
+    if isinstance(v, str):
+        s = v.strip()
+        if not s:
+            return None
+        try:
+            ts = pd.to_datetime(s, errors="coerce")
+        except Exception:
+            return None
+        if ts is pd.NaT or pd.isna(ts):
+            return None
+        try:
+            return ts.to_pydatetime()
+        except Exception:
+            return None
+    return None
+
+
+def _is_present(v: Any) -> bool:
+    """True if value is non-null / not NaN / not NaT / not empty string."""
+    if v is None:
+        return False
+    if isinstance(v, float) and math.isnan(v):
+        return False
+    try:
+        if pd.isna(v):
+            return False
+    except (TypeError, ValueError):
+        pass
+    if isinstance(v, str) and not v.strip():
+        return False
+    return True
+
+
+def _first_token(v: Any) -> str:
+    """First whitespace-delimited token of a string, or empty if missing."""
+    s = _safe_str(v, "").strip()
+    if not s:
+        return ""
+    return s.split()[0]
+
+
+def _tracking_sources_count(s: str) -> int:
+    """Count distinct comma-separated sources. Empty → 1 (assume single source)."""
+    if not s or not s.strip():
+        return 1
+    tokens = [t.strip() for t in s.split(",") if t.strip()]
+    if not tokens:
+        return 1
+    return len(set(tokens))
+
+
 def extract_trip_features(row: dict | Any) -> dict:
     """Pull a flat feature dict from a trip row.
 
@@ -87,13 +186,39 @@ def extract_trip_features(row: dict | Any) -> dict:
     transit_km = _safe_float(g("window_distance_travelled_km"))
     google_km = _safe_float(g("window_google_distance_km"))
 
+    # --- Datetime / behavioural fields ---------------------------------------
+    gate_out_dt = _safe_datetime(g("window_gate_out"))
+    first_ping_dt = _safe_datetime(g("window_first_ping_outside_origin"))
+    destination_entry_raw = g("window_destination_entry")
+    destination_entry_dt = _safe_datetime(destination_entry_raw)
+    closure_dt = _safe_datetime(g("window_trip_closure_time"))
+    google_eta_dt = _safe_datetime(g("window_google_eta"))
+
+    gate_out_hour = gate_out_dt.hour if gate_out_dt is not None else -1
+    if gate_out_dt is not None and first_ping_dt is not None:
+        gate_to_first_ping_min = (first_ping_dt - gate_out_dt).total_seconds() / 60.0
+    else:
+        gate_to_first_ping_min = 0.0
+
+    if google_eta_dt is not None and closure_dt is not None:
+        eta_breach_hrs = (closure_dt - google_eta_dt).total_seconds() / 3600.0
+        if eta_breach_hrs < 0:
+            eta_breach_hrs = 0.0
+    else:
+        eta_breach_hrs = 0.0
+
+    tracking_sources_raw = _safe_str(g("window_tracking_sources", "")).lower()
+
+    origin_raw = _safe_str(g("window_origin", ""))
+    destination_raw = _safe_str(g("window_destination", ""))
+
     return {
         "trip_id": _safe_str(g("window_trip_id", "")),
         "vehicle": _safe_str(g("vehicle_number_clean", "")),
         "driver_number": _safe_str(g("window_driver_number", "")),
         "transporter": _safe_str(g("window_transporter", "")),
-        "origin": _safe_str(g("window_origin", "")),
-        "destination": _safe_str(g("window_destination", "")),
+        "origin": origin_raw,
+        "destination": destination_raw,
         "transit_distance_km": transit_km,
         "google_distance_km": google_km,
         "detour_ratio": (transit_km / google_km) if google_km > 0 else 1.0,
@@ -107,4 +232,16 @@ def extract_trip_features(row: dict | Any) -> dict:
         "geofence_breached": _safe_bool(g("window_geofence_breached")),
         "closure_mode": _safe_str(g("window_closure_mode", "")).lower(),
         "auto_closure_type": _safe_str(g("window_auto_closure_type", "")),
+        # --- Behavioural / forward-looking fields ----------------------------
+        "gate_out_hour": gate_out_hour,
+        "gate_to_first_ping_min": gate_to_first_ping_min,
+        "loading_time_hrs": _safe_float(g("window_loading_time_hrs")),
+        "tracking_health": _safe_float(g("window_tracking_health"), default=1.0),
+        "tracking_sources": tracking_sources_raw,
+        "tracking_sources_count": _tracking_sources_count(tracking_sources_raw),
+        "alerts_count": _safe_int(g("window_alerts"), default=0),
+        "eta_breach_hrs": eta_breach_hrs,
+        "destination_entry_present": _is_present(destination_entry_raw),
+        "origin_code": _first_token(origin_raw),
+        "destination_code": _first_token(destination_raw),
     }

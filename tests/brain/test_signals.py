@@ -57,34 +57,67 @@ def test_evaluate_all_signals_returns_dict_with_score(sample_trip_row):
     assert isinstance(result["matched"], list)
 
 
-def test_driver_blacklist_fires():
-    feats = {"driver_number": "7459901375"}
-    ctx = {"blacklist": {"drivers": {"7459901375", "9999999999"}, "vehicles": set(), "transporters": set()}}
-    from brain.signals import SIGNAL_REGISTRY, evaluate_signal
-    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-04")
-    assert evaluate_signal(sig, feats, ctx)["fires"] is True
+def test_slow_loading_fires():
+    feats = {"loading_time_hrs": 4.0}
+    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-12")
+    assert evaluate_signal(sig, feats)["fires"] is True
 
 
-def test_driver_blacklist_does_not_fire_for_unknown():
-    feats = {"driver_number": "0000000000"}
-    ctx = {"blacklist": {"drivers": {"7459901375"}, "vehicles": set(), "transporters": set()}}
-    from brain.signals import SIGNAL_REGISTRY, evaluate_signal
-    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-04")
-    assert evaluate_signal(sig, feats, ctx)["fires"] is False
+def test_slow_loading_does_not_fire_for_quick_loading():
+    feats = {"loading_time_hrs": 1.0}
+    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-12")
+    assert evaluate_signal(sig, feats)["fires"] is False
 
 
-def test_vehicle_blacklist_fires():
-    feats = {"vehicle": "UP32QT2997"}
-    ctx = {"blacklist": {"drivers": set(), "vehicles": {"UP32QT2997"}, "transporters": set()}}
-    from brain.signals import SIGNAL_REGISTRY, evaluate_signal
-    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-05")
-    assert evaluate_signal(sig, feats, ctx)["fires"] is True
+def test_tracking_health_degraded_fires():
+    feats = {"tracking_health": 0.5}
+    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-13")
+    assert evaluate_signal(sig, feats)["fires"] is True
 
 
-def test_transporter_repeat_offender_fires():
-    feats = {"transporter": "A&A Associates - Zepto"}
-    ctx = {"blacklist": {"drivers": set(), "vehicles": set(),
-                          "transporters": {"a&a associates - zepto"}}}
-    from brain.signals import SIGNAL_REGISTRY, evaluate_signal
-    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-06")
-    assert evaluate_signal(sig, feats, ctx)["fires"] is True
+def test_tracking_health_does_not_fire_when_healthy():
+    feats = {"tracking_health": 0.95}
+    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-13")
+    assert evaluate_signal(sig, feats)["fires"] is False
+
+
+def test_gate_to_first_ping_delay_fires():
+    feats = {"gate_to_first_ping_min": 45}
+    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-14")
+    assert evaluate_signal(sig, feats)["fires"] is True
+
+
+def test_destination_entry_missing_fires():
+    feats = {"destination_entry_present": False, "transit_distance_km": 50}
+    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-15")
+    assert evaluate_signal(sig, feats)["fires"] is True
+
+
+def test_destination_entry_missing_does_not_fire_for_short_trip():
+    feats = {"destination_entry_present": False, "transit_distance_km": 2}
+    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-15")
+    assert evaluate_signal(sig, feats)["fires"] is False
+
+
+def test_eta_breach_fires():
+    feats = {"eta_breach_hrs": 5.0}
+    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-16")
+    assert evaluate_signal(sig, feats)["fires"] is True
+
+
+def test_alerts_fired_signal():
+    feats = {"alerts_count": 2}
+    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-17")
+    assert evaluate_signal(sig, feats)["fires"] is True
+
+
+def test_night_gate_out_fires():
+    feats = {"gate_out_hour": 23}
+    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-18")
+    assert evaluate_signal(sig, feats)["fires"] is True
+
+
+def test_night_gate_out_does_not_fire_in_day():
+    feats = {"gate_out_hour": 14}
+    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-18")
+    assert evaluate_signal(sig, feats)["fires"] is False

@@ -43,27 +43,33 @@ def _eval_long_stoppage_share(feats: dict) -> dict:
     return {"fires": fires, "evidence": {"stoppage_share": round(share, 2)}}
 
 
-# --- entity_state --------------------------------------------------------------
+# --- temporal ------------------------------------------------------------------
 
-def _eval_driver_blacklisted(feats: dict, ctx: dict) -> dict:
-    bl = (ctx.get("blacklist") or {}).get("drivers") or set()
-    drv = str(feats.get("driver_number") or "").strip()
-    return {"fires": drv in bl, "evidence": {"driver_number": drv}}
-
-
-def _eval_vehicle_blacklisted(feats: dict, ctx: dict) -> dict:
-    bl = (ctx.get("blacklist") or {}).get("vehicles") or set()
-    v = (feats.get("vehicle") or "").upper().replace(" ", "")
-    return {"fires": v in bl, "evidence": {"vehicle": v}}
+def _eval_slow_loading(feats: dict) -> dict:
+    loading = feats.get("loading_time_hrs", 0.0) or 0.0
+    fires = loading >= 3.0
+    return {"fires": fires, "evidence": {"loading_time_hrs": round(loading, 2)}}
 
 
-def _eval_transporter_repeat(feats: dict, ctx: dict) -> dict:
-    bl = (ctx.get("blacklist") or {}).get("transporters") or set()
-    t = (feats.get("transporter") or "").lower().strip()
-    return {"fires": t in bl, "evidence": {"transporter": t}}
+def _eval_night_gate_out(feats: dict) -> dict:
+    hour = feats.get("gate_out_hour", -1)
+    fires = hour in (22, 23, 0, 1, 2, 3)
+    return {"fires": fires, "evidence": {"gate_out_hour": hour}}
 
 
-# --- temporal (filled in later task) ------------------------------------------
+# --- tracking ------------------------------------------------------------------
+
+def _eval_tracking_health_degraded(feats: dict) -> dict:
+    health = feats.get("tracking_health", 1.0)
+    fires = health < 0.7
+    return {"fires": fires, "evidence": {"tracking_health": round(health, 2)}}
+
+
+def _eval_gate_to_first_ping_delay(feats: dict) -> dict:
+    delay = feats.get("gate_to_first_ping_min", 0.0) or 0.0
+    fires = delay >= 30
+    return {"fires": fires, "evidence": {"gate_to_first_ping_min": round(delay, 1)}}
+
 
 # --- geofence ------------------------------------------------------------------
 
@@ -104,6 +110,33 @@ def _eval_auto_closure_low_pings(feats: dict) -> dict:
     return {"fires": fires, "evidence": {"pings_per_km": round(pings_per_km, 2)}}
 
 
+def _eval_destination_entry_missing(feats: dict) -> dict:
+    present = bool(feats.get("destination_entry_present", False))
+    transit_km = feats.get("transit_distance_km", 0) or 0
+    fires = (not present) and transit_km >= 5
+    return {
+        "fires": fires,
+        "evidence": {
+            "destination_entry_present": present,
+            "transit_distance_km": round(float(transit_km), 1),
+        },
+    }
+
+
+def _eval_eta_breach(feats: dict) -> dict:
+    breach = feats.get("eta_breach_hrs", 0.0) or 0.0
+    fires = breach >= 4.0
+    return {"fires": fires, "evidence": {"eta_breach_hrs": round(breach, 2)}}
+
+
+# --- ping_pattern (alerts) -----------------------------------------------------
+
+def _eval_alerts_fired(feats: dict) -> dict:
+    count = feats.get("alerts_count", 0) or 0
+    fires = count >= 1
+    return {"fires": fires, "evidence": {"alerts_count": int(count)}}
+
+
 SIGNAL_REGISTRY: list[dict] = [
     {
         "id": "S-01",
@@ -131,33 +164,6 @@ SIGNAL_REGISTRY: list[dict] = [
         "source_cases": ["CT-001", "CT-004"],
         "default_weight": 20,
         "evaluator": _eval_long_stoppage_share,
-    },
-    {
-        "id": "S-04",
-        "name": "Driver on blacklist",
-        "category": "entity_state",
-        "rationale": "Driver number appears in the confirmed-theft/blacklisted-driver set.",
-        "source_cases": ["CT-001", "CT-007"],
-        "default_weight": 35,
-        "evaluator": _eval_driver_blacklisted,
-    },
-    {
-        "id": "S-05",
-        "name": "Vehicle on blacklist",
-        "category": "entity_state",
-        "rationale": "Vehicle number appears in the confirmed-theft/blacklisted-vehicle set.",
-        "source_cases": ["CT-001"],
-        "default_weight": 35,
-        "evaluator": _eval_vehicle_blacklisted,
-    },
-    {
-        "id": "S-06",
-        "name": "Transporter is a repeat offender",
-        "category": "entity_state",
-        "rationale": "Transporter branch has multiple trips in the positive set.",
-        "source_cases": ["CT-001", "CT-004"],
-        "default_weight": 20,
-        "evaluator": _eval_transporter_repeat,
     },
     {
         "id": "S-08",
@@ -194,6 +200,69 @@ SIGNAL_REGISTRY: list[dict] = [
         "source_cases": ["CT-004"],
         "default_weight": 18,
         "evaluator": _eval_auto_closure_low_pings,
+    },
+    {
+        "id": "S-12",
+        "name": "Slow loading at origin",
+        "category": "temporal",
+        "rationale": "Loading dwell ≥ 3h suggests pre-trip tampering or substitution window.",
+        "source_cases": ["CT-0054448970"],
+        "default_weight": 12,
+        "evaluator": _eval_slow_loading,
+    },
+    {
+        "id": "S-13",
+        "name": "Tracking health degraded",
+        "category": "tracking",
+        "rationale": "Tracking-health score < 0.7 — pings unreliable; theft window can hide here.",
+        "source_cases": ["CT-0049047489"],
+        "default_weight": 15,
+        "evaluator": _eval_tracking_health_degraded,
+    },
+    {
+        "id": "S-14",
+        "name": "Gate-out to first-ping delay",
+        "category": "tracking",
+        "rationale": "≥30 min between gate-out and first ping outside origin — likely device-off / tampering.",
+        "source_cases": ["CT-0054448970"],
+        "default_weight": 20,
+        "evaluator": _eval_gate_to_first_ping_delay,
+    },
+    {
+        "id": "S-15",
+        "name": "Destination entry missing",
+        "category": "closure_anomaly",
+        "rationale": "Trip closed without a destination-geofence entry event on a non-trivial trip.",
+        "source_cases": ["CT-0051603091"],
+        "default_weight": 15,
+        "evaluator": _eval_destination_entry_missing,
+    },
+    {
+        "id": "S-16",
+        "name": "ETA breached significantly",
+        "category": "closure_anomaly",
+        "rationale": "Trip closure ≥4h past the Google ETA — extended off-route or unaccounted dwell.",
+        "source_cases": ["CT-0050982352"],
+        "default_weight": 12,
+        "evaluator": _eval_eta_breach,
+    },
+    {
+        "id": "S-17",
+        "name": "Alerts fired during trip",
+        "category": "ping_pattern",
+        "rationale": "One or more in-transit alerts (geofence, halt, route-deviation) raised by the platform.",
+        "source_cases": ["CT-0054448970"],
+        "default_weight": 10,
+        "evaluator": _eval_alerts_fired,
+    },
+    {
+        "id": "S-18",
+        "name": "Night gate-out",
+        "category": "temporal",
+        "rationale": "Gate-out between 22:00 and 03:59 — overnight starts skew theft-positive.",
+        "source_cases": ["CT-0051902413"],
+        "default_weight": 12,
+        "evaluator": _eval_night_gate_out,
     },
 ]
 
