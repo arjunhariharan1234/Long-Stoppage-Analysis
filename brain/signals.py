@@ -60,8 +60,13 @@ def _eval_night_gate_out(feats: dict) -> dict:
 # --- tracking ------------------------------------------------------------------
 
 def _eval_tracking_health_degraded(feats: dict) -> dict:
-    health = feats.get("tracking_health", 1.0)
-    fires = health < 0.7
+    """tracking_health is on a 0-100 scale in the source data.
+    Fires when health is meaningfully degraded (< 70)."""
+    health = feats.get("tracking_health", 100.0)
+    # Tolerate either scale: if a caller passed 0-1, scale up before comparing.
+    if 0 < health <= 1.0:
+        health = health * 100
+    fires = health < 70.0
     return {"fires": fires, "evidence": {"tracking_health": round(health, 2)}}
 
 
@@ -100,14 +105,16 @@ def _eval_low_unloading(feats: dict) -> dict:
 
 
 def _eval_auto_closure_low_pings(feats: dict) -> dict:
-    closure = feats.get("closure_mode", "")
+    """Source data uses 'Auto Closed' (titlecase, with space). Match permissively."""
+    closure = (feats.get("closure_mode", "") or "").lower()
     pings = feats.get("total_pings", 0)
     transit_km = feats.get("transit_distance_km", 0)
-    if closure != "auto" or transit_km < 10:
+    is_auto = "auto" in closure
+    if not is_auto or transit_km < 10:
         return {"fires": False, "evidence": {}}
     pings_per_km = pings / max(transit_km, 1)
     fires = pings_per_km < 1.0
-    return {"fires": fires, "evidence": {"pings_per_km": round(pings_per_km, 2)}}
+    return {"fires": fires, "evidence": {"pings_per_km": round(pings_per_km, 2), "closure_mode": closure}}
 
 
 def _eval_destination_entry_missing(feats: dict) -> dict:
@@ -264,7 +271,35 @@ SIGNAL_REGISTRY: list[dict] = [
         "default_weight": 12,
         "evaluator": _eval_night_gate_out,
     },
+    {
+        "id": "S-19",
+        "name": "Route matches a known theft case",
+        "category": "geographic_memory",
+        "rationale": "Same (origin_code, destination_code) pair as a confirmed theft incident — geographic-level repeat pattern.",
+        "source_cases": ["CT-0054448970", "CT-0049142973"],
+        "default_weight": 25,
+        "evaluator": None,  # bound below; needs ctx['case_routes']
+    },
 ]
+
+
+def _eval_route_matches_known_case(feats: dict, ctx: dict) -> dict:
+    """Fires when the trip's (origin_code, destination_code) is in ctx['case_routes']."""
+    routes = ctx.get("case_routes") or set()
+    o = feats.get("origin_code") or ""
+    d = feats.get("destination_code") or ""
+    if not o or not d:
+        return {"fires": False, "evidence": {}}
+    if not isinstance(routes, set):
+        routes = set(tuple(r) for r in routes)
+    fires = (o, d) in routes
+    return {"fires": fires, "evidence": {"origin": o, "destination": d}}
+
+
+# Wire the deferred evaluator now that the function exists.
+for _s in SIGNAL_REGISTRY:
+    if _s["id"] == "S-19":
+        _s["evaluator"] = _eval_route_matches_known_case
 
 
 def evaluate_signal(signal: dict, feats: dict, context: dict | None = None) -> dict:

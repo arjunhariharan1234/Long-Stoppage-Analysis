@@ -1,3704 +1,3454 @@
 {
   "version": "2026-05-30.1",
-  "generated_at": "2026-05-31T11:23:55",
+  "generated_at": "2026-05-31T12:09:42",
   "drivers": [
     {
       "driver_number": "7038757151",
       "trips": 2,
       "trips_with_brain_hit": 2,
-      "risk_score": 108,
+      "risk_score": 64,
       "top_signal_ids": [
         "S-01",
         "S-03",
-        "S-04"
+        "S-09"
       ]
     },
     {
       "driver_number": "7459901375",
       "trips": 6,
       "trips_with_brain_hit": 6,
-      "risk_score": 103,
+      "risk_score": 63,
       "top_signal_ids": [
         "S-01",
         "S-03",
-        "S-04"
+        "S-09"
       ]
     },
     {
       "driver_number": "7786009688",
       "trips": 1,
       "trips_with_brain_hit": 1,
-      "risk_score": 103,
+      "risk_score": 63,
       "top_signal_ids": [
         "S-01",
         "S-03",
-        "S-04"
-      ]
-    },
-    {
-      "driver_number": "7394074593",
-      "trips": 7,
-      "trips_with_brain_hit": 7,
-      "risk_score": 98,
-      "top_signal_ids": [
-        "S-03",
-        "S-04",
-        "S-05"
+        "S-09"
       ]
     },
     {
       "driver_number": "7020931141",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 98,
+      "trips_with_brain_hit": 1,
+      "risk_score": 51,
       "top_signal_ids": [
         "S-01",
-        "S-04",
-        "S-05"
+        "S-09",
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "8544870833",
+      "trips": 7,
+      "trips_with_brain_hit": 5,
+      "risk_score": 50,
+      "top_signal_ids": [
+        "S-19",
+        "S-12",
+        "S-03"
       ]
     },
     {
       "driver_number": "9346716744",
       "trips": 5,
-      "trips_with_brain_hit": 5,
-      "risk_score": 97,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9960600753",
-      "trips": 15,
-      "trips_with_brain_hit": 15,
-      "risk_score": 96,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9849059720",
-      "trips": 3,
       "trips_with_brain_hit": 3,
-      "risk_score": 96,
+      "risk_score": 50,
       "top_signal_ids": [
         "S-01",
-        "S-04",
-        "S-05"
+        "S-09",
+        "S-16"
       ]
     },
     {
-      "driver_number": "7755877655",
-      "trips": 1,
-      "trips_with_brain_hit": 1,
-      "risk_score": 95,
+      "driver_number": "9623297684",
+      "trips": 11,
+      "trips_with_brain_hit": 9,
+      "risk_score": 49,
       "top_signal_ids": [
         "S-03",
-        "S-04",
-        "S-05"
+        "S-10",
+        "S-12"
       ]
     },
     {
       "driver_number": "6305191490",
       "trips": 1,
       "trips_with_brain_hit": 1,
-      "risk_score": 95,
+      "risk_score": 49,
       "top_signal_ids": [
         "S-03",
-        "S-04",
-        "S-05"
+        "S-10",
+        "S-15"
       ]
     },
     {
-      "driver_number": "9623297684",
-      "trips": 11,
-      "trips_with_brain_hit": 11,
-      "risk_score": 94,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9226124497",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 94,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9168098817",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 92,
-      "top_signal_ids": [
-        "S-03",
-        "S-04",
-        "S-05"
-      ]
-    },
-    {
-      "driver_number": "9838417491",
-      "trips": 8,
-      "trips_with_brain_hit": 8,
-      "risk_score": 90,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9392226160",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 89,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7459055696",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 89,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7387201237",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 89,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "6300295785",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 89,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7709021015",
-      "trips": 5,
-      "trips_with_brain_hit": 5,
-      "risk_score": 88,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7780457182",
-      "trips": 8,
-      "trips_with_brain_hit": 8,
-      "risk_score": 87,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8008696670",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 85,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9705773784",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 85,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7294953449",
-      "trips": 5,
-      "trips_with_brain_hit": 5,
-      "risk_score": 85,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7238836744",
-      "trips": 6,
-      "trips_with_brain_hit": 6,
-      "risk_score": 85,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8788017967",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 85,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9373832322",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 85,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8500656428",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 85,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7620745153",
-      "trips": 9,
-      "trips_with_brain_hit": 9,
-      "risk_score": 85,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7350350245",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 85,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7249077879",
-      "trips": 4,
+      "driver_number": "7394074593",
+      "trips": 7,
       "trips_with_brain_hit": 4,
-      "risk_score": 84,
+      "risk_score": 47,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-03",
+        "S-10",
+        "S-12"
+      ]
+    },
+    {
+      "driver_number": "7755877655",
+      "trips": 1,
+      "trips_with_brain_hit": 1,
+      "risk_score": 46,
+      "top_signal_ids": [
+        "S-03",
+        "S-10",
+        "S-12"
       ]
     },
     {
       "driver_number": "8683942113",
       "trips": 1,
       "trips_with_brain_hit": 1,
-      "risk_score": 83,
+      "risk_score": 43,
       "top_signal_ids": [
         "S-01",
-        "S-04",
-        "S-05"
-      ]
-    },
-    {
-      "driver_number": "7905690398",
-      "trips": 16,
-      "trips_with_brain_hit": 16,
-      "risk_score": 83,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8797036387",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 83,
-      "top_signal_ids": [
-        "S-01",
-        "S-04",
-        "S-05"
-      ]
-    },
-    {
-      "driver_number": "9014244533",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 83,
-      "top_signal_ids": [
-        "S-01",
-        "S-04",
-        "S-05"
+        "S-09",
+        "S-19"
       ]
     },
     {
       "driver_number": "9198997843",
       "trips": 7,
-      "trips_with_brain_hit": 7,
-      "risk_score": 82,
+      "trips_with_brain_hit": 5,
+      "risk_score": 42,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-19",
+        "S-01",
+        "S-03"
       ]
     },
     {
-      "driver_number": "9892299938",
-      "trips": 41,
-      "trips_with_brain_hit": 41,
-      "risk_score": 82,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9529968201",
-      "trips": 13,
-      "trips_with_brain_hit": 13,
-      "risk_score": 82,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9973702476",
+      "driver_number": "9226124497",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 80,
+      "trips_with_brain_hit": 1,
+      "risk_score": 42,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-10",
+        "S-17",
+        "S-01"
       ]
     },
     {
-      "driver_number": "7028731692",
-      "trips": 4,
+      "driver_number": "9168098817",
+      "trips": 3,
+      "trips_with_brain_hit": 2,
+      "risk_score": 41,
+      "top_signal_ids": [
+        "S-03",
+        "S-10",
+        "S-12"
+      ]
+    },
+    {
+      "driver_number": "9849059720",
+      "trips": 3,
+      "trips_with_brain_hit": 1,
+      "risk_score": 41,
+      "top_signal_ids": [
+        "S-01",
+        "S-09",
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9838417491",
+      "trips": 8,
       "trips_with_brain_hit": 4,
-      "risk_score": 80,
+      "risk_score": 40,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-03",
+        "S-16",
+        "S-01"
       ]
     },
     {
-      "driver_number": "9450060979",
+      "driver_number": "9960600753",
+      "trips": 15,
+      "trips_with_brain_hit": 6,
+      "risk_score": 38,
+      "top_signal_ids": [
+        "S-03",
+        "S-01",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "9392226160",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 80,
+      "trips_with_brain_hit": 1,
+      "risk_score": 37,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-01",
+        "S-03",
+        "S-09"
       ]
     },
     {
-      "driver_number": "7321810738",
+      "driver_number": "8500656428",
+      "trips": 3,
+      "trips_with_brain_hit": 2,
+      "risk_score": 37,
+      "top_signal_ids": [
+        "S-03",
+        "S-10",
+        "S-12"
+      ]
+    },
+    {
+      "driver_number": "7459055696",
       "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 37,
+      "top_signal_ids": [
+        "S-01",
+        "S-03",
+        "S-09"
+      ]
+    },
+    {
+      "driver_number": "8008696670",
+      "trips": 3,
       "trips_with_brain_hit": 2,
-      "risk_score": 80,
+      "risk_score": 36,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7518905530",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 80,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9866840186",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 80,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8544870833",
-      "trips": 7,
-      "trips_with_brain_hit": 7,
-      "risk_score": 79,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7276598672",
-      "trips": 310,
-      "trips_with_brain_hit": 310,
-      "risk_score": 79,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8482843165",
-      "trips": 740,
-      "trips_with_brain_hit": 740,
-      "risk_score": 79,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7448140676",
-      "trips": 56,
-      "trips_with_brain_hit": 56,
-      "risk_score": 79,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-03",
+        "S-10"
       ]
     },
     {
       "driver_number": "9133985178",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 79,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8976341097",
-      "trips": 12,
-      "trips_with_brain_hit": 12,
-      "risk_score": 79,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "6302719914",
-      "trips": 102,
-      "trips_with_brain_hit": 102,
-      "risk_score": 78,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7744963488",
-      "trips": 10,
-      "trips_with_brain_hit": 10,
-      "risk_score": 78,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7261865258",
-      "trips": 26,
-      "trips_with_brain_hit": 26,
-      "risk_score": 78,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9370961797",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 78,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8482868097",
-      "trips": 48,
-      "trips_with_brain_hit": 48,
-      "risk_score": 77,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7080914770",
-      "trips": 30,
-      "trips_with_brain_hit": 30,
-      "risk_score": 77,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7267941939",
-      "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 77,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9182336037",
-      "trips": 6,
-      "trips_with_brain_hit": 6,
-      "risk_score": 77,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8307641179",
-      "trips": 76,
-      "trips_with_brain_hit": 76,
-      "risk_score": 76,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9000746388",
-      "trips": 445,
-      "trips_with_brain_hit": 445,
-      "risk_score": 76,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8381858825",
-      "trips": 72,
-      "trips_with_brain_hit": 72,
-      "risk_score": 76,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9730875554",
-      "trips": 73,
-      "trips_with_brain_hit": 73,
-      "risk_score": 76,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9035343111",
-      "trips": 39,
-      "trips_with_brain_hit": 39,
-      "risk_score": 76,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9115319237",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9718310110",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9306816937",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9022148173",
-      "trips": 12,
-      "trips_with_brain_hit": 12,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7702171414",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7457964887",
-      "trips": 114,
-      "trips_with_brain_hit": 114,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7378516901",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9975783747",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9340227660",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9515172667",
-      "trips": 64,
-      "trips_with_brain_hit": 64,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9594335133",
-      "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7875794791",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7420049094",
-      "trips": 5,
-      "trips_with_brain_hit": 5,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9306235827",
-      "trips": 75,
-      "trips_with_brain_hit": 75,
-      "risk_score": 74,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7081655629",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 74,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8464806625",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 74,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "6301366054",
-      "trips": 264,
-      "trips_with_brain_hit": 264,
-      "risk_score": 73,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7219505055",
-      "trips": 6,
-      "trips_with_brain_hit": 6,
-      "risk_score": 73,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9284500750",
-      "trips": 5,
-      "trips_with_brain_hit": 5,
-      "risk_score": 73,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9640533902",
-      "trips": 6,
-      "trips_with_brain_hit": 6,
-      "risk_score": 73,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "6304141737",
-      "trips": 247,
-      "trips_with_brain_hit": 247,
-      "risk_score": 72,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7420086188",
-      "trips": 13,
-      "trips_with_brain_hit": 13,
-      "risk_score": 72,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9511805354",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 72,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9082918422",
-      "trips": 17,
-      "trips_with_brain_hit": 17,
-      "risk_score": 72,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7756968168",
-      "trips": 38,
-      "trips_with_brain_hit": 38,
-      "risk_score": 72,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9306911359",
-      "trips": 43,
-      "trips_with_brain_hit": 43,
-      "risk_score": 71,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9053527223",
-      "trips": 66,
-      "trips_with_brain_hit": 66,
-      "risk_score": 71,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7219525554",
-      "trips": 121,
-      "trips_with_brain_hit": 121,
-      "risk_score": 71,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9880665658",
-      "trips": 308,
-      "trips_with_brain_hit": 308,
-      "risk_score": 71,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8431295804",
-      "trips": 275,
-      "trips_with_brain_hit": 275,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7056448211",
-      "trips": 32,
-      "trips_with_brain_hit": 32,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9928266411",
-      "trips": 56,
-      "trips_with_brain_hit": 56,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7899467106",
-      "trips": 298,
-      "trips_with_brain_hit": 298,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9908388960",
-      "trips": 13,
-      "trips_with_brain_hit": 13,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8097221106",
-      "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9021265660",
-      "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9112202040",
-      "trips": 6,
-      "trips_with_brain_hit": 6,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9653347016",
-      "trips": 5,
-      "trips_with_brain_hit": 5,
-      "risk_score": 69,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8019197119",
-      "trips": 29,
-      "trips_with_brain_hit": 29,
-      "risk_score": 69,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "6386590010",
-      "trips": 7,
-      "trips_with_brain_hit": 7,
-      "risk_score": 68,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9989484813",
-      "trips": 203,
-      "trips_with_brain_hit": 203,
-      "risk_score": 67,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8767368785",
-      "trips": 12,
-      "trips_with_brain_hit": 12,
-      "risk_score": 67,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9945962316",
-      "trips": 135,
-      "trips_with_brain_hit": 135,
-      "risk_score": 67,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9391848650",
-      "trips": 17,
-      "trips_with_brain_hit": 17,
-      "risk_score": 66,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8431996765",
-      "trips": 1,
       "trips_with_brain_hit": 1,
-      "risk_score": 65,
+      "risk_score": 36,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-12",
+        "S-16",
+        "S-01"
       ]
     },
     {
       "driver_number": "9098999856",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 35,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-19"
       ]
     },
     {
-      "driver_number": "9115319239",
-      "trips": 1,
+      "driver_number": "9115319237",
+      "trips": 2,
       "trips_with_brain_hit": 1,
-      "risk_score": 65,
+      "risk_score": 35,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-19",
+        "S-03"
       ]
     },
     {
-      "driver_number": "9667766394",
-      "trips": 7,
-      "trips_with_brain_hit": 7,
-      "risk_score": 65,
+      "driver_number": "9718310110",
+      "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 35,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-19",
+        "S-03"
+      ]
+    },
+    {
+      "driver_number": "9306816937",
+      "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 35,
+      "top_signal_ids": [
+        "S-19",
+        "S-03"
       ]
     },
     {
       "driver_number": "9758612456",
       "trips": 1,
-      "trips_with_brain_hit": 1,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 35,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9653547016",
-      "trips": 1,
-      "trips_with_brain_hit": 1,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-19"
       ]
     },
     {
       "driver_number": "9316030127",
       "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 35,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-19"
+      ]
+    },
+    {
+      "driver_number": "9705773784",
+      "trips": 3,
+      "trips_with_brain_hit": 2,
+      "risk_score": 35,
+      "top_signal_ids": [
+        "S-03",
+        "S-10",
+        "S-15"
+      ]
+    },
+    {
+      "driver_number": "8788017967",
+      "trips": 3,
+      "trips_with_brain_hit": 2,
+      "risk_score": 34,
+      "top_signal_ids": [
+        "S-03",
+        "S-10",
+        "S-12"
+      ]
+    },
+    {
+      "driver_number": "6300295785",
+      "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 34,
+      "top_signal_ids": [
+        "S-01",
+        "S-03",
+        "S-09"
+      ]
+    },
+    {
+      "driver_number": "9373832322",
+      "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 33,
+      "top_signal_ids": [
+        "S-01",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "7387201237",
+      "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 32,
+      "top_signal_ids": [
+        "S-17",
+        "S-01",
+        "S-03"
+      ]
+    },
+    {
+      "driver_number": "7780457182",
+      "trips": 8,
+      "trips_with_brain_hit": 4,
+      "risk_score": 32,
+      "top_signal_ids": [
+        "S-03",
+        "S-10",
+        "S-15"
+      ]
+    },
+    {
+      "driver_number": "9667766394",
+      "trips": 7,
+      "trips_with_brain_hit": 0,
+      "risk_score": 31,
+      "top_signal_ids": [
+        "S-19",
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "7294953449",
+      "trips": 5,
+      "trips_with_brain_hit": 2,
+      "risk_score": 31,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "7448140676",
+      "trips": 56,
+      "trips_with_brain_hit": 16,
+      "risk_score": 30,
+      "top_signal_ids": [
+        "S-17",
+        "S-15",
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9594335133",
+      "trips": 4,
+      "trips_with_brain_hit": 1,
+      "risk_score": 30,
+      "top_signal_ids": [
+        "S-16",
+        "S-17",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "9653347016",
+      "trips": 5,
+      "trips_with_brain_hit": 1,
+      "risk_score": 29,
+      "top_signal_ids": [
+        "S-19",
+        "S-03"
+      ]
+    },
+    {
+      "driver_number": "7709021015",
+      "trips": 5,
+      "trips_with_brain_hit": 2,
+      "risk_score": 29,
+      "top_signal_ids": [
+        "S-01",
+        "S-09",
+        "S-03"
+      ]
+    },
+    {
+      "driver_number": "7350350245",
+      "trips": 3,
+      "trips_with_brain_hit": 1,
+      "risk_score": 29,
+      "top_signal_ids": [
+        "S-03",
+        "S-10",
+        "S-12"
+      ]
+    },
+    {
+      "driver_number": "7261865258",
+      "trips": 26,
+      "trips_with_brain_hit": 5,
+      "risk_score": 29,
+      "top_signal_ids": [
+        "S-17",
+        "S-16",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "6386590010",
+      "trips": 7,
+      "trips_with_brain_hit": 1,
+      "risk_score": 28,
+      "top_signal_ids": [
+        "S-19",
+        "S-03"
+      ]
+    },
+    {
+      "driver_number": "7028731692",
+      "trips": 4,
+      "trips_with_brain_hit": 2,
+      "risk_score": 28,
+      "top_signal_ids": [
+        "S-03",
+        "S-10",
+        "S-12"
+      ]
+    },
+    {
+      "driver_number": "9450060979",
+      "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 28,
+      "top_signal_ids": [
+        "S-03",
+        "S-10",
+        "S-12"
+      ]
+    },
+    {
+      "driver_number": "7249077879",
+      "trips": 4,
+      "trips_with_brain_hit": 1,
+      "risk_score": 28,
+      "top_signal_ids": [
+        "S-01",
+        "S-09",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "8797036387",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 28,
+      "top_signal_ids": [
+        "S-01",
+        "S-09",
+        "S-15"
+      ]
+    },
+    {
+      "driver_number": "9182336037",
+      "trips": 6,
+      "trips_with_brain_hit": 1,
+      "risk_score": 27,
+      "top_signal_ids": [
+        "S-16",
+        "S-15",
+        "S-01"
+      ]
+    },
+    {
+      "driver_number": "8431996765",
+      "trips": 1,
+      "trips_with_brain_hit": 0,
+      "risk_score": 25,
+      "top_signal_ids": [
+        "S-19"
+      ]
+    },
+    {
+      "driver_number": "9115319239",
+      "trips": 1,
+      "trips_with_brain_hit": 0,
+      "risk_score": 25,
+      "top_signal_ids": [
+        "S-19"
+      ]
+    },
+    {
+      "driver_number": "9653547016",
+      "trips": 1,
+      "trips_with_brain_hit": 0,
+      "risk_score": 25,
+      "top_signal_ids": [
+        "S-19"
       ]
     },
     {
       "driver_number": "8050814442",
       "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 25,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-19"
       ]
     },
     {
       "driver_number": "8294610464",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 25,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-19"
       ]
     },
     {
       "driver_number": "8149731577",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 25,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-19"
       ]
     },
     {
       "driver_number": "9164929023",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 25,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-19"
       ]
     },
     {
       "driver_number": "9560832718",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 25,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-19"
       ]
     },
     {
-      "driver_number": "9580398747",
-      "trips": 41,
-      "trips_with_brain_hit": 41,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9030126288",
-      "trips": 29,
-      "trips_with_brain_hit": 29,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7036778581",
-      "trips": 29,
-      "trips_with_brain_hit": 29,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9030126411",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9849263051",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8919351340",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8096518074",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9381817348",
-      "trips": 8,
-      "trips_with_brain_hit": 8,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9392823126",
+      "driver_number": "9973702476",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9951228142",
-      "trips": 1,
       "trips_with_brain_hit": 1,
-      "risk_score": 65,
+      "risk_score": 25,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-03",
+        "S-10"
       ]
     },
     {
-      "driver_number": "9959728166",
-      "trips": 13,
-      "trips_with_brain_hit": 13,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8522055850",
-      "trips": 10,
-      "trips_with_brain_hit": 10,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9988850084",
+      "driver_number": "7321810738",
       "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 25,
+      "top_signal_ids": [
+        "S-16",
+        "S-01",
+        "S-03"
+      ]
+    },
+    {
+      "driver_number": "7620745153",
+      "trips": 9,
       "trips_with_brain_hit": 2,
-      "risk_score": 65,
+      "risk_score": 24,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-03",
+        "S-10",
+        "S-15"
       ]
     },
     {
-      "driver_number": "6209981677",
+      "driver_number": "9370961797",
       "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 65,
+      "trips_with_brain_hit": 1,
+      "risk_score": 24,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-17",
+        "S-01",
+        "S-03"
       ]
     },
     {
-      "driver_number": "7075204376",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 65,
+      "driver_number": "9866840186",
+      "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 24,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-03",
+        "S-10",
+        "S-15"
+      ]
+    },
+    {
+      "driver_number": "7702171414",
+      "trips": 3,
+      "trips_with_brain_hit": 1,
+      "risk_score": 23,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "9892299938",
+      "trips": 41,
+      "trips_with_brain_hit": 8,
+      "risk_score": 23,
+      "top_signal_ids": [
+        "S-03",
+        "S-16",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "9014244533",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 23,
+      "top_signal_ids": [
+        "S-01",
+        "S-09",
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "7744963488",
+      "trips": 10,
+      "trips_with_brain_hit": 3,
+      "risk_score": 22,
+      "top_signal_ids": [
+        "S-10",
+        "S-15",
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9730875554",
+      "trips": 73,
+      "trips_with_brain_hit": 13,
+      "risk_score": 21,
+      "top_signal_ids": [
+        "S-16",
+        "S-01",
+        "S-09"
+      ]
+    },
+    {
+      "driver_number": "7081655629",
+      "trips": 3,
+      "trips_with_brain_hit": 1,
+      "risk_score": 21,
+      "top_signal_ids": [
+        "S-16",
+        "S-01",
+        "S-09"
+      ]
+    },
+    {
+      "driver_number": "9529968201",
+      "trips": 13,
+      "trips_with_brain_hit": 2,
+      "risk_score": 21,
+      "top_signal_ids": [
+        "S-03",
+        "S-01",
+        "S-09"
+      ]
+    },
+    {
+      "driver_number": "7238836744",
+      "trips": 6,
+      "trips_with_brain_hit": 0,
+      "risk_score": 20,
+      "top_signal_ids": [
+        "S-03",
+        "S-01",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "7267941939",
+      "trips": 4,
+      "trips_with_brain_hit": 1,
+      "risk_score": 20,
+      "top_signal_ids": [
+        "S-12",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "7905690398",
+      "trips": 16,
+      "trips_with_brain_hit": 2,
+      "risk_score": 20,
+      "top_signal_ids": [
+        "S-03",
+        "S-01",
+        "S-09"
+      ]
+    },
+    {
+      "driver_number": "7518905530",
+      "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 20,
+      "top_signal_ids": [
+        "S-01",
+        "S-03",
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "8976341097",
+      "trips": 12,
+      "trips_with_brain_hit": 2,
+      "risk_score": 20,
+      "top_signal_ids": [
+        "S-03",
+        "S-10",
+        "S-15"
+      ]
+    },
+    {
+      "driver_number": "7276598672",
+      "trips": 310,
+      "trips_with_brain_hit": 54,
+      "risk_score": 19,
+      "top_signal_ids": [
+        "S-03",
+        "S-16",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "9306235827",
+      "trips": 75,
+      "trips_with_brain_hit": 10,
+      "risk_score": 19,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "8307641179",
+      "trips": 76,
+      "trips_with_brain_hit": 8,
+      "risk_score": 19,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-09"
+      ]
+    },
+    {
+      "driver_number": "8381858825",
+      "trips": 72,
+      "trips_with_brain_hit": 13,
+      "risk_score": 19,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-01"
+      ]
+    },
+    {
+      "driver_number": "8482843165",
+      "trips": 740,
+      "trips_with_brain_hit": 76,
+      "risk_score": 19,
+      "top_signal_ids": [
+        "S-03",
+        "S-17",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "6302719914",
+      "trips": 102,
+      "trips_with_brain_hit": 20,
+      "risk_score": 19,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-01"
+      ]
+    },
+    {
+      "driver_number": "9022148173",
+      "trips": 12,
+      "trips_with_brain_hit": 2,
+      "risk_score": 18,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-19"
+      ]
+    },
+    {
+      "driver_number": "8097221106",
+      "trips": 4,
+      "trips_with_brain_hit": 0,
+      "risk_score": 18,
+      "top_signal_ids": [
+        "S-17",
+        "S-16",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "9511805354",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 18,
+      "top_signal_ids": [
+        "S-10",
+        "S-12",
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9515172667",
+      "trips": 64,
+      "trips_with_brain_hit": 4,
+      "risk_score": 18,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-12"
+      ]
+    },
+    {
+      "driver_number": "7875794791",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 18,
+      "top_signal_ids": [
+        "S-10",
+        "S-17"
+      ]
+    },
+    {
+      "driver_number": "8464806625",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 18,
+      "top_signal_ids": [
+        "S-17",
+        "S-01",
+        "S-09"
+      ]
+    },
+    {
+      "driver_number": "9306911359",
+      "trips": 43,
+      "trips_with_brain_hit": 6,
+      "risk_score": 17,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "6301366054",
+      "trips": 264,
+      "trips_with_brain_hit": 44,
+      "risk_score": 17,
+      "top_signal_ids": [
+        "S-16",
+        "S-10",
+        "S-15"
       ]
     },
     {
       "driver_number": "9665502500",
       "trips": 1,
-      "trips_with_brain_hit": 1,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 17,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-12",
+        "S-16"
       ]
     },
     {
-      "driver_number": "9014769364",
-      "trips": 3,
+      "driver_number": "7080914770",
+      "trips": 30,
       "trips_with_brain_hit": 3,
-      "risk_score": 65,
+      "risk_score": 17,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-03",
+        "S-16",
+        "S-01"
       ]
     },
     {
-      "driver_number": "8869911017",
-      "trips": 2,
+      "driver_number": "8431295804",
+      "trips": 275,
+      "trips_with_brain_hit": 14,
+      "risk_score": 16,
+      "top_signal_ids": [
+        "S-19",
+        "S-03",
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "7056448211",
+      "trips": 32,
       "trips_with_brain_hit": 2,
-      "risk_score": 65,
+      "risk_score": 16,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-03",
+        "S-10"
       ]
     },
     {
-      "driver_number": "7387866911",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 65,
+      "driver_number": "8482868097",
+      "trips": 48,
+      "trips_with_brain_hit": 6,
+      "risk_score": 16,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-03",
+        "S-16",
+        "S-01"
       ]
     },
     {
-      "driver_number": "8888858236",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "7410744342",
-      "trips": 11,
-      "trips_with_brain_hit": 11,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "8554826027",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9960712487",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "6387046001",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9172803552",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9975223828",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "driver_number": "9049192431",
-      "trips": 1,
+      "driver_number": "7219505055",
+      "trips": 6,
       "trips_with_brain_hit": 1,
-      "risk_score": 65,
+      "risk_score": 16,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-01",
+        "S-09"
       ]
     },
     {
-      "driver_number": "7219753916",
-      "trips": 1,
-      "trips_with_brain_hit": 1,
-      "risk_score": 65,
+      "driver_number": "7457964887",
+      "trips": 114,
+      "trips_with_brain_hit": 13,
+      "risk_score": 15,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-03",
+        "S-16",
+        "S-01"
       ]
     },
     {
-      "driver_number": "9730878052",
-      "trips": 1,
-      "trips_with_brain_hit": 1,
-      "risk_score": 65,
+      "driver_number": "7378516901",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 15,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-03",
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9975783747",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 15,
+      "top_signal_ids": [
+        "S-03",
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9053527223",
+      "trips": 66,
+      "trips_with_brain_hit": 2,
+      "risk_score": 14,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-09"
+      ]
+    },
+    {
+      "driver_number": "6304141737",
+      "trips": 247,
+      "trips_with_brain_hit": 23,
+      "risk_score": 14,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "9000746388",
+      "trips": 445,
+      "trips_with_brain_hit": 32,
+      "risk_score": 13,
+      "top_signal_ids": [
+        "S-03",
+        "S-01",
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "7219525554",
+      "trips": 121,
+      "trips_with_brain_hit": 5,
+      "risk_score": 13,
+      "top_signal_ids": [
+        "S-16",
+        "S-01",
+        "S-12"
+      ]
+    },
+    {
+      "driver_number": "9035343111",
+      "trips": 39,
+      "trips_with_brain_hit": 0,
+      "risk_score": 13,
+      "top_signal_ids": [
+        "S-03",
+        "S-12",
+        "S-01"
+      ]
+    },
+    {
+      "driver_number": "9989484813",
+      "trips": 203,
+      "trips_with_brain_hit": 6,
+      "risk_score": 12,
+      "top_signal_ids": [
+        "S-16",
+        "S-15",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "7420086188",
+      "trips": 13,
+      "trips_with_brain_hit": 1,
+      "risk_score": 12,
+      "top_signal_ids": [
+        "S-16",
+        "S-10",
+        "S-12"
+      ]
+    },
+    {
+      "driver_number": "7420049094",
+      "trips": 5,
+      "trips_with_brain_hit": 0,
+      "risk_score": 12,
+      "top_signal_ids": [
+        "S-03",
+        "S-10",
+        "S-16"
       ]
     },
     {
       "driver_number": "9991018876",
       "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 60,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16"
       ]
+    },
+    {
+      "driver_number": "9928266411",
+      "trips": 56,
+      "trips_with_brain_hit": 1,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-01",
+        "S-16",
+        "S-12"
+      ]
+    },
+    {
+      "driver_number": "9580398747",
+      "trips": 41,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9030126288",
+      "trips": 29,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "7036778581",
+      "trips": 29,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9030126411",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9849263051",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "8919351340",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "8096518074",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9381817348",
+      "trips": 8,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9392823126",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9391848650",
+      "trips": 17,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16",
+        "S-03"
+      ]
+    },
+    {
+      "driver_number": "9951228142",
+      "trips": 1,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "8522055850",
+      "trips": 10,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "6209981677",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "7075204376",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9014769364",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "8869911017",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9340227660",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-03"
+      ]
+    },
+    {
+      "driver_number": "9880665658",
+      "trips": 308,
+      "trips_with_brain_hit": 9,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16",
+        "S-01",
+        "S-03"
+      ]
+    },
+    {
+      "driver_number": "9284500750",
+      "trips": 5,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-03",
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9908388960",
+      "trips": 13,
+      "trips_with_brain_hit": 0,
+      "risk_score": 9,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "9082918422",
+      "trips": 17,
+      "trips_with_brain_hit": 0,
+      "risk_score": 9,
+      "top_signal_ids": [
+        "S-03",
+        "S-16",
+        "S-01"
+      ]
+    },
+    {
+      "driver_number": "7756968168",
+      "trips": 38,
+      "trips_with_brain_hit": 2,
+      "risk_score": 9,
+      "top_signal_ids": [
+        "S-03",
+        "S-16",
+        "S-10"
+      ]
+    },
+    {
+      "driver_number": "7899467106",
+      "trips": 298,
+      "trips_with_brain_hit": 6,
+      "risk_score": 8,
+      "top_signal_ids": [
+        "S-01",
+        "S-16",
+        "S-03"
+      ]
+    },
+    {
+      "driver_number": "9021265660",
+      "trips": 4,
+      "trips_with_brain_hit": 0,
+      "risk_score": 8,
+      "top_signal_ids": [
+        "S-16",
+        "S-03"
+      ]
+    },
+    {
+      "driver_number": "9640533902",
+      "trips": 6,
+      "trips_with_brain_hit": 0,
+      "risk_score": 8,
+      "top_signal_ids": [
+        "S-03",
+        "S-01"
+      ]
+    },
+    {
+      "driver_number": "8019197119",
+      "trips": 29,
+      "trips_with_brain_hit": 0,
+      "risk_score": 7,
+      "top_signal_ids": [
+        "S-16",
+        "S-10",
+        "S-03"
+      ]
+    },
+    {
+      "driver_number": "9959728166",
+      "trips": 13,
+      "trips_with_brain_hit": 0,
+      "risk_score": 6,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "8767368785",
+      "trips": 12,
+      "trips_with_brain_hit": 0,
+      "risk_score": 6,
+      "top_signal_ids": [
+        "S-16",
+        "S-03"
+      ]
+    },
+    {
+      "driver_number": "9112202040",
+      "trips": 6,
+      "trips_with_brain_hit": 0,
+      "risk_score": 6,
+      "top_signal_ids": [
+        "S-03",
+        "S-10",
+        "S-15"
+      ]
+    },
+    {
+      "driver_number": "9988850084",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 5,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "8888858236",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 5,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "7410744342",
+      "trips": 11,
+      "trips_with_brain_hit": 0,
+      "risk_score": 5,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "8554826027",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 5,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9172803552",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 5,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9975223828",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 5,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9945962316",
+      "trips": 135,
+      "trips_with_brain_hit": 0,
+      "risk_score": 4,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-12"
+      ]
+    },
+    {
+      "driver_number": "7387866911",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 3,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "driver_number": "9960712487",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 0,
+      "top_signal_ids": []
+    },
+    {
+      "driver_number": "6387046001",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 0,
+      "top_signal_ids": []
+    },
+    {
+      "driver_number": "9049192431",
+      "trips": 1,
+      "trips_with_brain_hit": 0,
+      "risk_score": 0,
+      "top_signal_ids": []
+    },
+    {
+      "driver_number": "7219753916",
+      "trips": 1,
+      "trips_with_brain_hit": 0,
+      "risk_score": 0,
+      "top_signal_ids": []
+    },
+    {
+      "driver_number": "9730878052",
+      "trips": 1,
+      "trips_with_brain_hit": 0,
+      "risk_score": 0,
+      "top_signal_ids": []
     }
   ],
   "vehicles": [
     {
-      "vehicle": "UP32QT2997",
-      "trips": 7,
-      "trips_with_brain_hit": 7,
-      "risk_score": 103,
+      "vehicle": "MH04KU6142",
+      "trips": 14,
+      "trips_with_brain_hit": 10,
+      "risk_score": 69,
       "top_signal_ids": [
-        "S-01",
-        "S-03",
-        "S-04"
+        "S-16",
+        "S-19",
+        "S-03"
       ]
     },
     {
-      "vehicle": "DL01LAN5238",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 103,
+      "vehicle": "UP32QT2997",
+      "trips": 7,
+      "trips_with_brain_hit": 7,
+      "risk_score": 63,
       "top_signal_ids": [
         "S-01",
         "S-03",
-        "S-04"
+        "S-09"
       ]
     },
     {
       "vehicle": "DL01LAH7156",
       "trips": 2,
       "trips_with_brain_hit": 2,
-      "risk_score": 99,
+      "risk_score": 61,
       "top_signal_ids": [
         "S-03",
-        "S-04",
-        "S-05"
+        "S-16",
+        "S-01"
       ]
     },
     {
       "vehicle": "HR55AY7182",
       "trips": 2,
       "trips_with_brain_hit": 2,
-      "risk_score": 99,
+      "risk_score": 53,
       "top_signal_ids": [
         "S-03",
-        "S-04",
-        "S-05"
+        "S-10",
+        "S-15"
+      ]
+    },
+    {
+      "vehicle": "PB65BD2551",
+      "trips": 7,
+      "trips_with_brain_hit": 5,
+      "risk_score": 50,
+      "top_signal_ids": [
+        "S-19",
+        "S-12",
+        "S-03"
       ]
     },
     {
       "vehicle": "HR55AG5582",
       "trips": 2,
       "trips_with_brain_hit": 2,
-      "risk_score": 95,
+      "risk_score": 44,
       "top_signal_ids": [
         "S-03",
-        "S-04",
-        "S-05"
-      ]
-    },
-    {
-      "vehicle": "DL01LAE2129",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 94,
-      "top_signal_ids": [
-        "S-03",
-        "S-04",
-        "S-05"
-      ]
-    },
-    {
-      "vehicle": "MH04KU6142",
-      "trips": 14,
-      "trips_with_brain_hit": 14,
-      "risk_score": 93,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01MA8853",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 93,
-      "top_signal_ids": [
-        "S-01",
-        "S-04",
-        "S-05"
-      ]
-    },
-    {
-      "vehicle": "DL01LAN0203",
-      "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 92,
-      "top_signal_ids": [
-        "S-03",
-        "S-04",
-        "S-05"
-      ]
-    },
-    {
-      "vehicle": "DL01LAE1910",
-      "trips": 5,
-      "trips_with_brain_hit": 5,
-      "risk_score": 91,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR55AZ3004",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 90,
-      "top_signal_ids": [
-        "S-03",
-        "S-04",
-        "S-05"
-      ]
-    },
-    {
-      "vehicle": "HR55AY4470",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 89,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAQ3673",
-      "trips": 5,
-      "trips_with_brain_hit": 5,
-      "risk_score": 87,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "TG07U3145",
-      "trips": 8,
-      "trips_with_brain_hit": 8,
-      "risk_score": 85,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "KA51AD0278",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 85,
-      "top_signal_ids": [
-        "S-01",
-        "S-04",
-        "S-05"
-      ]
-    },
-    {
-      "vehicle": "DL01LAA1276",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 85,
-      "top_signal_ids": [
-        "S-03",
-        "S-04",
-        "S-05"
-      ]
-    },
-    {
-      "vehicle": "DL01LAM5001",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 85,
-      "top_signal_ids": [
-        "S-03",
-        "S-04",
-        "S-05"
-      ]
-    },
-    {
-      "vehicle": "DL01LAN1467",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 85,
-      "top_signal_ids": [
-        "S-03",
-        "S-04",
-        "S-05"
-      ]
-    },
-    {
-      "vehicle": "DL01LAD7180",
-      "trips": 8,
-      "trips_with_brain_hit": 8,
-      "risk_score": 84,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-10",
+        "S-16"
       ]
     },
     {
       "vehicle": "HR55AZ2268",
       "trips": 1,
       "trips_with_brain_hit": 1,
-      "risk_score": 83,
+      "risk_score": 43,
       "top_signal_ids": [
         "S-01",
-        "S-04",
-        "S-05"
+        "S-09",
+        "S-19"
       ]
     },
     {
       "vehicle": "UP33DT2972",
       "trips": 7,
-      "trips_with_brain_hit": 7,
-      "risk_score": 82,
+      "trips_with_brain_hit": 5,
+      "risk_score": 42,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-19",
+        "S-01",
+        "S-03"
       ]
     },
     {
-      "vehicle": "DL01LAN5214",
-      "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 82,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAM5768",
-      "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 82,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "TG08V4659",
-      "trips": 123,
-      "trips_with_brain_hit": 123,
-      "risk_score": 81,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "MH43BX2312",
-      "trips": 125,
-      "trips_with_brain_hit": 125,
-      "risk_score": 80,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAM1936",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 80,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAM7819",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 80,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAQ7071",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 80,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "TG07U3406",
+      "vehicle": "DL01LAN5238",
       "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 80,
+      "trips_with_brain_hit": 1,
+      "risk_score": 41,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-01",
+        "S-03",
+        "S-09"
+      ]
+    },
+    {
+      "vehicle": "DL01LAE2129",
+      "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 39,
+      "top_signal_ids": [
+        "S-03",
+        "S-16",
+        "S-01"
+      ]
+    },
+    {
+      "vehicle": "DL01LAA1276",
+      "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 38,
+      "top_signal_ids": [
+        "S-03",
+        "S-19",
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01LAE1910",
+      "trips": 5,
+      "trips_with_brain_hit": 3,
+      "risk_score": 37,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
       ]
     },
     {
       "vehicle": "HR55AT1650",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 80,
+      "trips_with_brain_hit": 1,
+      "risk_score": 37,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "PB65BD2551",
-      "trips": 7,
-      "trips_with_brain_hit": 7,
-      "risk_score": 79,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "MH04LY2701",
-      "trips": 1260,
-      "trips_with_brain_hit": 1260,
-      "risk_score": 79,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01MA2771",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 79,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAN5832",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 79,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-19",
+        "S-03",
+        "S-10"
       ]
     },
     {
       "vehicle": "DL01MA9756",
       "trips": 6,
-      "trips_with_brain_hit": 6,
-      "risk_score": 78,
+      "trips_with_brain_hit": 0,
+      "risk_score": 36,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "UP32UN4743",
-      "trips": 249,
-      "trips_with_brain_hit": 249,
-      "risk_score": 77,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAN8247",
-      "trips": 5,
-      "trips_with_brain_hit": 5,
-      "risk_score": 77,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "TS08UL9250",
-      "trips": 445,
-      "trips_with_brain_hit": 445,
-      "risk_score": 76,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR55AZ6057",
-      "trips": 8,
-      "trips_with_brain_hit": 8,
-      "risk_score": 76,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "KA53AB4557",
-      "trips": 39,
-      "trips_with_brain_hit": 39,
-      "risk_score": 76,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAN7621",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAG3044",
-      "trips": 6,
-      "trips_with_brain_hit": 6,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAM2510",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAG2106",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAN8282",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAQ3116",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAB8601",
-      "trips": 5,
-      "trips_with_brain_hit": 5,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01MA5969",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAL1596",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAN7538",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAN6305",
-      "trips": 7,
-      "trips_with_brain_hit": 7,
-      "risk_score": 74,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "KA05AQ5752",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 74,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "MH12FD5898",
-      "trips": 308,
-      "trips_with_brain_hit": 308,
-      "risk_score": 74,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAL3660",
-      "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 74,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "TG07U3765",
-      "trips": 53,
-      "trips_with_brain_hit": 53,
-      "risk_score": 74,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "TG08T6924",
-      "trips": 279,
-      "trips_with_brain_hit": 279,
-      "risk_score": 73,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "KA53AA9174",
-      "trips": 169,
-      "trips_with_brain_hit": 169,
-      "risk_score": 73,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LY3813",
-      "trips": 6,
-      "trips_with_brain_hit": 6,
-      "risk_score": 73,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR69B9929",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 73,
-      "top_signal_ids": [
-        "S-01",
-        "S-04",
-        "S-05"
-      ]
-    },
-    {
-      "vehicle": "DL01LAL1212",
-      "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 72,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAN4899",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 72,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LY5589",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 71,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "TG08T2701",
-      "trips": 256,
-      "trips_with_brain_hit": 256,
-      "risk_score": 71,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "KA53AB4556",
-      "trips": 22,
-      "trips_with_brain_hit": 22,
-      "risk_score": 71,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "KA52B2278",
-      "trips": 267,
-      "trips_with_brain_hit": 267,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "KA53AC0119",
-      "trips": 127,
-      "trips_with_brain_hit": 127,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR47G2362",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAA9328",
-      "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAF3511",
-      "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "RJ14GT3961",
-      "trips": 56,
-      "trips_with_brain_hit": 56,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "TG08U3631",
-      "trips": 61,
-      "trips_with_brain_hit": 61,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAB8407",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR55AG9672",
-      "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "KA53AB1484",
-      "trips": 53,
-      "trips_with_brain_hit": 53,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "KA14A9136",
-      "trips": 80,
-      "trips_with_brain_hit": 80,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "TG08T5887",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAM5869",
-      "trips": 9,
-      "trips_with_brain_hit": 9,
-      "risk_score": 69,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "KA53AA9173",
-      "trips": 172,
-      "trips_with_brain_hit": 172,
-      "risk_score": 69,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR55X3247",
-      "trips": 8,
-      "trips_with_brain_hit": 8,
-      "risk_score": 69,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "KA52B2298",
-      "trips": 9,
-      "trips_with_brain_hit": 9,
-      "risk_score": 69,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "UP32YN0914",
-      "trips": 7,
-      "trips_with_brain_hit": 7,
-      "risk_score": 68,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LY2734",
-      "trips": 8,
-      "trips_with_brain_hit": 8,
-      "risk_score": 68,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "TG16T0711",
-      "trips": 236,
-      "trips_with_brain_hit": 236,
-      "risk_score": 68,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "TG15TR3714",
-      "trips": 6,
-      "trips_with_brain_hit": 6,
-      "risk_score": 68,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "RJ14GP7476",
-      "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 68,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR69C4288",
-      "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 68,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
+        "S-16",
+        "S-19",
         "S-01"
       ]
     },
     {
-      "vehicle": "DL01LAA1286",
-      "trips": 10,
-      "trips_with_brain_hit": 10,
-      "risk_score": 67,
+      "vehicle": "DL01MA8853",
+      "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 36,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "NL01Q4671",
-      "trips": 5,
-      "trips_with_brain_hit": 5,
-      "risk_score": 67,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "KA05AQ5755",
-      "trips": 126,
-      "trips_with_brain_hit": 126,
-      "risk_score": 67,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "TS12UC7904",
-      "trips": 49,
-      "trips_with_brain_hit": 49,
-      "risk_score": 66,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-01",
+        "S-09",
+        "S-03"
       ]
     },
     {
       "vehicle": "UP80GT5655",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 35,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-19"
+      ]
+    },
+    {
+      "vehicle": "DL01LAQ3673",
+      "trips": 5,
+      "trips_with_brain_hit": 2,
+      "risk_score": 35,
+      "top_signal_ids": [
+        "S-03",
+        "S-10",
+        "S-15"
+      ]
+    },
+    {
+      "vehicle": "DL01LAN6305",
+      "trips": 7,
+      "trips_with_brain_hit": 3,
+      "risk_score": 34,
+      "top_signal_ids": [
+        "S-19",
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "HR55AZ3004",
+      "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 34,
+      "top_signal_ids": [
+        "S-03",
+        "S-10",
+        "S-15"
+      ]
+    },
+    {
+      "vehicle": "DL01LAN0203",
+      "trips": 4,
+      "trips_with_brain_hit": 1,
+      "risk_score": 34,
+      "top_signal_ids": [
+        "S-03",
+        "S-16",
+        "S-01"
+      ]
+    },
+    {
+      "vehicle": "HR55AY4470",
+      "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 34,
+      "top_signal_ids": [
+        "S-01",
+        "S-03",
+        "S-09"
+      ]
+    },
+    {
+      "vehicle": "DL01LAM1936",
+      "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 33,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
       ]
     },
     {
       "vehicle": "DL01MA8644",
       "trips": 7,
-      "trips_with_brain_hit": 7,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 31,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-19",
+        "S-16"
       ]
     },
     {
-      "vehicle": "HR55AT9990",
+      "vehicle": "UP32YN0914",
+      "trips": 7,
+      "trips_with_brain_hit": 1,
+      "risk_score": 28,
+      "top_signal_ids": [
+        "S-19",
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "MH43BX2312",
+      "trips": 125,
+      "trips_with_brain_hit": 30,
+      "risk_score": 28,
+      "top_signal_ids": [
+        "S-17",
+        "S-16",
+        "S-10"
+      ]
+    },
+    {
+      "vehicle": "DL01LAM7819",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
+      "trips_with_brain_hit": 1,
+      "risk_score": 28,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-17",
+        "S-03",
+        "S-10"
       ]
     },
     {
-      "vehicle": "HR63E5702",
+      "vehicle": "HR69B9929",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 28,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-01",
+        "S-09",
+        "S-16"
       ]
     },
     {
-      "vehicle": "DL01MA2746",
+      "vehicle": "DL01LAQ7071",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
+      "trips_with_brain_hit": 1,
+      "risk_score": 28,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAH4250",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR47G7546",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR55AL2914",
-      "trips": 10,
-      "trips_with_brain_hit": 10,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR55BA0490",
-      "trips": 6,
-      "trips_with_brain_hit": 6,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAD3637",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR55AX5932",
-      "trips": 8,
-      "trips_with_brain_hit": 8,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR55AZ5408",
-      "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAD3693",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR63F7532",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR63F5464",
-      "trips": 5,
-      "trips_with_brain_hit": 5,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01MA1951",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAJ4743",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR55AZ3989",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR55AK4998",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAQ6470",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAC4356",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01MB2348",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR55AL7817",
-      "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-17",
+        "S-03",
+        "S-10"
       ]
     },
     {
       "vehicle": "HR55AZ6437",
       "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 27,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-19"
       ]
     },
     {
-      "vehicle": "DL01LAN0840",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01AL9286",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAR0653",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR74B2442",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "HR55AG7280",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAL8704",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "TS12UD1748",
-      "trips": 39,
-      "trips_with_brain_hit": 39,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "TS12UD2262",
-      "trips": 32,
-      "trips_with_brain_hit": 32,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "MH04MH6436",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAM8325",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "TG09T5611",
-      "trips": 1,
+      "vehicle": "TG07U3145",
+      "trips": 8,
       "trips_with_brain_hit": 1,
-      "risk_score": 65,
+      "risk_score": 27,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-03",
+        "S-09",
+        "S-16"
       ]
     },
     {
-      "vehicle": "HR55AF8078",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
+      "vehicle": "DL01LAD7180",
+      "trips": 8,
+      "trips_with_brain_hit": 0,
+      "risk_score": 27,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-01",
+        "S-09",
+        "S-16"
       ]
     },
     {
-      "vehicle": "DL01LAF3501",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01MB1450",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "DL01LAM5670",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "vehicle": "TG12U1445",
+      "vehicle": "DL01LAL3660",
       "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 65,
+      "trips_with_brain_hit": 1,
+      "risk_score": 26,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-01",
+        "S-03"
       ]
     },
     {
-      "vehicle": "TG08T6952",
+      "vehicle": "DL01LAM5869",
+      "trips": 9,
+      "trips_with_brain_hit": 1,
+      "risk_score": 25,
+      "top_signal_ids": [
+        "S-19",
+        "S-03",
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "KA51AD0278",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
+      "trips_with_brain_hit": 1,
+      "risk_score": 25,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-01",
+        "S-03",
+        "S-16"
       ]
     },
     {
-      "vehicle": "TG08V4799",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 65,
+      "vehicle": "DL01LAM5001",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 25,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-03",
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "TG07U3406",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 25,
+      "top_signal_ids": [
+        "S-09",
+        "S-16",
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "DL01MA2771",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 24,
+      "top_signal_ids": [
+        "S-01",
+        "S-09",
+        "S-10"
+      ]
+    },
+    {
+      "vehicle": "DL01LAN5832",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 24,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-09"
+      ]
+    },
+    {
+      "vehicle": "DL01LAN5214",
+      "trips": 4,
+      "trips_with_brain_hit": 1,
+      "risk_score": 24,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "vehicle": "HR69C4288",
+      "trips": 4,
+      "trips_with_brain_hit": 0,
+      "risk_score": 24,
+      "top_signal_ids": [
+        "S-16",
+        "S-01",
+        "S-09"
+      ]
+    },
+    {
+      "vehicle": "HR47G2362",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 23,
+      "top_signal_ids": [
+        "S-16",
+        "S-10",
+        "S-12"
+      ]
+    },
+    {
+      "vehicle": "DL01LAN7621",
+      "trips": 3,
+      "trips_with_brain_hit": 1,
+      "risk_score": 23,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "vehicle": "TG08V4659",
+      "trips": 123,
+      "trips_with_brain_hit": 30,
+      "risk_score": 23,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-01"
+      ]
+    },
+    {
+      "vehicle": "HR63E5702",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 22,
+      "top_signal_ids": [
+        "S-16",
+        "S-19"
+      ]
+    },
+    {
+      "vehicle": "DL01LAG2106",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 22,
+      "top_signal_ids": [
+        "S-19",
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "DL01LY3813",
+      "trips": 6,
+      "trips_with_brain_hit": 1,
+      "risk_score": 21,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "vehicle": "DL01LAM5768",
+      "trips": 4,
+      "trips_with_brain_hit": 0,
+      "risk_score": 20,
+      "top_signal_ids": [
+        "S-03",
+        "S-17",
+        "S-10"
+      ]
+    },
+    {
+      "vehicle": "DL01LAN1467",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 20,
+      "top_signal_ids": [
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "KA05AQ5752",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 18,
+      "top_signal_ids": [
+        "S-01",
+        "S-09",
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "UP32UN4743",
+      "trips": 249,
+      "trips_with_brain_hit": 43,
+      "risk_score": 18,
+      "top_signal_ids": [
+        "S-03",
+        "S-16",
+        "S-01"
+      ]
+    },
+    {
+      "vehicle": "MH04LY2701",
+      "trips": 1260,
+      "trips_with_brain_hit": 152,
+      "risk_score": 18,
+      "top_signal_ids": [
+        "S-03",
+        "S-10",
+        "S-17"
+      ]
+    },
+    {
+      "vehicle": "DL01LAL1212",
+      "trips": 4,
+      "trips_with_brain_hit": 1,
+      "risk_score": 17,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "vehicle": "TG08T6924",
+      "trips": 279,
+      "trips_with_brain_hit": 45,
+      "risk_score": 17,
+      "top_signal_ids": [
+        "S-16",
+        "S-10",
+        "S-15"
+      ]
+    },
+    {
+      "vehicle": "MH12FD5898",
+      "trips": 308,
+      "trips_with_brain_hit": 41,
+      "risk_score": 17,
+      "top_signal_ids": [
+        "S-16",
+        "S-12",
+        "S-01"
+      ]
+    },
+    {
+      "vehicle": "DL01LAB8601",
+      "trips": 5,
+      "trips_with_brain_hit": 1,
+      "risk_score": 17,
+      "top_signal_ids": [
+        "S-17",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "vehicle": "KA52B2278",
+      "trips": 267,
+      "trips_with_brain_hit": 14,
+      "risk_score": 16,
+      "top_signal_ids": [
+        "S-19",
+        "S-03",
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01LAG3044",
+      "trips": 6,
+      "trips_with_brain_hit": 0,
+      "risk_score": 16,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-01"
+      ]
+    },
+    {
+      "vehicle": "HR55X3247",
+      "trips": 8,
+      "trips_with_brain_hit": 0,
+      "risk_score": 16,
+      "top_signal_ids": [
+        "S-16",
+        "S-10",
+        "S-12"
+      ]
+    },
+    {
+      "vehicle": "TG07U3765",
+      "trips": 53,
+      "trips_with_brain_hit": 3,
+      "risk_score": 16,
+      "top_signal_ids": [
+        "S-12",
+        "S-16",
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "DL01LAF3511",
+      "trips": 4,
+      "trips_with_brain_hit": 0,
+      "risk_score": 15,
+      "top_signal_ids": [
+        "S-16",
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "DL01LAB8407",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 15,
+      "top_signal_ids": [
+        "S-16",
+        "S-10"
+      ]
+    },
+    {
+      "vehicle": "DL01LAQ3116",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 15,
+      "top_signal_ids": [
+        "S-16",
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "HR55BA0490",
+      "trips": 6,
+      "trips_with_brain_hit": 0,
+      "risk_score": 14,
+      "top_signal_ids": [
+        "S-16",
+        "S-19"
+      ]
+    },
+    {
+      "vehicle": "DL01LAA1286",
+      "trips": 10,
+      "trips_with_brain_hit": 0,
+      "risk_score": 14,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-12"
+      ]
+    },
+    {
+      "vehicle": "HR55AZ6057",
+      "trips": 8,
+      "trips_with_brain_hit": 0,
+      "risk_score": 14,
+      "top_signal_ids": [
+        "S-03",
+        "S-16",
+        "S-10"
+      ]
+    },
+    {
+      "vehicle": "DL01LAN8247",
+      "trips": 5,
+      "trips_with_brain_hit": 0,
+      "risk_score": 14,
+      "top_signal_ids": [
+        "S-03",
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "HR55AX5932",
+      "trips": 8,
+      "trips_with_brain_hit": 0,
+      "risk_score": 13,
+      "top_signal_ids": [
+        "S-16",
+        "S-19"
+      ]
+    },
+    {
+      "vehicle": "DL01LY5589",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 13,
+      "top_signal_ids": [
+        "S-16",
+        "S-10",
+        "S-09"
+      ]
+    },
+    {
+      "vehicle": "TS08UL9250",
+      "trips": 445,
+      "trips_with_brain_hit": 32,
+      "risk_score": 13,
+      "top_signal_ids": [
+        "S-03",
+        "S-01",
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "TG16T0711",
+      "trips": 236,
+      "trips_with_brain_hit": 15,
+      "risk_score": 13,
+      "top_signal_ids": [
+        "S-16",
+        "S-15",
+        "S-10"
+      ]
+    },
+    {
+      "vehicle": "TG08T2701",
+      "trips": 256,
+      "trips_with_brain_hit": 23,
+      "risk_score": 13,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-01"
+      ]
+    },
+    {
+      "vehicle": "TG15TR3714",
+      "trips": 6,
+      "trips_with_brain_hit": 0,
+      "risk_score": 13,
+      "top_signal_ids": [
+        "S-16",
+        "S-10"
       ]
     },
     {
       "vehicle": "HR55AZ5760",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 63,
+      "trips_with_brain_hit": 0,
+      "risk_score": 13,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-09"
+        "S-09",
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "KA53AB4557",
+      "trips": 39,
+      "trips_with_brain_hit": 0,
+      "risk_score": 13,
+      "top_signal_ids": [
+        "S-03",
+        "S-12",
+        "S-01"
+      ]
+    },
+    {
+      "vehicle": "TS12UC7904",
+      "trips": 49,
+      "trips_with_brain_hit": 2,
+      "risk_score": 12,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "vehicle": "KA53AA9174",
+      "trips": 169,
+      "trips_with_brain_hit": 9,
+      "risk_score": 12,
+      "top_signal_ids": [
+        "S-01",
+        "S-16",
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "DL01LAM8325",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 12,
+      "top_signal_ids": [
+        "S-16",
+        "S-12"
+      ]
+    },
+    {
+      "vehicle": "RJ14GP7476",
+      "trips": 4,
+      "trips_with_brain_hit": 0,
+      "risk_score": 12,
+      "top_signal_ids": [
+        "S-12",
+        "S-16",
+        "S-10"
+      ]
+    },
+    {
+      "vehicle": "NL01Q4671",
+      "trips": 5,
+      "trips_with_brain_hit": 0,
+      "risk_score": 12,
+      "top_signal_ids": [
+        "S-12",
+        "S-16",
+        "S-10"
+      ]
+    },
+    {
+      "vehicle": "HR55AT9990",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01MA2746",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01LAH4250",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "HR47G7546",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01LAD3637",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01LAD3693",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "HR63F7532",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "HR63F5464",
+      "trips": 5,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01MA1951",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01LAJ4743",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "HR55AZ3989",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "HR55AK4998",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01LAQ6470",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01LAC4356",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01MB2348",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
       ]
     },
     {
       "vehicle": "HR55AV7277",
       "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 60,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16"
       ]
     },
     {
-      "vehicle": "MH04KU7637",
+      "vehicle": "DL01LAN0840",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01AL9286",
       "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 58,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16"
       ]
     },
     {
-      "vehicle": "NL01AJ5980",
-      "trips": 1,
-      "trips_with_brain_hit": 1,
-      "risk_score": 45,
+      "vehicle": "DL01LAR0653",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
       "top_signal_ids": [
-        "S-04",
-        "S-05"
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01LAA9328",
+      "trips": 4,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16",
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "HR74B2442",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01LY2734",
+      "trips": 8,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16",
+        "S-03"
       ]
     },
     {
       "vehicle": "DL01LAE7373",
       "trips": 1,
-      "trips_with_brain_hit": 1,
-      "risk_score": 45,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
       "top_signal_ids": [
-        "S-04",
-        "S-05"
+        "S-16"
       ]
+    },
+    {
+      "vehicle": "DL01LAL8704",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "RJ14GT3961",
+      "trips": 56,
+      "trips_with_brain_hit": 1,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-01",
+        "S-16",
+        "S-12"
+      ]
+    },
+    {
+      "vehicle": "TS12UD1748",
+      "trips": 39,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "TS12UD2262",
+      "trips": 32,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "TG08U3631",
+      "trips": 61,
+      "trips_with_brain_hit": 3,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "vehicle": "MH04MH6436",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01LAM2510",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "HR55AG9672",
+      "trips": 4,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16",
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "DL01LAN8282",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "DL01LAM5670",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01MA5969",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "DL01LAL1596",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "KA14A9136",
+      "trips": 80,
+      "trips_with_brain_hit": 1,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16",
+        "S-01",
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "DL01LAN7538",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "KA52B2298",
+      "trips": 9,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-19",
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "HR55AL2914",
+      "trips": 10,
+      "trips_with_brain_hit": 0,
+      "risk_score": 9,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "KA53AB4556",
+      "trips": 22,
+      "trips_with_brain_hit": 0,
+      "risk_score": 9,
+      "top_signal_ids": [
+        "S-03",
+        "S-12",
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "KA53AB1484",
+      "trips": 53,
+      "trips_with_brain_hit": 1,
+      "risk_score": 9,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-01"
+      ]
+    },
+    {
+      "vehicle": "TG08T5887",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 9,
+      "top_signal_ids": [
+        "S-01",
+        "S-17"
+      ]
+    },
+    {
+      "vehicle": "KA53AC0119",
+      "trips": 127,
+      "trips_with_brain_hit": 2,
+      "risk_score": 8,
+      "top_signal_ids": [
+        "S-01",
+        "S-03",
+        "S-19"
+      ]
+    },
+    {
+      "vehicle": "KA53AA9173",
+      "trips": 172,
+      "trips_with_brain_hit": 1,
+      "risk_score": 8,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-01"
+      ]
+    },
+    {
+      "vehicle": "HR55AF8078",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 8,
+      "top_signal_ids": [
+        "S-16",
+        "S-12"
+      ]
+    },
+    {
+      "vehicle": "DL01LAF3501",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 7,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "DL01MB1450",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 7,
+      "top_signal_ids": [
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "DL01LAN4899",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 7,
+      "top_signal_ids": [
+        "S-03"
+      ]
+    },
+    {
+      "vehicle": "TG12U1445",
+      "trips": 4,
+      "trips_with_brain_hit": 0,
+      "risk_score": 5,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "TG08T6952",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 5,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "KA05AQ5755",
+      "trips": 126,
+      "trips_with_brain_hit": 0,
+      "risk_score": 4,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-12"
+      ]
+    },
+    {
+      "vehicle": "TG08V4799",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 3,
+      "top_signal_ids": [
+        "S-16"
+      ]
+    },
+    {
+      "vehicle": "HR55AZ5408",
+      "trips": 4,
+      "trips_with_brain_hit": 0,
+      "risk_score": 0,
+      "top_signal_ids": []
+    },
+    {
+      "vehicle": "MH04KU7637",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 0,
+      "top_signal_ids": []
+    },
+    {
+      "vehicle": "NL01AJ5980",
+      "trips": 1,
+      "trips_with_brain_hit": 0,
+      "risk_score": 0,
+      "top_signal_ids": []
+    },
+    {
+      "vehicle": "HR55AL7817",
+      "trips": 4,
+      "trips_with_brain_hit": 0,
+      "risk_score": 0,
+      "top_signal_ids": []
+    },
+    {
+      "vehicle": "HR55AG7280",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 0,
+      "top_signal_ids": []
+    },
+    {
+      "vehicle": "TG09T5611",
+      "trips": 1,
+      "trips_with_brain_hit": 0,
+      "risk_score": 0,
+      "top_signal_ids": []
     }
   ],
   "transporters": [
     {
-      "transporter": "Speed Fox",
-      "trips": 11,
-      "trips_with_brain_hit": 11,
-      "risk_score": 90,
+      "transporter": "Navneet Enterprises",
+      "trips": 7,
+      "trips_with_brain_hit": 5,
+      "risk_score": 50,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "SEARCHX BUSINESS SOLUTION PRIVATE LIMITED",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 89,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "MSF EXPRESS PRIVATE LIMITED",
-      "trips": 30,
-      "trips_with_brain_hit": 30,
-      "risk_score": 85,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "Rans Transline-Zepto",
-      "trips": 1,
-      "trips_with_brain_hit": 1,
-      "risk_score": 85,
-      "top_signal_ids": [
-        "S-03",
-        "S-04",
-        "S-05"
-      ]
-    },
-    {
-      "transporter": "Sri Vastav",
-      "trips": 72,
-      "trips_with_brain_hit": 72,
-      "risk_score": 83,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "Nitin Transport_Zepto",
-      "trips": 3,
-      "trips_with_brain_hit": 3,
-      "risk_score": 83,
-      "top_signal_ids": [
-        "S-01",
-        "S-04",
-        "S-05"
+        "S-19",
+        "S-12",
+        "S-03"
       ]
     },
     {
       "transporter": "Bhagavati Services & Suppliers",
       "trips": 7,
-      "trips_with_brain_hit": 7,
-      "risk_score": 82,
+      "trips_with_brain_hit": 5,
+      "risk_score": 42,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-19",
+        "S-01",
+        "S-03"
+      ]
+    },
+    {
+      "transporter": "Speed Fox",
+      "trips": 11,
+      "trips_with_brain_hit": 4,
+      "risk_score": 36,
+      "top_signal_ids": [
+        "S-03",
+        "S-16",
+        "S-09"
+      ]
+    },
+    {
+      "transporter": "MSF EXPRESS PRIVATE LIMITED",
+      "trips": 30,
+      "trips_with_brain_hit": 14,
+      "risk_score": 34,
+      "top_signal_ids": [
+        "S-10",
+        "S-16",
+        "S-03"
+      ]
+    },
+    {
+      "transporter": "SEARCHX BUSINESS SOLUTION PRIVATE LIMITED",
+      "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 34,
+      "top_signal_ids": [
+        "S-01",
+        "S-03",
+        "S-09"
+      ]
+    },
+    {
+      "transporter": "Rans Transline-Zepto",
+      "trips": 1,
+      "trips_with_brain_hit": 0,
+      "risk_score": 30,
+      "top_signal_ids": [
+        "S-03",
+        "S-16"
       ]
     },
     {
       "transporter": "Hari Cargo",
       "trips": 15,
-      "trips_with_brain_hit": 15,
-      "risk_score": 82,
+      "trips_with_brain_hit": 5,
+      "risk_score": 28,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-03",
+        "S-10"
       ]
     },
     {
-      "transporter": "SRCV SUPPLY CHAIN PRIVATE LIMITED",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 80,
+      "transporter": "Nitin Transport_Zepto",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 28,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "Navneet Enterprises",
-      "trips": 7,
-      "trips_with_brain_hit": 7,
-      "risk_score": 79,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "TRUSTECH",
-      "trips": 1270,
-      "trips_with_brain_hit": 1270,
-      "risk_score": 79,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-01",
+        "S-09",
+        "S-16"
       ]
     },
     {
       "transporter": "Shree Balaji Transports",
       "trips": 8,
-      "trips_with_brain_hit": 8,
-      "risk_score": 78,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "A&A Associates",
-      "trips": 248,
-      "trips_with_brain_hit": 248,
-      "risk_score": 77,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "YADAV TRANSPORT",
-      "trips": 14,
-      "trips_with_brain_hit": 14,
-      "risk_score": 76,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "Just Deliveries",
-      "trips": 430,
-      "trips_with_brain_hit": 430,
-      "risk_score": 76,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "Rans Transline",
-      "trips": 60,
-      "trips_with_brain_hit": 60,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "Yadav Transport_Zepto",
-      "trips": 1,
-      "trips_with_brain_hit": 1,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-01",
-        "S-04",
-        "S-05"
-      ]
-    },
-    {
-      "transporter": "UR Truck",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "Vaishali Transcarriers",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 75,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "JSP logistics",
-      "trips": 12,
-      "trips_with_brain_hit": 12,
-      "risk_score": 74,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "NENCY ROAD LINES-ZEPTO",
-      "trips": 3,
       "trips_with_brain_hit": 3,
-      "risk_score": 74,
+      "risk_score": 26,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-03",
+        "S-10"
       ]
     },
     {
       "transporter": "Maa Durga Transport",
       "trips": 53,
-      "trips_with_brain_hit": 53,
-      "risk_score": 73,
+      "trips_with_brain_hit": 5,
+      "risk_score": 24,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-19",
+        "S-03",
+        "S-16"
       ]
     },
     {
-      "transporter": "Manish freight and logistics Pvt Ltd",
-      "trips": 40,
-      "trips_with_brain_hit": 40,
-      "risk_score": 73,
+      "transporter": "Sri Vastav",
+      "trips": 72,
+      "trips_with_brain_hit": 20,
+      "risk_score": 23,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "Kitty Logistics",
-      "trips": 530,
-      "trips_with_brain_hit": 530,
-      "risk_score": 73,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "Dhanalaxmi",
-      "trips": 111,
-      "trips_with_brain_hit": 111,
-      "risk_score": 73,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "Peprit",
-      "trips": 24,
-      "trips_with_brain_hit": 24,
-      "risk_score": 73,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-03",
+        "S-16",
+        "S-01"
       ]
     },
     {
       "transporter": "Vishwakarma Transport",
       "trips": 6,
-      "trips_with_brain_hit": 6,
-      "risk_score": 73,
+      "trips_with_brain_hit": 1,
+      "risk_score": 21,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-03",
+        "S-10"
       ]
     },
     {
-      "transporter": "MHS TRANSPORT",
-      "trips": 59,
-      "trips_with_brain_hit": 59,
-      "risk_score": 72,
+      "transporter": "YADAV TRANSPORT",
+      "trips": 14,
+      "trips_with_brain_hit": 3,
+      "risk_score": 20,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "transporter": "SRCV SUPPLY CHAIN PRIVATE LIMITED",
+      "trips": 2,
+      "trips_with_brain_hit": 1,
+      "risk_score": 20,
+      "top_signal_ids": [
+        "S-01",
+        "S-03",
+        "S-16"
+      ]
+    },
+    {
+      "transporter": "Yadav Transport_Zepto",
+      "trips": 1,
+      "trips_with_brain_hit": 0,
+      "risk_score": 20,
+      "top_signal_ids": [
+        "S-01",
+        "S-16"
+      ]
+    },
+    {
+      "transporter": "A&A Associates",
+      "trips": 248,
+      "trips_with_brain_hit": 45,
+      "risk_score": 19,
+      "top_signal_ids": [
+        "S-03",
+        "S-16",
+        "S-01"
+      ]
+    },
+    {
+      "transporter": "JSP logistics",
+      "trips": 12,
+      "trips_with_brain_hit": 1,
+      "risk_score": 19,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-19"
+      ]
+    },
+    {
+      "transporter": "TRUSTECH",
+      "trips": 1270,
+      "trips_with_brain_hit": 161,
+      "risk_score": 19,
+      "top_signal_ids": [
+        "S-03",
+        "S-10",
+        "S-17"
       ]
     },
     {
       "transporter": "PRARAMBH INDIA SERVICES PRIVATE LIMITED",
       "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 72,
+      "trips_with_brain_hit": 1,
+      "risk_score": 19,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-17",
+        "S-03"
       ]
     },
     {
-      "transporter": "NENCY ROAD LINES",
-      "trips": 70,
-      "trips_with_brain_hit": 70,
-      "risk_score": 72,
+      "transporter": "UR Truck",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 18,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-03",
+        "S-12",
+        "S-16"
+      ]
+    },
+    {
+      "transporter": "Manish freight and logistics Pvt Ltd",
+      "trips": 40,
+      "trips_with_brain_hit": 4,
+      "risk_score": 17,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
       ]
     },
     {
       "transporter": "Oorja",
       "trips": 624,
-      "trips_with_brain_hit": 624,
-      "risk_score": 72,
+      "trips_with_brain_hit": 72,
+      "risk_score": 17,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-12",
+        "S-01"
       ]
     },
     {
-      "transporter": "SLN TRANSPORTS",
-      "trips": 664,
-      "trips_with_brain_hit": 664,
-      "risk_score": 71,
+      "transporter": "Rans Transline",
+      "trips": 60,
+      "trips_with_brain_hit": 3,
+      "risk_score": 17,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-12",
+        "S-03"
       ]
     },
     {
       "transporter": "GM enterprises",
       "trips": 111,
-      "trips_with_brain_hit": 111,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "Truckobar India Pvt Ltd",
-      "trips": 11,
-      "trips_with_brain_hit": 11,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "SRINIVASA TRANSPORT AND LOGISTICS",
-      "trips": 165,
-      "trips_with_brain_hit": 165,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "Just Deliveries-Zepto",
-      "trips": 9,
-      "trips_with_brain_hit": 9,
-      "risk_score": 70,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "SWIFTCREW LOGISTICS & STAFFING SOLUTIONS",
-      "trips": 10,
       "trips_with_brain_hit": 10,
-      "risk_score": 70,
+      "risk_score": 16,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-19",
+        "S-03",
+        "S-16"
       ]
     },
     {
-      "transporter": "Bhagwan Transport Service",
-      "trips": 13,
-      "trips_with_brain_hit": 13,
-      "risk_score": 69,
+      "transporter": "MHS TRANSPORT",
+      "trips": 59,
+      "trips_with_brain_hit": 7,
+      "risk_score": 16,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-03",
+        "S-10"
       ]
     },
     {
       "transporter": "Sannhvi Logistics Pvt Ltd",
       "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 68,
+      "trips_with_brain_hit": 0,
+      "risk_score": 16,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-10",
+        "S-12"
       ]
     },
     {
       "transporter": "NITIN TRANSPORT COMPANY",
       "trips": 34,
-      "trips_with_brain_hit": 34,
-      "risk_score": 68,
+      "trips_with_brain_hit": 1,
+      "risk_score": 15,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-12",
+        "S-10"
       ]
     },
     {
-      "transporter": "JL TRANSPORT",
-      "trips": 128,
-      "trips_with_brain_hit": 128,
-      "risk_score": 67,
+      "transporter": "Kitty Logistics",
+      "trips": 530,
+      "trips_with_brain_hit": 69,
+      "risk_score": 15,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-10",
+        "S-03"
+      ]
+    },
+    {
+      "transporter": "SRINIVASA TRANSPORT AND LOGISTICS",
+      "trips": 165,
+      "trips_with_brain_hit": 4,
+      "risk_score": 15,
+      "top_signal_ids": [
+        "S-19",
+        "S-03",
+        "S-16"
+      ]
+    },
+    {
+      "transporter": "SWIFTCREW LOGISTICS & STAFFING SOLUTIONS",
+      "trips": 10,
+      "trips_with_brain_hit": 0,
+      "risk_score": 15,
+      "top_signal_ids": [
+        "S-16",
+        "S-17",
+        "S-01"
+      ]
+    },
+    {
+      "transporter": "Dhanalaxmi",
+      "trips": 111,
+      "trips_with_brain_hit": 12,
+      "risk_score": 14,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "transporter": "Vaishali Transcarriers",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 14,
+      "top_signal_ids": [
+        "S-03",
+        "S-17"
+      ]
+    },
+    {
+      "transporter": "Truckobar India Pvt Ltd",
+      "trips": 11,
+      "trips_with_brain_hit": 1,
+      "risk_score": 13,
+      "top_signal_ids": [
+        "S-16",
+        "S-17",
+        "S-03"
+      ]
+    },
+    {
+      "transporter": "Bhagwan Transport Service",
+      "trips": 13,
+      "trips_with_brain_hit": 0,
+      "risk_score": 13,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-10"
+      ]
+    },
+    {
+      "transporter": "Just Deliveries",
+      "trips": 430,
+      "trips_with_brain_hit": 31,
+      "risk_score": 13,
+      "top_signal_ids": [
+        "S-03",
+        "S-01",
+        "S-16"
+      ]
+    },
+    {
+      "transporter": "NENCY ROAD LINES",
+      "trips": 70,
+      "trips_with_brain_hit": 2,
+      "risk_score": 13,
+      "top_signal_ids": [
+        "S-01",
+        "S-16",
+        "S-12"
+      ]
+    },
+    {
+      "transporter": "NENCY ROAD LINES-ZEPTO",
+      "trips": 3,
+      "trips_with_brain_hit": 0,
+      "risk_score": 13,
+      "top_signal_ids": [
+        "S-09",
+        "S-16",
+        "S-03"
       ]
     },
     {
       "transporter": "Smartship",
       "trips": 59,
-      "trips_with_brain_hit": 59,
-      "risk_score": 66,
+      "trips_with_brain_hit": 2,
+      "risk_score": 11,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16",
+        "S-15",
+        "S-03"
+      ]
+    },
+    {
+      "transporter": "SLN TRANSPORTS",
+      "trips": 664,
+      "trips_with_brain_hit": 15,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-16",
+        "S-01",
+        "S-03"
       ]
     },
     {
       "transporter": "SHRI SHYAM LOGISTICS",
       "trips": 4,
-      "trips_with_brain_hit": 4,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
-      ]
-    },
-    {
-      "transporter": "Shri Tirupati Cargo Carriers-Zepto",
-      "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
-      "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16"
       ]
     },
     {
       "transporter": "Hari Cargo-Zepto",
       "trips": 1,
-      "trips_with_brain_hit": 1,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16"
       ]
     },
     {
       "transporter": "Akashi Express Service",
       "trips": 8,
-      "trips_with_brain_hit": 8,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16"
       ]
     },
     {
       "transporter": "Manasha Logistics",
       "trips": 1,
-      "trips_with_brain_hit": 1,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16"
       ]
     },
     {
       "transporter": "TEST VENDOR",
       "trips": 1,
-      "trips_with_brain_hit": 1,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16"
       ]
     },
     {
       "transporter": "ROBH",
       "trips": 63,
-      "trips_with_brain_hit": 63,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16"
       ]
     },
     {
       "transporter": "ACCESS WAREHOSING PVT LTD",
       "trips": 8,
-      "trips_with_brain_hit": 8,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16"
       ]
     },
     {
       "transporter": "NEELAM TRANSPORT",
       "trips": 2,
-      "trips_with_brain_hit": 2,
-      "risk_score": 65,
+      "trips_with_brain_hit": 0,
+      "risk_score": 10,
       "top_signal_ids": [
-        "S-04",
-        "S-05",
-        "S-06"
+        "S-16"
       ]
+    },
+    {
+      "transporter": "Peprit",
+      "trips": 24,
+      "trips_with_brain_hit": 1,
+      "risk_score": 10,
+      "top_signal_ids": [
+        "S-01",
+        "S-09",
+        "S-10"
+      ]
+    },
+    {
+      "transporter": "Just Deliveries-Zepto",
+      "trips": 9,
+      "trips_with_brain_hit": 0,
+      "risk_score": 7,
+      "top_signal_ids": [
+        "S-01",
+        "S-09",
+        "S-12"
+      ]
+    },
+    {
+      "transporter": "JL TRANSPORT",
+      "trips": 128,
+      "trips_with_brain_hit": 0,
+      "risk_score": 4,
+      "top_signal_ids": [
+        "S-16",
+        "S-03",
+        "S-12"
+      ]
+    },
+    {
+      "transporter": "Shri Tirupati Cargo Carriers-Zepto",
+      "trips": 2,
+      "trips_with_brain_hit": 0,
+      "risk_score": 0,
+      "top_signal_ids": []
     }
   ]
 }

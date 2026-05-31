@@ -67,20 +67,22 @@ def main() -> None:
         "negative_trips": len(negatives),
     }
 
+    # Build case index FIRST so case_routes is available for codex training.
+    print("Building case index from training xlsx (actual incident trips only)…")
+    from brain.case_index import build_case_index_from_xlsx, extract_case_routes
+    case_idx = build_case_index_from_xlsx(training_df, extract_trip_features)
+    write_case_index(case_idx, OUT_DIR / "case_index.json")
+    case_routes = extract_case_routes(case_idx)
+    print(f"  → {len(case_idx['cases'])} cases indexed · {len(case_routes)} unique case routes")
+
     print("Building codex…")
-    codex = build_codex(positives, negatives, blacklist, training_meta)
+    codex = build_codex(positives, negatives, blacklist, training_meta, case_routes=case_routes)
     write_codex(codex, OUT_DIR / "theft_codex.json")
     print(f"  → {len(codex['signals'])} signals shipped (weight ≥ 5)")
 
-    print("Building case index from training xlsx…")
-    from brain.case_index import build_case_index_from_xlsx
-    case_idx = build_case_index_from_xlsx(training_df, extract_trip_features)
-    write_case_index(case_idx, OUT_DIR / "case_index.json")
-    print(f"  → {len(case_idx['cases'])} cases indexed")
-
     print("Scoring target dataset…")
     target_records = target_df.to_dict(orient="records")
-    scores = score_dataset(target_records, codex, case_idx["cases"], blacklist)
+    scores = score_dataset(target_records, codex, case_idx["cases"], blacklist, case_routes=case_routes)
     (OUT_DIR / "brain_scores.json").write_text(json.dumps({
         "version": CODEX_VERSION,
         "generated_at": datetime.utcnow().isoformat(timespec="seconds"),

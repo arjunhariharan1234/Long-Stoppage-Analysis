@@ -52,12 +52,16 @@ def _hit_rate(signal: dict, rows: Iterable[dict], ctx: dict) -> float:
 
 
 def build_codex(positives: list[dict], negatives: list[dict], blacklist: dict,
-                training_meta: dict | None = None) -> dict:
+                training_meta: dict | None = None,
+                case_routes: set | None = None) -> dict:
     """Build the codex by training each signal against positive vs negative sets.
 
     Edge case: when ``negatives`` is empty we have no clean fleet sample, so
     ``false_match_proxy`` is forced to 0.0 and weights derive from positive
     hit-rate alone — acceptable for the v1 forensic brain.
+
+    ``case_routes`` is threaded through the context so signals that need it
+    (S-19 route match) see the same set during training and scoring.
     """
     if len(negatives) == 0:
         print(
@@ -65,7 +69,7 @@ def build_codex(positives: list[dict], negatives: list[dict], blacklist: dict,
             "weights derived from positive hit-rate only.",
             file=sys.stderr,
         )
-    ctx = {"blacklist": blacklist}
+    ctx = {"blacklist": blacklist, "case_routes": case_routes or set()}
     signals_out = []
     for sig in SIGNAL_REGISTRY:
         hit = _hit_rate(sig, positives, ctx)
@@ -75,9 +79,16 @@ def build_codex(positives: list[dict], negatives: list[dict], blacklist: dict,
             # already returns 0.0 for an empty iterable, but explicit is better).
             fm = 0.0
         weight = compute_weight(hit, fm)
-        # If no negative sample, cap at default_weight to prevent inflation.
+        # If no negative sample:
+        #   - cap weight at default_weight to prevent inflation from hit_rate=100%
+        #   - floor at default_weight for multi-case signals (analyst-curated,
+        #     may be forward-looking and not fire on the training cohort itself)
         if not negatives:
-            weight = min(weight, sig.get("default_weight", 10))
+            cap = sig.get("default_weight", 10)
+            if len(sig.get("source_cases", []) or []) >= 2:
+                weight = cap  # use default for analyst-curated multi-case signals
+            else:
+                weight = min(weight, cap)
         weight = _apply_overfit_guard(weight, sig.get("source_cases", []))
         if weight < MIN_SHIPPABLE_WEIGHT:
             continue

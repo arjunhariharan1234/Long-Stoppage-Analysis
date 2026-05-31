@@ -111,37 +111,53 @@ def _first_non_null(series) -> object:
 def build_case_index_from_xlsx(training_df, extract_features_fn) -> dict:
     """Build the case index directly from the training xlsx.
 
-    Groups rows by ``incident_trip_id`` (each group = one confirmed-theft case)
-    and averages per-trip signature vectors to get an aggregated per-case
-    signature. Per-case metadata (city, vehicle, transporter, theft_type,
-    rca_summary, loss_inr) is taken from the first non-null value in the group.
+    The dataset's incident trip itself is not present as a row — only its
+    lookback-window peers are. So for each ``incident_trip_id`` group we pick
+    the row with the smallest ``days_before_incident`` (the trip closest to,
+    or on, the incident day) as the case representative. That row's behavioral
+    signature is the closest proxy to the actual theft trip.
+
+    Per-case metadata (city, vehicle, transporter, theft_type, rca_summary,
+    loss_inr, origin_code, destination_code) comes from this representative row.
     """
     df = training_df.dropna(subset=["incident_trip_id"])
+    # Pick the row with smallest days_before_incident per incident.
+    if "days_before_incident" in df.columns:
+        rep_idx = df.groupby("incident_trip_id")["days_before_incident"].idxmin()
+        rep_df = df.loc[rep_idx]
+    else:
+        # Fallback: first row per incident.
+        rep_df = df.groupby("incident_trip_id").head(1)
+
+    def _val(row, col):
+        v = row.get(col) if hasattr(row, "get") else None
+        if v is None:
+            return None
+        # pandas NaN is a float that != itself
+        try:
+            if v != v:
+                return None
+        except Exception:
+            pass
+        return v
+
     out: list[dict] = []
-    for incident_trip_id, group in df.groupby("incident_trip_id"):
+    for _, incident_row in rep_df.iterrows():
+        incident_trip_id = incident_row["incident_trip_id"]
         case_id = f"CT-{int(incident_trip_id):010d}"
-        city = _first_non_null(group["city"]) if "city" in group else None
-        vehicle = _first_non_null(group["vehicle_number_clean"]) if "vehicle_number_clean" in group else None
-        transporter = _first_non_null(group["window_transporter"]) if "window_transporter" in group else None
-        theft_type = _first_non_null(group["theft_type"]) if "theft_type" in group else None
-        rca_summary = _first_non_null(group["rca_summary"]) if "rca_summary" in group else None
-        loss_inr_raw = _first_non_null(group["incident_loss_value"]) if "incident_loss_value" in group else None
+        city = _val(incident_row, "city")
+        vehicle = _val(incident_row, "vehicle_number_clean")
+        transporter = _val(incident_row, "window_transporter")
+        theft_type = _val(incident_row, "theft_type")
+        rca_summary = _val(incident_row, "rca_summary")
+        loss_inr_raw = _val(incident_row, "incident_loss_value")
         try:
             loss_inr = float(loss_inr_raw) if loss_inr_raw is not None else None
         except (TypeError, ValueError):
             loss_inr = None
 
-        # Per-trip signature vectors → average per feature.
-        vectors = []
-        for row in group.to_dict(orient="records"):
-            feats = extract_features_fn(row)
-            vectors.append(build_signature_vector(feats))
-        avg_vec: dict[str, float] = {}
-        if vectors:
-            for feat in SIGNATURE_FEATURES:
-                avg_vec[feat] = sum(_safe(v, feat) for v in vectors) / len(vectors)
-        else:
-            avg_vec = {feat: 0.0 for feat in SIGNATURE_FEATURES}
+        feats = extract_features_fn(incident_row.to_dict())
+        sig_vec = build_signature_vector(feats)
 
         out.append({
             "case_id": case_id,
@@ -152,14 +168,29 @@ def build_case_index_from_xlsx(training_df, extract_features_fn) -> dict:
             "theft_type": str(theft_type) if theft_type is not None else None,
             "loss_inr": loss_inr,
             "rca_summary": (str(rca_summary)[:200] if rca_summary is not None else ""),
-            "matched_trip_count": len(group),
-            "signature_vector": avg_vec,
+            "origin_code": feats.get("origin_code") or "",
+            "destination_code": feats.get("destination_code") or "",
+            "matched_trip_count": 1,
+            "signature_vector": sig_vec,
         })
+
+    # Derive case_routes from the populated origin_code / destination_code fields.
+    case_routes = sorted(
+        {(c["origin_code"], c["destination_code"])
+         for c in out
+         if c.get("origin_code") and c.get("destination_code")}
+    )
     return {
         "version": CODEX_VERSION,
         "generated_at": datetime.utcnow().isoformat(timespec="seconds"),
         "cases": out,
+        "case_routes": [list(t) for t in case_routes],
     }
+
+
+def extract_case_routes(case_index: dict) -> set[tuple[str, str]]:
+    """Pull the (origin, destination) route set from a case index dict."""
+    return {tuple(r) for r in case_index.get("case_routes", [])}
 
 
 def write_case_index(idx: dict, out_path: Path) -> None:

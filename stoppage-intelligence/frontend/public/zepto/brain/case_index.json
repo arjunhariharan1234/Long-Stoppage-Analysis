@@ -1,6 +1,6 @@
 {
   "version": "2026-05-30.1",
-  "generated_at": "2026-05-31T11:23:53",
+  "generated_at": "2026-05-31T12:09:41",
   "cases": [
     {
       "case_id": "CT-0049047489",
@@ -11,14 +11,16 @@
       "theft_type": "en route theft confirmed",
       "loss_inr": 63437.0,
       "rca_summary": "theft confirmed",
-      "matched_trip_count": 12,
+      "origin_code": "BLR005M_BLR007M",
+      "destination_code": "BLR024S",
+      "matched_trip_count": 1,
       "signature_vector": {
-        "detour_ratio": 1.0389371119434743,
-        "stoppage_share": 0.025903730625483016,
-        "max_halt_hrs": 0.05666666726271311,
+        "detour_ratio": 1.0463253239124122,
+        "stoppage_share": 0.03875969164621935,
+        "max_halt_hrs": 0.10000000149011612,
         "halt_count_per_100km": 0.0,
-        "transit_distance_km": 57.292175928751625,
-        "unloading_time_hrs": 1.5200000007947285,
+        "transit_distance_km": 57.70484161376953,
+        "unloading_time_hrs": 1.590000033378601,
         "ping_density_per_km": 0.0,
         "geofence_breached": 0.0
       }
@@ -32,15 +34,17 @@
       "theft_type": "potential en-route theft",
       "loss_inr": 124729.0,
       "rca_summary": "suspected en-route theft",
-      "matched_trip_count": 7,
+      "origin_code": "LKO002M",
+      "destination_code": "LKO007S",
+      "matched_trip_count": 1,
       "signature_vector": {
-        "detour_ratio": 1.2744294669895655,
-        "stoppage_share": 0.36612694909867954,
-        "max_halt_hrs": 1.1528571503502982,
+        "detour_ratio": 1.1316590727320546,
+        "stoppage_share": 0.318181800269078,
+        "max_halt_hrs": 0.7699999809265137,
         "halt_count_per_100km": 0.0,
-        "transit_distance_km": 60.2221668788365,
-        "unloading_time_hrs": 1.1300000037465776,
-        "ping_density_per_km": 3.3401031928555414,
+        "transit_distance_km": 56.39057159423828,
+        "unloading_time_hrs": 1.350000023841858,
+        "ping_density_per_km": 5.898760254576687,
         "geofence_breached": 0.0
       }
     },
@@ -53,15 +57,17 @@
       "theft_type": "potential en-route theft",
       "loss_inr": 40632.0,
       "rca_summary": "suspected en-route theft",
-      "matched_trip_count": 7,
+      "origin_code": "LKO002M",
+      "destination_code": "LKO050S-LKO-Anora",
+      "matched_trip_count": 1,
       "signature_vector": {
-        "detour_ratio": 0.9630085730085998,
-        "stoppage_share": 0.4165130632173014,
-        "max_halt_hrs": 0.7942857146263123,
+        "detour_ratio": 0.9655688219624381,
+        "stoppage_share": 0.4162162005422412,
+        "max_halt_hrs": 0.7699999809265137,
         "halt_count_per_100km": 0.0,
-        "transit_distance_km": 47.58225359235491,
-        "unloading_time_hrs": 0.7114285741533551,
-        "ping_density_per_km": 1.694903459177404,
+        "transit_distance_km": 47.70875549316406,
+        "unloading_time_hrs": 0.6200000047683716,
+        "ping_density_per_km": 0.0,
         "geofence_breached": 0.0
       }
     },
@@ -74,15 +80,17 @@
       "theft_type": "Empty Totes theft",
       "loss_inr": null,
       "rca_summary": "driver admission, CCTV confirmed",
-      "matched_trip_count": 4,
+      "origin_code": "JJR001M",
+      "destination_code": "DEL037S",
+      "matched_trip_count": 1,
       "signature_vector": {
-        "detour_ratio": 0.9671719638874561,
-        "stoppage_share": 0.24511888648572436,
-        "max_halt_hrs": 0.9449999928474426,
+        "detour_ratio": 0.8987515741622957,
+        "stoppage_share": 0.26352941288667564,
+        "max_halt_hrs": 1.1200000047683716,
         "halt_count_per_100km": 0.0,
-        "transit_distance_km": 87.28028106689453,
-        "unloading_time_hrs": 10.284999966621399,
-        "ping_density_per_km": 1.473401455181347,
+        "transit_distance_km": 88.61690521240234,
+        "unloading_time_hrs": 11.75,
+        "ping_density_per_km": 0.0,
         "geofence_breached": 0.0
       }
     },
@@ -95,15 +103,17 @@
       "theft_type": "Empty Totes theft",
       "loss_inr": null,
       "rca_summary": "CCTV confirmed totes theft",
-      "matched_trip_count": 7,
+      "origin_code": "JJR001M",
+      "destination_code": "DEL038S",
+      "matched_trip_count": 1,
       "signature_vector": {
-        "detour_ratio": 0.9080278929307586,
-        "stoppage_share": 0.23730204572905045,
-        "max_halt_hrs": 0.9314285556652716,
+        "detour_ratio": 0.8466341188161168,
+        "stoppage_share": 0.5303738013200144,
+        "max_halt_hrs": 2.2699999809265137,
         "halt_count_per_100km": 0.0,
-        "transit_distance_km": 86.85013144356864,
-        "unloading_time_hrs": 2.457142880984715,
-        "ping_density_per_km": 1.6536292166124404,
+        "transit_distance_km": 87.08478546142578,
+        "unloading_time_hrs": 2.430000066757202,
+        "ping_density_per_km": 0.0,
         "geofence_breached": 0.0
       }
     },
@@ -116,13 +126,15 @@
       "theft_type": "Intransit Theft",
       "loss_inr": 4240.0,
       "rca_summary": "theft during unloading at DH",
-      "matched_trip_count": 14,
+      "origin_code": "MUM013M_MUM206M",
+      "destination_code": "MUM211S-MUM-BKC",
+      "matched_trip_count": 1,
       "signature_vector": {
-        "detour_ratio": 0.9783550487485542,
-        "stoppage_share": 0.35366786805430234,
-        "max_halt_hrs": 4.5528571265084405,
+        "detour_ratio": 1.0054522900541951,
+        "stoppage_share": 0.45454545454545453,
+        "max_halt_hrs": 2.5999999046325684,
         "halt_count_per_100km": 0.0,
-        "transit_distance_km": 55.76550728934152,
+        "transit_distance_km": 48.66389083862305,
         "unloading_time_hrs": 0.0,
         "ping_density_per_km": 0.0,
         "geofence_breached": 0.0
@@ -137,15 +149,17 @@
       "theft_type": "Empty Totes theft",
       "loss_inr": null,
       "rca_summary": "driver admission, CCTV confirmed",
-      "matched_trip_count": 7,
+      "origin_code": "JJR001M",
+      "destination_code": "DEL022S",
+      "matched_trip_count": 1,
       "signature_vector": {
-        "detour_ratio": 1.1044224182346403,
-        "stoppage_share": 0.20920233082611642,
-        "max_halt_hrs": 0.6914285591670445,
+        "detour_ratio": 1.0983073890240034,
+        "stoppage_share": 0.2962962888014279,
+        "max_halt_hrs": 0.9599999785423279,
         "halt_count_per_100km": 0.0,
-        "transit_distance_km": 85.39547838483539,
-        "unloading_time_hrs": 3.9828572273254395,
-        "ping_density_per_km": 4.171383362833931,
+        "transit_distance_km": 84.92112731933594,
+        "unloading_time_hrs": 4.260000228881836,
+        "ping_density_per_km": 0.0,
         "geofence_breached": 0.0
       }
     },
@@ -158,6 +172,8 @@
       "theft_type": "en-route theft",
       "loss_inr": 50804.0,
       "rca_summary": "suspected en-route theft",
+      "origin_code": "JJR001M",
+      "destination_code": "NOD016S",
       "matched_trip_count": 1,
       "signature_vector": {
         "detour_ratio": 2.4717006577581664,
@@ -179,15 +195,17 @@
       "theft_type": "en-route theft",
       "loss_inr": 53533.0,
       "rca_summary": "suspected en-route theft",
-      "matched_trip_count": 7,
+      "origin_code": "JJR001M",
+      "destination_code": "DEL056S",
+      "matched_trip_count": 1,
       "signature_vector": {
-        "detour_ratio": 1.118311442680388,
-        "stoppage_share": 0.30189572104817436,
-        "max_halt_hrs": 1.2285714192049844,
+        "detour_ratio": 1.0802717817868503,
+        "stoppage_share": 0.24429967957940166,
+        "max_halt_hrs": 0.75,
         "halt_count_per_100km": 0.0,
-        "transit_distance_km": 65.31884057181222,
-        "unloading_time_hrs": 2.6985714605876376,
-        "ping_density_per_km": 2.4822662548268135,
+        "transit_distance_km": 63.09867477416992,
+        "unloading_time_hrs": 3.240000009536743,
+        "ping_density_per_km": 0.0,
         "geofence_breached": 0.0
       }
     },
@@ -200,7 +218,9 @@
       "theft_type": "potential en-route theft",
       "loss_inr": 6000.0,
       "rca_summary": "tote mismatch pattern",
-      "matched_trip_count": 2,
+      "origin_code": "JJR001M",
+      "destination_code": "DEL123S-DEL-Janta",
+      "matched_trip_count": 1,
       "signature_vector": {
         "detour_ratio": 0.0,
         "stoppage_share": 0.0,
@@ -221,15 +241,17 @@
       "theft_type": "Intransit Theft",
       "loss_inr": 159632.0,
       "rca_summary": "supervisors opened locks, gray area theft",
-      "matched_trip_count": 7,
+      "origin_code": "PAT002M",
+      "destination_code": "PNK001S",
+      "matched_trip_count": 1,
       "signature_vector": {
-        "detour_ratio": 1.0802199860580828,
-        "stoppage_share": 0.48315703047446357,
-        "max_halt_hrs": 2.3771428859659602,
+        "detour_ratio": 1.0962783413774826,
+        "stoppage_share": 0.7014651825910772,
+        "max_halt_hrs": 3.8299999237060547,
         "halt_count_per_100km": 0.0,
-        "transit_distance_km": 47.01117379324777,
-        "unloading_time_hrs": 4.069999933242798,
-        "ping_density_per_km": 3.4852540485148347,
+        "transit_distance_km": 47.71003341674805,
+        "unloading_time_hrs": 3.8399999141693115,
+        "ping_density_per_km": 0.0,
         "geofence_breached": 0.0
       }
     },
@@ -242,15 +264,17 @@
       "theft_type": "theft case",
       "loss_inr": 76396.0,
       "rca_summary": "theft confirmed",
-      "matched_trip_count": 8,
+      "origin_code": "BLR065M",
+      "destination_code": "DEV002S",
+      "matched_trip_count": 1,
       "signature_vector": {
-        "detour_ratio": 1.0405422260903308,
-        "stoppage_share": 0.354314417761257,
-        "max_halt_hrs": 3.1587500274181366,
+        "detour_ratio": 1.0753350314741077,
+        "stoppage_share": 0.33695653403086,
+        "max_halt_hrs": 3.4100000858306885,
         "halt_count_per_100km": 0.0,
-        "transit_distance_km": 261.1447563171387,
-        "unloading_time_hrs": 2.1774999499320984,
-        "ping_density_per_km": 2.2316045494471406,
+        "transit_distance_km": 271.40380859375,
+        "unloading_time_hrs": 1.6299999952316284,
+        "ping_density_per_km": 5.942377031906236,
         "geofence_breached": 0.0
       }
     },
@@ -263,17 +287,73 @@
       "theft_type": "potential en-route theft",
       "loss_inr": 51924.0,
       "rca_summary": "suspicious halts, blacklisted driver, narcotics",
-      "matched_trip_count": 7,
+      "origin_code": "LKO002M",
+      "destination_code": "LKO005S",
+      "matched_trip_count": 1,
       "signature_vector": {
-        "detour_ratio": 1.4839166561888244,
-        "stoppage_share": 0.5204927048909201,
-        "max_halt_hrs": 1.8914285898208618,
+        "detour_ratio": 1.4478608888454505,
+        "stoppage_share": 0.46527777087909233,
+        "max_halt_hrs": 1.340000033378601,
         "halt_count_per_100km": 0.0,
-        "transit_distance_km": 54.28415134974888,
-        "unloading_time_hrs": 1.854285717010498,
-        "ping_density_per_km": 3.332037128503372,
+        "transit_distance_km": 52.948272705078125,
+        "unloading_time_hrs": 3.009999990463257,
+        "ping_density_per_km": 5.8094463019529305,
         "geofence_breached": 0.0
       }
     }
+  ],
+  "case_routes": [
+    [
+      "BLR005M_BLR007M",
+      "BLR024S"
+    ],
+    [
+      "BLR065M",
+      "DEV002S"
+    ],
+    [
+      "JJR001M",
+      "DEL022S"
+    ],
+    [
+      "JJR001M",
+      "DEL037S"
+    ],
+    [
+      "JJR001M",
+      "DEL038S"
+    ],
+    [
+      "JJR001M",
+      "DEL056S"
+    ],
+    [
+      "JJR001M",
+      "DEL123S-DEL-Janta"
+    ],
+    [
+      "JJR001M",
+      "NOD016S"
+    ],
+    [
+      "LKO002M",
+      "LKO005S"
+    ],
+    [
+      "LKO002M",
+      "LKO007S"
+    ],
+    [
+      "LKO002M",
+      "LKO050S-LKO-Anora"
+    ],
+    [
+      "MUM013M_MUM206M",
+      "MUM211S-MUM-BKC"
+    ],
+    [
+      "PAT002M",
+      "PNK001S"
+    ]
   ]
 }

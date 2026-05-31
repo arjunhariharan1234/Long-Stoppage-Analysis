@@ -1,6 +1,6 @@
 {
   "version": "2026-05-30.1",
-  "generated_at": "2026-05-31T11:23:53",
+  "generated_at": "2026-05-31T12:09:41",
   "training_set": {
     "training_xlsx": "zepto_theft_cases_base_data.xlsx",
     "positive_trips": 5036,
@@ -35,47 +35,6 @@
       "false_match_proxy": 0.0
     },
     {
-      "id": "S-04",
-      "name": "Driver on blacklist",
-      "category": "entity_state",
-      "rationale": "Driver number appears in the confirmed-theft/blacklisted-driver set.",
-      "source_cases": [
-        "CT-001",
-        "CT-007"
-      ],
-      "default_weight": 35,
-      "weight": 35,
-      "training_hit_rate": 1.0,
-      "false_match_proxy": 0.0
-    },
-    {
-      "id": "S-05",
-      "name": "Vehicle on blacklist",
-      "category": "entity_state",
-      "rationale": "Vehicle number appears in the confirmed-theft/blacklisted-vehicle set.",
-      "source_cases": [
-        "CT-001"
-      ],
-      "default_weight": 35,
-      "weight": 10,
-      "training_hit_rate": 1.0,
-      "false_match_proxy": 0.0
-    },
-    {
-      "id": "S-06",
-      "name": "Transporter is a repeat offender",
-      "category": "entity_state",
-      "rationale": "Transporter branch has multiple trips in the positive set.",
-      "source_cases": [
-        "CT-001",
-        "CT-004"
-      ],
-      "default_weight": 20,
-      "weight": 20,
-      "training_hit_rate": 0.997,
-      "false_match_proxy": 0.0
-    },
-    {
       "id": "S-09",
       "name": "Transit distance far exceeds Google distance",
       "category": "geofence",
@@ -99,6 +58,72 @@
       "default_weight": 22,
       "weight": 10,
       "training_hit_rate": 0.143,
+      "false_match_proxy": 0.0
+    },
+    {
+      "id": "S-12",
+      "name": "Slow loading at origin",
+      "category": "temporal",
+      "rationale": "Loading dwell \u2265 3h suggests pre-trip tampering or substitution window.",
+      "source_cases": [
+        "CT-0054448970"
+      ],
+      "default_weight": 12,
+      "weight": 7,
+      "training_hit_rate": 0.067,
+      "false_match_proxy": 0.0
+    },
+    {
+      "id": "S-15",
+      "name": "Destination entry missing",
+      "category": "closure_anomaly",
+      "rationale": "Trip closed without a destination-geofence entry event on a non-trivial trip.",
+      "source_cases": [
+        "CT-0051603091"
+      ],
+      "default_weight": 15,
+      "weight": 9,
+      "training_hit_rate": 0.088,
+      "false_match_proxy": 0.0
+    },
+    {
+      "id": "S-16",
+      "name": "ETA breached significantly",
+      "category": "closure_anomaly",
+      "rationale": "Trip closure \u22654h past the Google ETA \u2014 extended off-route or unaccounted dwell.",
+      "source_cases": [
+        "CT-0050982352"
+      ],
+      "default_weight": 12,
+      "weight": 10,
+      "training_hit_rate": 0.358,
+      "false_match_proxy": 0.0
+    },
+    {
+      "id": "S-17",
+      "name": "Alerts fired during trip",
+      "category": "ping_pattern",
+      "rationale": "One or more in-transit alerts (geofence, halt, route-deviation) raised by the platform.",
+      "source_cases": [
+        "CT-0054448970"
+      ],
+      "default_weight": 10,
+      "weight": 8,
+      "training_hit_rate": 0.082,
+      "false_match_proxy": 0.0
+    },
+    {
+      "id": "S-19",
+      "name": "Route matches a known theft case",
+      "category": "geographic_memory",
+      "rationale": "Same (origin_code, destination_code) pair as a confirmed theft incident \u2014 geographic-level repeat pattern.",
+      "source_cases": [
+        "CT-0054448970",
+        "CT-0049142973"
+      ],
+      "default_weight": 25,
+      "weight": 25,
+      "training_hit_rate": 0.038,
       "false_match_proxy": 0.0
     }
   ]

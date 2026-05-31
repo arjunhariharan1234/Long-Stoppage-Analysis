@@ -121,3 +121,24 @@ def test_night_gate_out_does_not_fire_in_day():
     feats = {"gate_out_hour": 14}
     sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-18")
     assert evaluate_signal(sig, feats)["fires"] is False
+
+
+def test_route_match_signal_fires_when_route_in_set():
+    feats = {"origin_code": "LKO002M", "destination_code": "LKO005S"}
+    ctx = {"case_routes": {("LKO002M", "LKO005S"), ("DEL123M", "DEL456S")}}
+    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-19")
+    assert evaluate_signal(sig, feats, ctx)["fires"] is True
+
+
+def test_route_match_signal_does_not_fire_when_route_not_in_set():
+    feats = {"origin_code": "AAA001", "destination_code": "BBB002"}
+    ctx = {"case_routes": {("LKO002M", "LKO005S")}}
+    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-19")
+    assert evaluate_signal(sig, feats, ctx)["fires"] is False
+
+
+def test_route_match_signal_handles_missing_route_fields():
+    feats = {"origin_code": "", "destination_code": "LKO005S"}
+    ctx = {"case_routes": {("LKO002M", "LKO005S")}}
+    sig = next(s for s in SIGNAL_REGISTRY if s["id"] == "S-19")
+    assert evaluate_signal(sig, feats, ctx)["fires"] is False

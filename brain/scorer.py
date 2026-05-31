@@ -59,6 +59,7 @@ def _feature_weights_from_codex(codex: dict) -> dict[str, float]:
         "S-16": [],   # ETA breach — not in signature vector v1
         "S-17": [],   # alerts — not in signature vector v1
         "S-18": [],   # night gate-out — not in signature vector v1
+        "S-19": [],   # route match — set membership, not vector feature
     }
     weights = {f: 1.0 for f in SIGNATURE_FEATURES}  # floor
     for sig in codex.get("signals", []):
@@ -158,8 +159,9 @@ def _recommended_action(matched: list[dict], similar: list[dict]) -> str:
     return "Open evidence packet."
 
 
-def score_dataset(rows, codex: dict, cases: list[dict], blacklist: dict) -> list[dict]:
-    ctx = {"blacklist": blacklist}
+def score_dataset(rows, codex: dict, cases: list[dict], blacklist: dict,
+                   case_routes: set | None = None) -> list[dict]:
+    ctx = {"blacklist": blacklist, "case_routes": case_routes or set()}
     out = []
     for r in rows:
         feats = extract_trip_features(r)

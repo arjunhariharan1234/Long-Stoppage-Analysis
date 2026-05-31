@@ -77,6 +77,37 @@ def _safe_bool(v: Any) -> bool:
     return False
 
 
+def _count_alerts(v: Any) -> int:
+    """Source `window_alerts` is comma-separated text like
+    'detention_origin,route_deviation,sta_breach' OR plain text ('untracked')
+    OR numeric. Return a count of distinct alert tokens.
+    """
+    if v is None:
+        return 0
+    if isinstance(v, bool):
+        return int(v)
+    if isinstance(v, (int, float)):
+        try:
+            if isinstance(v, float) and math.isnan(v):
+                return 0
+            return int(v) if v > 0 else 0
+        except (TypeError, ValueError):
+            return 0
+    if isinstance(v, str):
+        s = v.strip()
+        if not s:
+            return 0
+        # Try numeric first.
+        try:
+            n = float(s)
+            return int(n) if n > 0 else 0
+        except ValueError:
+            pass
+        tokens = [t.strip() for t in s.split(",") if t.strip()]
+        return len(tokens)
+    return 0
+
+
 def _safe_int(v: Any, default: int = 0) -> int:
     """Coerce to int, parsing numeric strings; default for None/NaN/non-numeric."""
     if v is None:
@@ -239,7 +270,7 @@ def extract_trip_features(row: dict | Any) -> dict:
         "tracking_health": _safe_float(g("window_tracking_health"), default=1.0),
         "tracking_sources": tracking_sources_raw,
         "tracking_sources_count": _tracking_sources_count(tracking_sources_raw),
-        "alerts_count": _safe_int(g("window_alerts"), default=0),
+        "alerts_count": _count_alerts(g("window_alerts")),
         "eta_breach_hrs": eta_breach_hrs,
         "destination_entry_present": _is_present(destination_entry_raw),
         "origin_code": _first_token(origin_raw),
