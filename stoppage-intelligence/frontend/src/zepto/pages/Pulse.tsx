@@ -68,10 +68,14 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
           const t = Date.parse(ds);
           return isNaN(t) ? 0 : t;
         };
-        // Drop "degenerate" trips where origin and destination resolve to the
-        // same physical location (within ~200m). These usually happen when
-        // the polyline endpoints collapse to a single warehouse cluster —
-        // they offer nothing for ops to physically investigate.
+        // Quality filter — only surface trips an investigator can actually
+        // physically check on the ground:
+        //   1. Origin and destination must be different places (≥5 km apart)
+        //      so we don't waste ops time on degenerate routes.
+        //   2. The trip must have a real planned route (planned ≥10 km).
+        //   3. There must be at least one halt CLUSTER >2 km from BOTH the
+        //      origin and the destination — i.e., a real in-transit
+        //      stoppage, not just a slow dock-in at the destination warehouse.
         const haversineKm = (a: [number, number], b: [number, number]) => {
           const R = 6371.0088;
           const lat1 = (a[0] * Math.PI) / 180;
@@ -82,30 +86,49 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
             + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dlng / 2) ** 2;
           return 2 * R * Math.asin(Math.sqrt(h));
         };
-        const isDegenerate = (s: BrainScore): boolean => {
+        const passesQualityFilter = (s: BrainScore): boolean => {
           const oLat = (s as any).origin_lat;
           const oLng = (s as any).origin_lng;
           const dLat = (s as any).destination_lat;
           const dLng = (s as any).destination_lng;
           if (oLat == null || oLng == null || dLat == null || dLng == null) return false;
-          return haversineKm([oLat, oLng], [dLat, dLng]) < 0.2;
+          const od = haversineKm([oLat, oLng], [dLat, dLng]);
+          if (od < 5) return false; // origin == destination (within 5 km)
+          if ((s.google_distance_km ?? 0) < 10) return false;
+          const halts = ((s as any).halt_clusters || []) as { lat: number; lng: number }[];
+          if (halts.length < 2) return false;
+          for (const h of halts) {
+            const dO = haversineKm([oLat, oLng], [h.lat, h.lng]);
+            const dD = haversineKm([dLat, dLng], [h.lat, h.lng]);
+            if (dO >= 2 && dD >= 2) return true; // a real in-transit halt
+          }
+          return false;
         };
 
         const byPattern = new Map<string, BrainScore>();
         for (const s of brain.scores) {
           if (s.tier !== "high") continue;
-          if (isDegenerate(s)) continue;
+          if (!passesQualityFilter(s)) continue;
           const key = `${s.vehicle}|${tokenize(s.origin)}|${tokenize(s.destination)}`;
           const prev = byPattern.get(key);
           if (!prev || tripTime(s) > tripTime(prev)) byPattern.set(key, s);
         }
-        const top = [...byPattern.values()]
-          .sort((a, b) => {
-            const dt = tripTime(b) - tripTime(a);
-            if (dt !== 0) return dt;
-            return b.brain_score - a.brain_score;
-          })
-          .slice(0, 10);
+        // De-duplicate further by driver — top 10 should be 10 distinct
+        // drivers so ops aren't asked to investigate the same person
+        // multiple times for variants of the same recurring run.
+        const seenDrivers = new Set<string>();
+        const top: BrainScore[] = [];
+        for (const s of [...byPattern.values()].sort((a, b) => {
+          const dt = tripTime(b) - tripTime(a);
+          if (dt !== 0) return dt;
+          return b.brain_score - a.brain_score;
+        })) {
+          const drv = s.driver_number || s.vehicle;
+          if (seenDrivers.has(drv)) continue;
+          seenDrivers.add(drv);
+          top.push(s);
+          if (top.length >= 10) break;
+        }
         setBrainTop(top);
         setLoading(false);
       })
