@@ -1,6 +1,6 @@
 {
   "version": "2026-05-30.1",
-  "generated_at": "2026-06-01T04:40:30",
+  "generated_at": "2026-06-01T04:55:40",
   "cases": [
     {
       "case_id": "CT-0049047489",
@@ -21,7 +21,7 @@
         "halt_count_per_100km": 0.0,
         "transit_distance_km": 57.70484161376953,
         "unloading_time_hrs": 1.590000033378601,
-        "ping_density_per_km": 0.0,
+        "ping_density_per_km": 8.112639268169897,
         "geofence_breached": 0.0
       }
     },
@@ -44,7 +44,7 @@
         "halt_count_per_100km": 0.0,
         "transit_distance_km": 56.39057159423828,
         "unloading_time_hrs": 1.350000023841858,
-        "ping_density_per_km": 5.898760254576687,
+        "ping_density_per_km": 2.7296498991974425,
         "geofence_breached": 0.0
       }
     },
@@ -67,7 +67,7 @@
         "halt_count_per_100km": 0.0,
         "transit_distance_km": 47.70875549316406,
         "unloading_time_hrs": 0.6200000047683716,
-        "ping_density_per_km": 0.0,
+        "ping_density_per_km": 3.136946478739682,
         "geofence_breached": 0.0
       }
     },
@@ -90,7 +90,7 @@
         "halt_count_per_100km": 0.0,
         "transit_distance_km": 88.61690521240234,
         "unloading_time_hrs": 11.75,
-        "ping_density_per_km": 0.0,
+        "ping_density_per_km": 6.7449083357960244,
         "geofence_breached": 0.0
       }
     },
@@ -113,7 +113,7 @@
         "halt_count_per_100km": 0.0,
         "transit_distance_km": 87.08478546142578,
         "unloading_time_hrs": 2.430000066757202,
-        "ping_density_per_km": 0.0,
+        "ping_density_per_km": 3.7479398168143043,
         "geofence_breached": 0.0
       }
     },
@@ -136,7 +136,7 @@
         "halt_count_per_100km": 0.0,
         "transit_distance_km": 48.66389083862305,
         "unloading_time_hrs": 0.0,
-        "ping_density_per_km": 0.0,
+        "ping_density_per_km": 2.1439519877715996,
         "geofence_breached": 0.0
       }
     },
@@ -159,7 +159,7 @@
         "halt_count_per_100km": 0.0,
         "transit_distance_km": 84.92112731933594,
         "unloading_time_hrs": 4.260000228881836,
-        "ping_density_per_km": 0.0,
+        "ping_density_per_km": 2.1823026743220972,
         "geofence_breached": 0.0
       }
     },
@@ -182,7 +182,7 @@
         "halt_count_per_100km": 0.0,
         "transit_distance_km": 213.95040893554688,
         "unloading_time_hrs": 3.2899999618530273,
-        "ping_density_per_km": 0.0,
+        "ping_density_per_km": 1.3508093737738593,
         "geofence_breached": 0.0
       }
     },
@@ -205,7 +205,7 @@
         "halt_count_per_100km": 0.0,
         "transit_distance_km": 63.09867477416992,
         "unloading_time_hrs": 3.240000009536743,
-        "ping_density_per_km": 0.0,
+        "ping_density_per_km": 5.939878062591536,
         "geofence_breached": 0.0
       }
     },
@@ -251,7 +251,7 @@
         "halt_count_per_100km": 0.0,
         "transit_distance_km": 47.71003341674805,
         "unloading_time_hrs": 3.8399999141693115,
-        "ping_density_per_km": 0.0,
+        "ping_density_per_km": 3.0192440328982157,
         "geofence_breached": 0.0
       }
     },
@@ -274,7 +274,7 @@
         "halt_count_per_100km": 0.0,
         "transit_distance_km": 271.40380859375,
         "unloading_time_hrs": 1.6299999952316284,
-        "ping_density_per_km": 5.942377031906236,
+        "ping_density_per_km": 1.043872971330397,
         "geofence_breached": 0.0
       }
     },
@@ -297,7 +297,7 @@
         "halt_count_per_100km": 0.0,
         "transit_distance_km": 52.948272705078125,
         "unloading_time_hrs": 3.009999990463257,
-        "ping_density_per_km": 5.8094463019529305,
+        "ping_density_per_km": 4.0263095932162525,
         "geofence_breached": 0.0
       }
     }

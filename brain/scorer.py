@@ -184,6 +184,13 @@ def score_trip(feats: dict, codex: dict, cases: list[dict], context: dict | None
         "alerts_text": feats.get("alerts_text", ""),
         "tracking_health": feats.get("tracking_health", 100),
         "closure_mode": feats.get("closure_mode", ""),
+        # --- Geo for map rendering ---
+        "ping_polyline": feats.get("ping_polyline", ""),
+        "origin_lat": feats.get("origin_lat"),
+        "origin_lng": feats.get("origin_lng"),
+        "destination_lat": feats.get("destination_lat"),
+        "destination_lng": feats.get("destination_lng"),
+        "halt_clusters": feats.get("halt_clusters", []),
     }
 
 

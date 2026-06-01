@@ -56,8 +56,18 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
       .then(([s, v, h, d, vh, t, e, brain]) => {
         setSummary(s); setVerdicts(v); setHotspots(h);
         setDrivers(d); setVehicles(vh); setTransporters(t); setEvents(e);
-        const top = brain.scores
-          .filter(x => x.tier === "high")
+        // Distinct top-5 trip patterns: keep the highest-scoring trip per
+        // (vehicle, origin_token, destination_token) so we don't show 5 cards
+        // for the same recurring run.
+        const tokenize = (s?: string) => (s || "").trim().split(/\s+/)[0] || "";
+        const byPattern = new Map<string, BrainScore>();
+        for (const s of brain.scores) {
+          if (s.tier !== "high") continue;
+          const key = `${s.vehicle}|${tokenize(s.origin)}|${tokenize(s.destination)}`;
+          const prev = byPattern.get(key);
+          if (!prev || s.brain_score > prev.brain_score) byPattern.set(key, s);
+        }
+        const top = [...byPattern.values()]
           .sort((a, b) => b.brain_score - a.brain_score)
           .slice(0, 5);
         setBrainTop(top);

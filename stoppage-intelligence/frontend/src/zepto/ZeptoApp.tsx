@@ -93,7 +93,11 @@ export function ZeptoApp() {
         {page === "actions" && <Actions />}
         {page === "risk-zones" && <TheftZoneUpload />}
         {page === "suspected-trip" && suspectedTripId && (
-          <SuspectedTripDetail tripId={suspectedTripId} onBack={() => setPage("pulse")} />
+          <SuspectedTripDetail
+            tripId={suspectedTripId}
+            onBack={() => setPage("pulse")}
+            onOpenSuspectedTrip={openSuspectedTrip}
+          />
         )}
       </main>
     </div>

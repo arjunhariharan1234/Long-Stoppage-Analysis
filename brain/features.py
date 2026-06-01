@@ -26,11 +26,34 @@ def haversine_km(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
 
 
 def decode_polyline(encoded: str | None) -> list[tuple[float, float]]:
-    """Decode a Google encoded polyline into a list of (lat, lng) tuples."""
+    """Decode a polyline string into a list of (lat, lng) tuples.
+
+    Handles two formats:
+      1. Google encoded polyline string (e.g. ``_qo]_ulN...``)
+      2. JSON-array string of [lat, lng] pairs (e.g. ``[[19.26, 72.98], ...]``)
+         — the Zepto training dataset uses this format.
+    """
     if not encoded:
         return []
+    s = encoded.strip()
+    if not s:
+        return []
+    # JSON-array format
+    if s.startswith("["):
+        try:
+            import json as _json
+            arr = _json.loads(s)
+            pts: list[tuple[float, float]] = []
+            for item in arr:
+                if isinstance(item, (list, tuple)) and len(item) >= 2:
+                    lat = float(item[0]); lng = float(item[1])
+                    pts.append((lat, lng))
+            return pts
+        except Exception:
+            return []
+    # Google encoded polyline
     try:
-        return _polyline.decode(encoded)
+        return _polyline.decode(s)
     except Exception:
         return []
 
@@ -43,6 +66,58 @@ def polyline_length_km(encoded: str | None) -> float:
     for (a_lat, a_lng), (b_lat, b_lng) in zip(pts, pts[1:]):
         total += haversine_km(a_lat, a_lng, b_lat, b_lng)
     return total
+
+
+def detect_halt_clusters(encoded: str | None, radius_m: float = 100.0,
+                          min_run_length: int = 5,
+                          max_clusters: int = 20) -> list[dict]:
+    """Find spatial clusters where consecutive pings stay within ``radius_m``.
+
+    Returns one cluster per detected halt with {lat, lng, ping_count}.
+    ``ping_count`` proxies dwell duration since per-ping timestamps aren't
+    encoded in the polyline.
+
+    Filtered to clusters with at least ``min_run_length`` consecutive close
+    pings (a short dwell of 5+ pings). Top ``max_clusters`` by size.
+    """
+    pts = decode_polyline(encoded)
+    if len(pts) < min_run_length:
+        return []
+    clusters = []
+    current = [pts[0]]
+    radius_km = radius_m / 1000.0
+    for p in pts[1:]:
+        # Compare to current cluster centroid.
+        c_lat = sum(c[0] for c in current) / len(current)
+        c_lng = sum(c[1] for c in current) / len(current)
+        if haversine_km(p[0], p[1], c_lat, c_lng) <= radius_km:
+            current.append(p)
+        else:
+            if len(current) >= min_run_length:
+                lat = sum(c[0] for c in current) / len(current)
+                lng = sum(c[1] for c in current) / len(current)
+                clusters.append({"lat": round(lat, 6), "lng": round(lng, 6),
+                                 "ping_count": len(current)})
+            current = [p]
+    if len(current) >= min_run_length:
+        lat = sum(c[0] for c in current) / len(current)
+        lng = sum(c[1] for c in current) / len(current)
+        clusters.append({"lat": round(lat, 6), "lng": round(lng, 6),
+                         "ping_count": len(current)})
+    clusters.sort(key=lambda c: -c["ping_count"])
+    return clusters[:max_clusters]
+
+
+def polyline_endpoints(encoded: str | None) -> dict:
+    """Return {origin_lat, origin_lng, dest_lat, dest_lng} from polyline ends."""
+    pts = decode_polyline(encoded)
+    if len(pts) < 2:
+        return {"origin_lat": None, "origin_lng": None,
+                "dest_lat": None, "dest_lng": None}
+    return {
+        "origin_lat": round(pts[0][0], 6), "origin_lng": round(pts[0][1], 6),
+        "dest_lat": round(pts[-1][0], 6), "dest_lng": round(pts[-1][1], 6),
+    }
 
 
 def _safe_float(v: Any, default: float = 0.0) -> float:
@@ -217,6 +292,12 @@ def extract_trip_features(row: dict | Any) -> dict:
     transit_km = _safe_float(g("window_distance_travelled_km"))
     google_km = _safe_float(g("window_google_distance_km"))
 
+    # Geo for map rendering: endpoints from polyline + spatial halt clusters.
+    endpoints = polyline_endpoints(polyline_enc) if polyline_enc else {
+        "origin_lat": None, "origin_lng": None, "dest_lat": None, "dest_lng": None,
+    }
+    halt_clusters = detect_halt_clusters(polyline_enc) if polyline_enc else []
+
     # --- Datetime / behavioural fields ---------------------------------------
     gate_out_dt = _safe_datetime(g("window_gate_out"))
     first_ping_dt = _safe_datetime(g("window_first_ping_outside_origin"))
@@ -286,4 +367,11 @@ def extract_trip_features(row: dict | Any) -> dict:
         "destination_entry_iso": _iso(destination_entry_dt),
         "closure_iso": _iso(closure_dt),
         "google_eta_iso": _iso(google_eta_dt),
+        # --- Geo for map rendering -------------------------------------------
+        "ping_polyline": polyline_enc,
+        "origin_lat": endpoints["origin_lat"],
+        "origin_lng": endpoints["origin_lng"],
+        "destination_lat": endpoints["dest_lat"],
+        "destination_lng": endpoints["dest_lng"],
+        "halt_clusters": halt_clusters,
     }
