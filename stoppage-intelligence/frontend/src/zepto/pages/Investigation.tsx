@@ -1253,6 +1253,7 @@ function Detail({ lens, meta, events, drivers, onJumpTo }: {
           </div>
         )}
 
+        {topClusters.length > 0 ? (
         <div style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 24, marginBottom: 24 }}>
           <div>
             <SectionLabel>Top recurring locations</SectionLabel>
@@ -1278,7 +1279,6 @@ function Detail({ lens, meta, events, drivers, onJumpTo }: {
                   <Badge variant="neutral">{c.count}× stops</Badge>
                 </div>
               ))}
-              {topClusters.length === 0 && <div style={{ color: "#838c9d", fontSize: 13, padding: "8px 0" }}>No location data.</div>}
             </div>
 
             {lens === "trip" && driverPatterns.length > 0 && (
@@ -1326,8 +1326,27 @@ function Detail({ lens, meta, events, drivers, onJumpTo }: {
             </div>
           </div>
         </div>
+        ) : (
+          <div style={{
+            margin: "8px 0 24px",
+            padding: "14px 16px",
+            background: "#fffbeb",
+            border: "1px solid #fde68a",
+            borderRadius: 8,
+            fontSize: 13,
+            lineHeight: 1.5,
+            color: "#78350f",
+          }}>
+            <strong>No halt-by-halt locations available for this entity.</strong>{" "}
+            The aggregate stats above (halt count, night share, risk score) come from
+            the platform-level summary. The detailed per-halt GPS locations aren't
+            present in our current event sample — ask the dispatch desk for a richer
+            event export to populate this section.
+          </div>
+        )}
 
-        {/* Events table */}
+        {/* Events table — only when we actually have events. */}
+        {events.length > 0 && (<>
         <SectionLabel>
           Events <span style={{ color: "#838c9d", fontWeight: 400, textTransform: "none", letterSpacing: 0 }}>({events.length.toLocaleString()})</span>
         </SectionLabel>
@@ -1376,6 +1395,7 @@ function Detail({ lens, meta, events, drivers, onJumpTo }: {
             Showing first 400 of {events.length} events. Export to view all.
           </div>
         )}
+        </>)}
       </div>
     </div>
   );

@@ -259,32 +259,9 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
 
   return (
     <div className="z-container z-page">
-      {/* KPI ribbon — every number here reflects the brain analysis over
-          everything we know (training cohort + scored trips), not just the
-          Feb–May halt-event sample. */}
-      <div className="z-kpi-row">
-        <KPI
-          label="Trips analysed"
-          value={brainStats ? fmt(brainStats.totalScored) : "—"}
-          delta={{ direction: "up", value: "5K+", baseline: "across the Zepto network" }}
-        />
-        <KPI
-          label="High-risk flagged"
-          value={brainStats ? fmt(brainStats.highRisk) : "—"}
-          accent
-          delta={{ direction: "up", value: brainStats ? `${Math.round((brainStats.highRisk / Math.max(brainStats.totalScored, 1)) * 100)}%` : "—", baseline: "of all scored trips" }}
-        />
-        <KPI
-          label="Drivers on watch"
-          value={brainStats ? fmt(brainStats.distinctDriversFlagged) : "—"}
-          delta={{ direction: "up", value: brainStats ? String(brainStats.distinctVehiclesFlagged) : "—", baseline: "vehicles & " + (brainStats ? String(brainStats.distinctTransportersFlagged) : "—") + " transporters" }}
-        />
-        <KPI
-          label="Past confirmed thefts"
-          value={brainStats ? String(brainStats.pastConfirmedCases) : "—"}
-          delta={{ direction: "up", value: "on file", baseline: "training cohort behind our checks" }}
-        />
-      </div>
+      {/* KPI ribbon removed — the rail of Suspected trips below is the
+          single actionable surface on this page. Static counts at the top
+          weren't driving decisions and only added vertical real estate. */}
 
       {brainTop.length > 0 && (
         <section className="pulse-rail brain-rail brain-rail-attention">
