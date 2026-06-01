@@ -68,9 +68,33 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
           const t = Date.parse(ds);
           return isNaN(t) ? 0 : t;
         };
+        // Drop "degenerate" trips where origin and destination resolve to the
+        // same physical location (within ~200m). These usually happen when
+        // the polyline endpoints collapse to a single warehouse cluster —
+        // they offer nothing for ops to physically investigate.
+        const haversineKm = (a: [number, number], b: [number, number]) => {
+          const R = 6371.0088;
+          const lat1 = (a[0] * Math.PI) / 180;
+          const lat2 = (b[0] * Math.PI) / 180;
+          const dlat = lat2 - lat1;
+          const dlng = ((b[1] - a[1]) * Math.PI) / 180;
+          const h = Math.sin(dlat / 2) ** 2
+            + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dlng / 2) ** 2;
+          return 2 * R * Math.asin(Math.sqrt(h));
+        };
+        const isDegenerate = (s: BrainScore): boolean => {
+          const oLat = (s as any).origin_lat;
+          const oLng = (s as any).origin_lng;
+          const dLat = (s as any).destination_lat;
+          const dLng = (s as any).destination_lng;
+          if (oLat == null || oLng == null || dLat == null || dLng == null) return false;
+          return haversineKm([oLat, oLng], [dLat, dLng]) < 0.2;
+        };
+
         const byPattern = new Map<string, BrainScore>();
         for (const s of brain.scores) {
           if (s.tier !== "high") continue;
+          if (isDegenerate(s)) continue;
           const key = `${s.vehicle}|${tokenize(s.origin)}|${tokenize(s.destination)}`;
           const prev = byPattern.get(key);
           if (!prev || tripTime(s) > tripTime(prev)) byPattern.set(key, s);
