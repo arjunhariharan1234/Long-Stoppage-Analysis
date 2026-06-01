@@ -140,20 +140,22 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
         // drivers so ops aren't asked to investigate the same person
         // multiple times for variants of the same recurring run.
         //
-        // Ordering: trips from before April come first; April/May trips slide
-        // to the BACK of the rail (so the operator scrolls right to reach
-        // them). Within each group, recency desc with score as a tiebreaker.
-        const isAprMay = (t: number): boolean => {
+        // Ordering: trips closed in April-2026 or May-2026 slide to the BACK
+        // of the rail (the operator scrolls right to reach them). Within
+        // each group, recency desc with score as a tiebreaker.
+        const isAprMay2026 = (t: number): boolean => {
           if (!t) return false;
-          const m = new Date(t).getUTCMonth(); // 0-indexed: Apr=3, May=4
-          return m === 3 || m === 4;
+          const d = new Date(t);
+          const y = d.getUTCFullYear();
+          const m = d.getUTCMonth(); // 0-indexed: Apr=3, May=4
+          return y === 2026 && (m === 3 || m === 4);
         };
         const seenDrivers = new Set<string>();
         const top: BrainScore[] = [];
         for (const s of [...byPattern.values()].sort((a, b) => {
-          const aAprMay = isAprMay(tripTime(a));
-          const bAprMay = isAprMay(tripTime(b));
-          if (aAprMay !== bAprMay) return aAprMay ? 1 : -1; // April/May → back
+          const aAprMay = isAprMay2026(tripTime(a));
+          const bAprMay = isAprMay2026(tripTime(b));
+          if (aAprMay !== bAprMay) return aAprMay ? 1 : -1; // April/May 2026 → back
           const dt = tripTime(b) - tripTime(a);
           if (dt !== 0) return dt;
           return b.brain_score - a.brain_score;
