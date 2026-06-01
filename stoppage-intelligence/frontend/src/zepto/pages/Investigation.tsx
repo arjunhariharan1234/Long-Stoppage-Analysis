@@ -603,6 +603,7 @@ export function Investigation({ preselect }: Props) {
       {lens === "trip" && !detailTrip && (
         <TripTable
           rows={tripTableRows}
+          allRows={tripRows}
           kpis={tripKpis}
           query={query}
           onQuery={setQuery}
@@ -701,11 +702,12 @@ export function Investigation({ preselect }: Props) {
  * Trip table — Control Tower-style landing for the trip lens
  * ========================================================= */
 function TripTable({
-  rows, kpis, query, onQuery, zoneFilter, onZoneFilter,
+  rows, allRows, kpis, query, onQuery, zoneFilter, onZoneFilter,
   directionFilter, onDirectionFilter, zoneOptions, directionOptions,
   windowDays, onWindowDays, brainByTrip, aliasLocation, onView,
 }: {
   rows: TripRow[];
+  allRows: TripRow[];
   kpis: {
     total: number; halts: number; avgStoppage: number; vehicles: number;
     transporters: number; critical: number; highEsc: number; reeferCount: number;
@@ -724,6 +726,39 @@ function TripTable({
   aliasLocation: (s: string) => string;
   onView: (t: TripRow) => void;
 }) {
+  // Anchor the time window to the latest trip in the unfiltered cohort
+  // (not wall-clock "now") — the demo dataset is from early 2026, and a
+  // wall-clock anchor would make every window empty.
+  const latestMs = useMemo(() => {
+    let m = 0;
+    for (const t of allRows) {
+      const ts = t.latest_alert_at ? Date.parse(t.latest_alert_at) : 0;
+      if (!isNaN(ts) && ts > m) m = ts;
+    }
+    return m;
+  }, [allRows]);
+
+  const fmtCutoff = (days: number) => {
+    if (!days || latestMs === 0) return "all dates";
+    const c = new Date(latestMs - days * 24 * 60 * 60 * 1000);
+    return c.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+  };
+  const countForWindow = useMemo(() => {
+    const m: Record<number, number> = {};
+    const total = allRows.length;
+    for (const days of [7, 30, 90, 0]) {
+      if (days === 0) { m[days] = total; continue; }
+      const cutoff = latestMs - days * 24 * 60 * 60 * 1000;
+      let n = 0;
+      for (const t of allRows) {
+        const ts = t.latest_alert_at ? Date.parse(t.latest_alert_at) : 0;
+        if (!isNaN(ts) && ts >= cutoff) n += 1;
+      }
+      m[days] = n;
+    }
+    return m;
+  }, [allRows, latestMs]);
+
   const WINDOW_OPTIONS: { days: number; label: string }[] = [
     { days: 7, label: "Last 7 days" },
     { days: 30, label: "Last 30 days" },
@@ -783,7 +818,10 @@ function TripTable({
         <TripKpi label="Reefer trips" value={kpis.reeferCount.toLocaleString("en-IN")} />
       </div>
 
-      {/* Time-window pill filter — recent trips are the actionable ones. */}
+      {/* Time-window pill filter — recent trips are the actionable ones.
+          Each pill shows its own match count so the user can see at a
+          glance how the filter narrows the cohort. The KPI ribbon above
+          and the trip table below both recompute when a pill is clicked. */}
       <div className="z-trip-window-row">
         <span className="z-trip-window-label">When:</span>
         {WINDOW_OPTIONS.map(opt => (
@@ -792,10 +830,20 @@ function TripTable({
             type="button"
             className={"z-trip-window-pill" + (windowDays === opt.days ? " is-active" : "")}
             onClick={() => { onWindowDays(opt.days); setPage(0); }}
+            title={opt.days ? `Since ${fmtCutoff(opt.days)}` : "No date filter applied"}
           >
             {opt.label}
+            <span className="z-trip-window-pill-count">{countForWindow[opt.days]?.toLocaleString("en-IN") ?? "—"}</span>
           </button>
         ))}
+        {windowDays > 0 && (
+          <span className="z-trip-window-since">
+            since <strong>{fmtCutoff(windowDays)}</strong>
+          </span>
+        )}
+        <span className="z-trip-window-showing">
+          showing <strong>{rows.length.toLocaleString("en-IN")}</strong> of {allRows.length.toLocaleString("en-IN")} trips
+        </span>
       </div>
 
       {/* Filter bar */}
