@@ -4888,6 +4888,9 @@ html, body {
 .brain-rail-narrative { font-size: 11px; color: var(--zepto-muted, #6b7280); }
 .brain-rail-signals { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
 .brain-rail-more { font-size: 11px; color: var(--zepto-muted, #6b7280); }
+.brain-rail-reasons-count { font-size: 11px; color: var(--zepto-muted, #6b7280);
+  font-weight: 500; padding: 4px 8px; background: #fff;
+  border: 1px solid var(--zepto-border, #e5e7eb); border-radius: 12px; }
 
 /* Brain score pill (Queue rows etc) */
 .brain-pill { display: inline-block; min-width: 28px; padding: 2px 6px;
@@ -5076,3 +5079,31 @@ html, body {
   color: var(--zepto-muted, #6b7280); }
 .susp-modal-trip-route { font-size: 13px; color: var(--zepto-fg, #111827);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Quick-review banner — sits above the tabs so the user always sees why
+   the trip is suspected, regardless of which tab they're on. */
+.susp-quick-review { margin-bottom: 16px; padding: 16px;
+  background: linear-gradient(180deg, #fff7ed 0%, #fff 100%);
+  border: 1px solid #fed7aa; border-radius: 10px; }
+.susp-quick-review-head { display: flex; justify-content: space-between;
+  align-items: baseline; margin-bottom: 10px; gap: 12px; }
+.susp-quick-review-title { margin: 0; font-size: 14px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.04em; color: #7c2d12; }
+.susp-quick-review-count { font-size: 12px; color: #7c2d12; font-weight: 500; }
+.susp-quick-review-list { list-style: none; padding: 0; margin: 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
+.susp-quick-review-item { display: flex; align-items: flex-start; gap: 8px;
+  font-size: 13px; line-height: 1.45; color: var(--zepto-fg, #111827); }
+.susp-quick-review-bullet { flex-shrink: 0; display: inline-block;
+  width: 6px; height: 6px; border-radius: 50%; background: #ea580c;
+  margin-top: 7px; }
+.susp-quick-review-more { font-size: 12px; color: var(--zepto-muted, #6b7280);
+  grid-column: 1 / -1; padding-top: 4px; }
+.susp-quick-review-similar { margin-top: 12px; padding-top: 12px;
+  border-top: 1px dashed #fed7aa; font-size: 13px;
+  color: #7c2d12; }
+
+/* Tight viewport: stack the quick-review items in one column. */
+@media (max-width: 640px) {
+  .susp-quick-review-list { grid-template-columns: 1fr; }
+}

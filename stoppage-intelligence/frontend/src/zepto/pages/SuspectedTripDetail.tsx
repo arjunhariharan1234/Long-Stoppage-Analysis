@@ -58,12 +58,15 @@ function aliasLocation(s?: string): string {
 function synthesizeTripRow(b: BrainScore): TripRow {
   const clusters = (b as any).halt_clusters as { lat: number; lng: number; ping_count: number }[] | undefined;
   const totalStop = b.stoppage_hrs ?? 0;
+  const oLat = (b as any).origin_lat as number | null;
+  const oLng = (b as any).origin_lng as number | null;
+  const dLat = (b as any).destination_lat as number | null;
+  const dLng = (b as any).destination_lng as number | null;
   const totalPings = clusters && clusters.length ? clusters.reduce((a, c) => a + c.ping_count, 0) : 1;
-  const halts: TripHalt[] = (clusters ?? []).map((c, idx) => ({
+  let halts: TripHalt[] = (clusters ?? []).map((c) => ({
     ts: "",
     lat: c.lat,
     lng: c.lng,
-    // Approximate halt duration by share of total stoppage proportional to ping density.
     duration_hrs: totalPings > 0 ? Math.round((totalStop * c.ping_count / totalPings) * 100) / 100 : 0,
     escalation: 2,
     poi_name: "Unmapped halt",
@@ -74,9 +77,28 @@ function synthesizeTripRow(b: BrainScore): TripRow {
     cluster_halt_count: 1,
     is_night: false,
     address: "",
-    // expose ping_count for any downstream consumer
-    ...(idx >= 0 ? {} : {}),
   } as TripHalt));
+
+  // Telemetry reports stoppage time but GPS pings were too sparse to detect
+  // a spatial cluster — fabricate one synthetic halt at the route midpoint
+  // so the stats panel doesn't read "0 halts · 7.1h max halt" (a contradiction).
+  if (halts.length === 0 && totalStop >= 0.25 && oLat != null && oLng != null && dLat != null && dLng != null) {
+    halts = [{
+      ts: "",
+      lat: (oLat + dLat) / 2,
+      lng: (oLng + dLng) / 2,
+      duration_hrs: Math.round(totalStop * 100) / 100,
+      escalation: 2,
+      poi_name: "Reported stoppage (location approximate)",
+      poi_type: "Telemetry-only",
+      poi_category: "",
+      distance_to_poi_km: null,
+      cluster_id: "synth",
+      cluster_halt_count: 1,
+      is_night: false,
+      address: "",
+    } as TripHalt];
+  }
 
   return {
     trip_id: String(b.trip_id),
@@ -116,26 +138,100 @@ function synthesizeTripRow(b: BrainScore): TripRow {
 
 /* ---------------- subcomponents ---------------- */
 
+/* Translate the brain's raw evidence key/value into an operator-friendly
+   label and value. The brain emits things like {stoppage_share: 0.49} or
+   {detour_ratio: 2.26} which are technical; we surface them as natural
+   English numbers an ops manager can act on. */
+function formatEvidence(key: string, raw: unknown): { label: string; value: string } | null {
+  const n = typeof raw === "number" ? raw : Number(raw);
+  const isNum = !isNaN(n);
+  switch (key) {
+    case "detour_ratio":
+      return isNum
+        ? { label: "Detour size", value: `${n.toFixed(2)}× the planned distance` }
+        : null;
+    case "stoppage_share":
+      return isNum
+        ? { label: "Time stopped", value: `${Math.round(n * 100)}% of the trip` }
+        : null;
+    case "excess_km":
+      return isNum
+        ? { label: "Extra distance vs plan", value: `${n.toFixed(1)} km` }
+        : null;
+    case "pings_per_km":
+      return isNum
+        ? { label: "GPS ping density", value: `${n.toFixed(2)} pings per km${n < 0.5 ? " (sparse)" : ""}` }
+        : null;
+    case "unloading_hrs":
+      return isNum
+        ? { label: "Time spent unloading", value: n < 0.1 ? "< 6 minutes" : `${(n * 60).toFixed(0)} minutes` }
+        : null;
+    case "eta_breach_hrs":
+      return isNum
+        ? { label: "How late vs planned ETA", value: `${n.toFixed(1)} hours late` }
+        : null;
+    case "loading_time_hrs":
+      return isNum
+        ? { label: "Time spent loading", value: `${n.toFixed(1)} hours` }
+        : null;
+    case "gate_to_first_ping_min":
+      return isNum
+        ? { label: "GPS-off window after departure", value: `${n.toFixed(0)} minutes` }
+        : null;
+    case "tracking_health":
+      return isNum
+        ? { label: "Tracking quality", value: `${n.toFixed(0)} / 100 (poor)` }
+        : null;
+    case "alerts_count":
+      return isNum
+        ? { label: "Platform alerts raised", value: `${n.toFixed(0)}` }
+        : null;
+    case "destination_entry_present":
+      return { label: "Recorded arrival at destination", value: raw ? "Yes" : "No" };
+    case "transit_distance_km":
+      return isNum ? { label: "Distance actually driven", value: `${n.toFixed(1)} km` } : null;
+    case "geofence_breached":
+      return { label: "Geofence breached", value: raw ? "Yes" : "No" };
+    case "origin":
+      return { label: "Origin", value: String(raw) };
+    case "destination":
+      return { label: "Destination", value: String(raw) };
+    case "closure_mode":
+      return { label: "Trip closed by", value: String(raw) };
+    default:
+      // Last-resort fallback: convert key to title case so we never leak
+      // raw snake_case keys to the user.
+      return {
+        label: key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+        value: String(raw),
+      };
+  }
+}
+
 function ReasonCard({ signal }: { signal: BrainSignal }) {
   const [open, setOpen] = useState(false);
-  const evidenceEntries = Object.entries(signal.evidence ?? {});
+  const evidenceItems = useMemo(() => {
+    return Object.entries(signal.evidence ?? {})
+      .map(([k, v]) => formatEvidence(k, v))
+      .filter((x): x is { label: string; value: string } => x !== null);
+  }, [signal]);
   return (
     <div className="susp-reason">
       <div className="susp-reason-head">
         <div className="susp-reason-text">{signal.human_text || signal.name}</div>
         <Badge className="is-low">+{signal.weight} pts</Badge>
       </div>
-      {evidenceEntries.length > 0 && (
+      {evidenceItems.length > 0 && (
         <button className="susp-reason-toggle" onClick={() => setOpen(!open)}>
           {open ? "Hide details" : "What the system saw"}
         </button>
       )}
-      {open && evidenceEntries.length > 0 && (
+      {open && evidenceItems.length > 0 && (
         <dl className="susp-reason-evidence">
-          {evidenceEntries.map(([k, v]) => (
-            <div key={k} className="susp-reason-evidence-row">
-              <dt>{k.replace(/_/g, " ")}</dt>
-              <dd>{String(v)}</dd>
+          {evidenceItems.map((item) => (
+            <div key={item.label} className="susp-reason-evidence-row">
+              <dt>{item.label}</dt>
+              <dd>{item.value}</dd>
             </div>
           ))}
         </dl>
@@ -319,6 +415,39 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
         <div className="susp-topbar-trip">Trip {score.trip_id}</div>
         <Badge className={tierClass(score.tier)}>{tierLabel(score.tier)} · {score.brain_score}</Badge>
       </div>
+
+      {/* Always-visible quick-review: why this trip is suspected. Lives
+          outside the tabs so the user sees the reason regardless of which
+          tab is active. */}
+      {sortedSignals.length > 0 && (
+        <section className="susp-quick-review">
+          <div className="susp-quick-review-head">
+            <h3 className="susp-quick-review-title">Why this trip is suspected</h3>
+            <span className="susp-quick-review-count">
+              {sortedSignals.length} risk pattern{sortedSignals.length === 1 ? "" : "s"} matched
+            </span>
+          </div>
+          <ul className="susp-quick-review-list">
+            {sortedSignals.slice(0, 4).map(s => (
+              <li key={s.id} className="susp-quick-review-item">
+                <span className="susp-quick-review-bullet" />
+                {s.human_text || s.name}
+              </li>
+            ))}
+            {sortedSignals.length > 4 && (
+              <li className="susp-quick-review-more">
+                + {sortedSignals.length - 4} more — see <strong>Why suspected</strong> tab
+              </li>
+            )}
+          </ul>
+          {score.similar_cases.length > 0 && score.similar_cases[0].city && (
+            <div className="susp-quick-review-similar">
+              Looks like a past theft in <strong>{score.similar_cases[0].city}</strong>
+              {" "}— {Math.round(score.similar_cases[0].similarity * 100)}% behavioural match.
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Tabs */}
       <div className="susp-tabs">

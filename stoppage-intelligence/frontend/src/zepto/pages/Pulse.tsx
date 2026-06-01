@@ -218,20 +218,16 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
                   <div className="brain-rail-meta">
                     {b.vehicle} · {b.transporter}
                   </div>
-                  {b.similar_cases.length > 0 && (
+                  {b.similar_cases.length > 0 && b.similar_cases[0].city && (
                     <div className="brain-rail-narrative">
-                      Looks like <strong>{b.similar_cases[0].case_id}</strong>
-                      {b.similar_cases[0].city ? ` (${b.similar_cases[0].city})` : ""} —
-                      {" "}{Math.round(b.similar_cases[0].similarity * 100)}% similar
+                      Looks like a past theft in <strong>{b.similar_cases[0].city}</strong>
+                      {" "}— {Math.round(b.similar_cases[0].similarity * 100)}% match
                     </div>
                   )}
                   <div className="brain-rail-signals">
-                    {b.matched_signals.slice(0, 3).map(s => (
-                      <Badge key={s.id} className="is-low">{s.id}</Badge>
-                    ))}
-                    {b.matched_signals.length > 3 && (
-                      <span className="brain-rail-more">+{b.matched_signals.length - 3}</span>
-                    )}
+                    <span className="brain-rail-reasons-count">
+                      {b.matched_signals.length} risk pattern{b.matched_signals.length === 1 ? "" : "s"} matched
+                    </span>
                   </div>
                 </div>
               </li>

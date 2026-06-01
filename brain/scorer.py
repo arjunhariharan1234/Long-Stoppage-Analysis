@@ -195,19 +195,29 @@ def score_trip(feats: dict, codex: dict, cases: list[dict], context: dict | None
 
 
 def _recommended_action(matched: list[dict], similar: list[dict]) -> str:
-    """Tiny canned recommender — points the analyst at the highest-leverage next step."""
+    """Tiny canned recommender — points the analyst at the highest-leverage next step.
+
+    Never leaks codified case IDs (CT-XXXXXX) — uses plain city/transporter language.
+    """
     if not matched:
         return "No brain hit — review only if other surfaces flag."
     has_high_weight = any(m["weight"] >= 15 for m in matched)
+    def _case_phrase(c: dict) -> str:
+        city = (c.get("city") or "").strip()
+        transporter = (c.get("transporter") or "").strip()
+        if city and transporter:
+            return f"the past {city} theft handled by {transporter}"
+        if city:
+            return f"the past theft in {city}"
+        return "a past theft case"
     if has_high_weight and similar:
         c = similar[0]
-        return (f"Open case packet · compare with {c.get('case_id')}"
-                f" ({c.get('city', '')})")
+        return (f"Open the evidence packet and cross-check against {_case_phrase(c)}.")
     if similar:
         c = similar[0]
-        return (f"Compare ping pattern with {c.get('case_id')}"
-                f" ({c.get('city', '')}) — {int(c.get('similarity', 0) * 100)}% match.")
-    return "Open evidence packet."
+        return (f"Compare the GPS pattern with {_case_phrase(c)} — "
+                f"{int(c.get('similarity', 0) * 100)}% behavioural match.")
+    return "Open the evidence packet."
 
 
 def score_dataset(rows, codex: dict, cases: list[dict], blacklist: dict,
