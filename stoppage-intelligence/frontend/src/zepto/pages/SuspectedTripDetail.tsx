@@ -389,6 +389,7 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("trip");
   const [drill, setDrill] = useState<{ kind: "Driver" | "Vehicle" | "Transporter"; key: string; name: string; sub?: string } | null>(null);
+  const [caseModal, setCaseModal] = useState<BrainSimilarCase | null>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -562,7 +563,7 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
             {sortedSignals.slice(0, 4).map(s => (
               <li key={s.id} className="susp-quick-review-item">
                 <span className="susp-quick-review-bullet" />
-                {s.human_text || s.name}
+                {s.short_text || s.human_text || s.name}
               </li>
             ))}
             {sortedSignals.length > 4 && (
@@ -573,7 +574,15 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
           </ul>
           {score.similar_cases.length > 0 && score.similar_cases[0].city && (
             <div className="susp-quick-review-similar">
-              Looks like a past theft in <strong>{score.similar_cases[0].city}</strong>
+              Looks like a{" "}
+              <button
+                type="button"
+                className="susp-quick-review-caselink"
+                onClick={() => setCaseModal(score.similar_cases[0])}
+                title="View details of the past confirmed-theft case"
+              >
+                past theft in <strong>{score.similar_cases[0].city}</strong>
+              </button>
               {" "}— {Math.round(score.similar_cases[0].similarity * 100)}% behavioural match.
             </div>
           )}
@@ -808,6 +817,60 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
           }}
         />
       )}
+
+      {caseModal && <PastCaseModal c={caseModal} onClose={() => setCaseModal(null)} />}
+    </div>
+  );
+}
+
+/* Past confirmed-theft case modal — opens when the user clicks the
+   "past theft in {city}" link in the quick-review banner. */
+function PastCaseModal({ c, onClose }: { c: BrainSimilarCase; onClose: () => void }) {
+  return (
+    <div className="susp-modal-backdrop" onClick={onClose}>
+      <div className="susp-modal" onClick={(e) => e.stopPropagation()}>
+        <header className="susp-modal-head">
+          <div>
+            <div className="susp-modal-kind">Past confirmed theft</div>
+            <div className="susp-modal-name">
+              {c.city ? `${c.city}` : "Unknown city"}
+              {c.transporter ? ` · ${c.transporter}` : ""}
+            </div>
+            <div className="susp-modal-sub">
+              Behavioural similarity to this trip: <strong>{Math.round(c.similarity * 100)}%</strong>
+            </div>
+          </div>
+          <button className="susp-modal-close" onClick={onClose} aria-label="Close">×</button>
+        </header>
+        <div className="susp-modal-body">
+          {c.rca_summary ? (
+            <>
+              <h4 className="susp-modal-section-title">Investigator notes from the past case</h4>
+              <p style={{
+                margin: 0, padding: "12px 14px", background: "#fffbeb",
+                border: "1px solid #fde68a", borderRadius: 8,
+                fontSize: 13, lineHeight: 1.55, color: "#78350f",
+              }}>
+                "{c.rca_summary}"
+              </p>
+            </>
+          ) : (
+            <p className="zepto-empty">No investigator notes on file for this past case.</p>
+          )}
+
+          <h4 className="susp-modal-section-title" style={{ marginTop: 16 }}>
+            Why this is relevant
+          </h4>
+          <p style={{ margin: 0, fontSize: 13, lineHeight: 1.55, color: "#374151" }}>
+            We compare every new trip against the behavioural fingerprint of each past
+            confirmed-theft case. This trip's pattern is <strong>{Math.round(c.similarity * 100)}%</strong>
+            {" "}similar to the case above — meaning the way the truck moved,
+            stopped, loaded and closed out resembles the way the past theft trip
+            behaved before it was flagged. Worth checking the same things the
+            investigator checked on the past case.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

@@ -148,6 +148,7 @@ def score_trip(feats: dict, codex: dict, cases: list[dict], context: dict | None
             "weight": m["weight"],
             "evidence": m["evidence"],
             "human_text": reg.get("human_text", m["name"]),
+            "short_text": reg.get("short_text", reg.get("human_text", m["name"])),
             "rationale": reg.get("rationale", ""),
         })
 

@@ -289,6 +289,8 @@ export interface BrainSignal {
   evidence: Record<string, unknown>;
   /** Plain-English explanation for the operator. */
   human_text?: string;
+  /** Terse one-line summary for banners / quick-review surfaces. */
+  short_text?: string;
   /** Why this signal exists in the codex (analyst rationale). */
   rationale?: string;
 }

@@ -5272,3 +5272,14 @@ html, body {
 .susp-back-btn:active { transform: scale(0.98); }
 .susp-back-btn:focus-visible { outline: 2px solid var(--zepto-accent, #facc15); outline-offset: 1px; }
 .susp-back-arrow { font-size: 16px; line-height: 1; color: var(--zepto-muted, #6b7280); }
+
+/* Quick-review past-case clickable link */
+.susp-quick-review-caselink {
+  background: transparent; border: 0; padding: 0; cursor: pointer;
+  font: inherit; color: inherit;
+  text-decoration: underline; text-decoration-color: #ea580c;
+  text-decoration-thickness: 2px; text-underline-offset: 3px;
+}
+.susp-quick-review-caselink:hover { color: #7c2d12; text-decoration-color: #7c2d12; }
+.susp-quick-review-caselink:focus-visible { outline: 2px solid var(--zepto-accent, #facc15);
+  outline-offset: 2px; border-radius: 2px; }
