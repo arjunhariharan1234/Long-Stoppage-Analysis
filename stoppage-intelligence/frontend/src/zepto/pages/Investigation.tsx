@@ -58,6 +58,9 @@ export function Investigation({ preselect }: Props) {
   const [routes, setRoutes] = useState<RouteRollup[]>([]);
   const [tripRows, setTripRows] = useState<TripRow[]>([]);
   const [events, setEvents] = useState<EventRow[]>([]);
+  // Per-trip brain score lookup (trip_id → BrainScore) so the trip table
+  // can colour rows by tier and offer "open suspected detail" actions.
+  const [brainByTrip, setBrainByTrip] = useState<Map<string, import("../types").BrainScore>>(new Map());
   const [query, setQuery] = useState("");
   const [zoneFilter, setZoneFilter] = useState<string>("");
   const [directionFilter, setDirectionFilter] = useState<string>("");
@@ -72,9 +75,63 @@ export function Investigation({ preselect }: Props) {
   const selectedRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
-    Promise.all([api.drivers(), api.vehicles(), api.transporters(), api.routes(), api.trips(), api.events()])
-      .then(([d, v, t, r, tr, e]) => {
-        setDrivers(d); setVehicles(v); setTransporters(t); setRoutes(r); setTripRows(tr); setEvents(e); setLoading(false);
+    Promise.all([
+      api.drivers(), api.vehicles(), api.transporters(), api.routes(),
+      api.trips(), api.events(),
+      api.brainScores().catch(() => ({ scores: [] })),
+    ])
+      .then(([d, v, t, r, tr, e, brain]) => {
+        setDrivers(d); setVehicles(v); setTransporters(t); setRoutes(r);
+        setEvents(e);
+
+        // Build the brain-score lookup map.
+        const bm = new Map<string, import("../types").BrainScore>();
+        for (const s of brain.scores) bm.set(String(s.trip_id), s);
+        setBrainByTrip(bm);
+
+        // Merge brain-only trips into tripRows so the Investigate table shows
+        // every trip we have data on (trips.json + brain). Skip trips that
+        // are already in tripRows.
+        const seen = new Set(tr.map(x => x.trip_id));
+        const synthesized: TripRow[] = [];
+        for (const s of brain.scores) {
+          if (seen.has(String(s.trip_id))) continue;
+          synthesized.push({
+            trip_id: String(s.trip_id),
+            master_trip_id: String(s.trip_id),
+            origin: s.origin || "",
+            destination: s.destination || "",
+            origin_lat: (s as any).origin_lat ?? null,
+            origin_lng: (s as any).origin_lng ?? null,
+            destination_lat: (s as any).destination_lat ?? null,
+            destination_lng: (s as any).destination_lng ?? null,
+            vehicle_number: s.vehicle || "",
+            vehicle_type: "",
+            transporter_branch: s.transporter || "",
+            driver_name: s.driver_name || "",
+            driver_number: s.driver_number || "",
+            zone: "",
+            inbound_or_outbound: "",
+            trip_status: "closed",
+            halt_count: ((s as any).halt_clusters || []).length,
+            max_stoppage_hrs: s.stoppage_hrs ?? 0,
+            total_stoppage_hrs: s.stoppage_hrs ?? 0,
+            max_escalation: s.tier === "high" ? 3 : s.tier === "medium" ? 2 : 1,
+            first_alert_at: s.first_ping_outside_origin || s.gate_out || "",
+            latest_alert_at: s.trip_closure_time || s.first_ping_outside_origin || "",
+            total_planned_distance: s.google_distance_km ?? null,
+            total_transit_distance: s.transit_distance_km ?? null,
+            is_reefer: /REEFER|COLD/i.test(s.origin || ""),
+            night_share: 0,
+            top_poi_name: "",
+            top_poi_type: "",
+            top_poi_category: "",
+            top_poi_distance_km: null,
+            unmapped_halts: ((s as any).halt_clusters || []).length,
+          });
+        }
+        setTripRows([...tr, ...synthesized]);
+        setLoading(false);
       })
       .catch(err => { console.error(err); setLoading(false); });
   }, []);
@@ -216,7 +273,12 @@ export function Investigation({ preselect }: Props) {
       if (t.transporter_branch) transporterSet.add(t.transporter_branch);
       halts += t.halt_count;
       totalStoppageHrs += t.total_stoppage_hrs;
-      if (t.max_escalation >= 3) critical += 1;
+      // Prefer brain tier when present — that's what the rest of the UI uses.
+      const brain = brainByTrip.get(t.trip_id);
+      if (brain) {
+        if (brain.tier === "high") critical += 1;
+        else if (brain.tier === "medium") highEsc += 1;
+      } else if (t.max_escalation >= 3) critical += 1;
       else if (t.max_escalation === 2) highEsc += 1;
       if (t.is_reefer) reeferCount += 1;
     }
@@ -230,7 +292,7 @@ export function Investigation({ preselect }: Props) {
       highEsc,
       reeferCount,
     };
-  }, [tripTableRows]);
+  }, [tripTableRows, brainByTrip]);
 
   const zoneOptions = useMemo(() => {
     const s = new Set<string>();
@@ -383,6 +445,7 @@ export function Investigation({ preselect }: Props) {
           directionOptions={directionOptions}
           windowDays={windowDays}
           onWindowDays={setWindowDays}
+          brainByTrip={brainByTrip}
           aliasLocation={aliasLocation}
           onView={(t) => setDetailTrip(t)}
         />
@@ -471,7 +534,7 @@ export function Investigation({ preselect }: Props) {
 function TripTable({
   rows, kpis, query, onQuery, zoneFilter, onZoneFilter,
   directionFilter, onDirectionFilter, zoneOptions, directionOptions,
-  windowDays, onWindowDays, aliasLocation, onView,
+  windowDays, onWindowDays, brainByTrip, aliasLocation, onView,
 }: {
   rows: TripRow[];
   kpis: {
@@ -488,6 +551,7 @@ function TripTable({
   directionOptions: string[];
   windowDays: number;
   onWindowDays: (d: number) => void;
+  brainByTrip: Map<string, import("../types").BrainScore>;
   aliasLocation: (s: string) => string;
   onView: (t: TripRow) => void;
 }) {
@@ -497,10 +561,26 @@ function TripTable({
     { days: 90, label: "Last 90 days" },
     { days: 0, label: "All time" },
   ];
+  type SortKey = "date" | "score" | "halts" | "max_halt";
+  const [sortKey, setSortKey] = useState<SortKey>("date");
   const [page, setPage] = useState(0);
   const PER_PAGE = 50;
-  const pageRows = rows.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
-  const totalPages = Math.max(1, Math.ceil(rows.length / PER_PAGE));
+  // Apply sort key over rows (rows arrive recency-sorted by default).
+  const sortedRows = useMemo(() => {
+    const arr = [...rows];
+    const score = (t: TripRow) => brainByTrip.get(t.trip_id)?.brain_score ?? -1;
+    const dateMs = (t: TripRow) => {
+      const ts = t.latest_alert_at ? Date.parse(t.latest_alert_at) : 0;
+      return isNaN(ts) ? 0 : ts;
+    };
+    if (sortKey === "score") arr.sort((a, b) => score(b) - score(a));
+    else if (sortKey === "halts") arr.sort((a, b) => b.halt_count - a.halt_count);
+    else if (sortKey === "max_halt") arr.sort((a, b) => b.max_stoppage_hrs - a.max_stoppage_hrs);
+    else arr.sort((a, b) => dateMs(b) - dateMs(a));
+    return arr;
+  }, [rows, sortKey, brainByTrip]);
+  const pageRows = sortedRows.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(sortedRows.length / PER_PAGE));
 
   function fmtDate(s: string) {
     if (!s) return "—";
@@ -578,38 +658,68 @@ function TripTable({
 
       {/* Table */}
       <div className="z-trip-table-wrap">
-        <table className="z-trip-table">
+        <table className="z-trip-table z-trip-table-compact">
           <thead>
             <tr>
               <th>Trip</th>
               <th>Origin → Destination</th>
-              <th>Vehicle</th>
-              <th>Transporter</th>
+              <th>Vehicle · Transporter</th>
               <th>Driver</th>
-              <th className="num">Halts</th>
-              <th className="num">Max halt</th>
-              <th>Halt POI</th>
+              <th
+                className={"num is-sortable" + (sortKey === "score" ? " is-active" : "")}
+                onClick={() => { setSortKey("score"); setPage(0); }}
+                title="Sort by our risk score"
+              >Score{sortKey === "score" ? " ↓" : ""}</th>
+              <th
+                className={"num is-sortable" + (sortKey === "halts" ? " is-active" : "")}
+                onClick={() => { setSortKey("halts"); setPage(0); }}
+              >Halts{sortKey === "halts" ? " ↓" : ""}</th>
+              <th
+                className={"num is-sortable" + (sortKey === "max_halt" ? " is-active" : "")}
+                onClick={() => { setSortKey("max_halt"); setPage(0); }}
+              >Max halt{sortKey === "max_halt" ? " ↓" : ""}</th>
               <th>Severity</th>
-              <th>Last alert</th>
-              <th></th>
+              <th
+                className={"is-sortable" + (sortKey === "date" ? " is-active" : "")}
+                onClick={() => { setSortKey("date"); setPage(0); }}
+              >Last alert{sortKey === "date" ? " ↓" : ""}</th>
+              <th className="z-trip-actions-col"></th>
             </tr>
           </thead>
           <tbody>
             {pageRows.length === 0 && (
-              <tr><td colSpan={11} style={{ textAlign: "center", padding: "48px 16px", color: "#838c9d" }}>No trips match the current filters.</td></tr>
+              <tr><td colSpan={10} style={{ textAlign: "center", padding: "48px 16px", color: "#838c9d" }}>
+                No trips in the selected window — try widening the time range above, or clearing the search and filters.
+              </td></tr>
             )}
             {pageRows.map(t => {
-              const sev = escalationLabel(t.max_escalation);
+              const brain = brainByTrip.get(t.trip_id);
+              // Tier-from-brain wins over the platform escalation when present.
+              const sev = brain
+                ? (brain.tier === "high"
+                    ? { label: "Critical", cls: "is-critical" }
+                    : brain.tier === "medium"
+                    ? { label: "High", cls: "is-high" }
+                    : { label: "Watch", cls: "" })
+                : escalationLabel(t.max_escalation);
               const originAlias = aliasLocation(t.origin);
               const destAlias = aliasLocation(t.destination);
               const fullRoute = `${t.origin || "—"}\n→ ${t.destination || "—"}`;
-              const poiTypeClean = (t.top_poi_type || "").replace(/_/g, " ");
-              const poiUnmapped = !t.top_poi_distance_km || t.top_poi_distance_km > 1.0 || t.top_poi_type === "No POI within 2km";
+              const ftUrl = `https://www.freighttiger.com/v6/myTrips?searchByValue=${t.trip_id}&sortBy=created_at&sortByOrder=DESC&status=0&page=1`;
               return (
                 <tr key={t.trip_id}>
                   <td>
-                    <div className="z-trip-tripid" title={t.trip_id}>{t.trip_id.slice(0, 14)}{t.trip_id.length > 14 ? "…" : ""}</div>
-                    <div className="z-trip-zone">{t.zone || "—"} · {t.inbound_or_outbound || "—"}</div>
+                    <a
+                      className="z-trip-tripid is-link"
+                      href={ftUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Open this trip in the FT control room"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {t.trip_id} ↗
+                    </a>
+                    <div className="z-trip-zone">{t.zone || "—"}{t.inbound_or_outbound ? ` · ${t.inbound_or_outbound}` : ""}</div>
                   </td>
                   <td title={fullRoute}>
                     <div className="z-trip-route">
@@ -618,42 +728,34 @@ function TripTable({
                       <span className="z-trip-route-to">{destAlias}</span>
                     </div>
                     <div className="z-trip-route-sub">
-                      {t.total_planned_distance ? `${Math.round(t.total_planned_distance)} km planned` : "—"}
+                      {t.total_planned_distance ? `${Math.round(t.total_planned_distance)} km plan` : ""}
                       {t.total_transit_distance ? ` · ${Math.round(t.total_transit_distance)} km actual` : ""}
                     </div>
                   </td>
                   <td>
                     <div className="z-trip-vehicle">{t.vehicle_number || "—"}</div>
-                    <div className="z-trip-vehicle-sub">{t.vehicle_type || "—"}{t.is_reefer ? " · reefer" : ""}</div>
+                    <div className="z-trip-vehicle-sub">{t.transporter_branch || "—"}</div>
                   </td>
-                  <td className="z-trip-transporter">{t.transporter_branch || "—"}</td>
                   <td>
                     <div>{t.driver_name || "—"}</div>
                     <div className="z-trip-driver-sub">{t.driver_number || ""}</div>
                   </td>
-                  <td className="num"><strong>{t.halt_count}</strong></td>
-                  <td className={"num " + durationClass(t.max_stoppage_hrs)}>{t.max_stoppage_hrs.toFixed(1)} hr</td>
-                  <td title={t.top_poi_name ? `${t.top_poi_name} (${t.top_poi_category || "—"})` : ""}>
-                    {poiUnmapped ? (
-                      <>
-                        <div className="z-trip-poi-type is-unmapped">Unmapped halt</div>
-                        <div className="z-trip-poi-sub">{t.top_poi_distance_km ? `${t.top_poi_distance_km.toFixed(1)} km from nearest` : ">2 km from any POI"}</div>
-                      </>
+                  <td className="num">
+                    {brain ? (
+                      <span className={"brain-pill " + (brain.tier === "high" ? "is-critical" : brain.tier === "medium" ? "is-medium" : "is-low")}>
+                        {brain.brain_score}
+                      </span>
                     ) : (
-                      <>
-                        <div className="z-trip-poi-type">{poiTypeClean || "—"}</div>
-                        <div className="z-trip-poi-sub">
-                          {t.top_poi_distance_km != null ? `${t.top_poi_distance_km.toFixed(2)} km` : "—"}
-                          {t.top_poi_name && t.top_poi_name !== "Unnamed" ? ` · ${t.top_poi_name.length > 18 ? t.top_poi_name.slice(0, 18) + "…" : t.top_poi_name}` : ""}
-                        </div>
-                      </>
+                      <span className="zepto-muted">—</span>
                     )}
                   </td>
+                  <td className="num"><strong>{t.halt_count}</strong></td>
+                  <td className={"num " + durationClass(t.max_stoppage_hrs)}>{t.max_stoppage_hrs.toFixed(1)}h</td>
                   <td>
                     <span className={"z-trip-sev " + sev.cls}>{sev.label}</span>
                   </td>
                   <td className="z-trip-date">{fmtDate(t.latest_alert_at)}</td>
-                  <td>
+                  <td className="z-trip-actions-col">
                     <button className="z-trip-view" onClick={() => onView(t)}>View</button>
                   </td>
                 </tr>

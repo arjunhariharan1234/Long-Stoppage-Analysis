@@ -202,65 +202,78 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
 
       {brainTop.length > 0 && (
         <section className="pulse-rail brain-rail brain-rail-attention">
-          <header className="pulse-rail-header brain-rail-header">
+          <header className="brain-rail-header">
             <div>
               <h3 className="brain-rail-title">Suspected trips</h3>
               <p className="brain-rail-subtitle">
-                {brainTop.length} high-risk trip{brainTop.length === 1 ? "" : "s"} the brain wants you to investigate
+                {brainTop.length} high-risk trip{brainTop.length === 1 ? "" : "s"} we want you to investigate — scroll right for more
               </p>
             </div>
           </header>
-          <ul className="brain-rail-list brain-rail-list-grid">
-            {brainTop.map(b => (
-              <li
-                key={b.trip_id}
-                className="brain-rail-card is-clickable"
-                role="button"
-                tabIndex={0}
-                onClick={() => onSuspectedTripClick?.(b.trip_id)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    onSuspectedTripClick?.(b.trip_id);
-                  }
-                }}
-              >
-                <div className="brain-rail-score">
-                  <span className="brain-rail-num">{b.brain_score}</span>
-                  <Badge className="is-critical">HIGH</Badge>
-                </div>
-                <div className="brain-rail-body">
-                  <div className="brain-rail-trip">
-                    {b.driver_name || "Unknown driver"} · {b.vehicle || "?"}
+          <ul className="brain-rail-list brain-rail-scroll">
+            {brainTop.map(b => {
+              const ds = b.trip_closure_time || b.first_ping_outside_origin;
+              const dateStr = (() => {
+                if (!ds) return "";
+                const d = new Date(ds);
+                return isNaN(d.getTime())
+                  ? ""
+                  : d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+              })();
+              const ftUrl = `https://www.freighttiger.com/v6/myTrips?searchByValue=${b.trip_id}&sortBy=created_at&sortByOrder=DESC&status=0&page=1`;
+              return (
+                <li
+                  key={b.trip_id}
+                  className="brain-rail-card is-clickable"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => onSuspectedTripClick?.(b.trip_id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onSuspectedTripClick?.(b.trip_id);
+                    }
+                  }}
+                >
+                  {/* Top strip: score on the left, date pill on the right */}
+                  <div className="brain-rail-top">
+                    <div className="brain-rail-score-block">
+                      <div className="brain-rail-num">{b.brain_score}</div>
+                      <Badge className="is-critical">HIGH</Badge>
+                    </div>
+                    {dateStr && <div className="brain-rail-date">{dateStr}</div>}
                   </div>
-                  {(() => {
-                    const ds = b.trip_closure_time || b.first_ping_outside_origin;
-                    if (!ds) return null;
-                    const d = new Date(ds);
-                    if (isNaN(d.getTime())) return null;
-                    return (
-                      <div className="brain-rail-date">
-                        {d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
-                      </div>
-                    );
-                  })()}
-                  <div className="brain-rail-meta brain-rail-transporter">
-                    {b.transporter || "—"}
+
+                  {/* Identity — driver as primary, then vehicle, then transporter */}
+                  <div className="brain-rail-driver">
+                    {b.driver_name || "Unknown driver"}
                   </div>
+                  <div className="brain-rail-meta">
+                    {b.vehicle || "—"} · {b.transporter || "—"}
+                  </div>
+
+                  {/* Similar-case narrative as a short italic line */}
                   {b.similar_cases.length > 0 && b.similar_cases[0].city && (
                     <div className="brain-rail-narrative">
-                      Looks like a past theft in <strong>{b.similar_cases[0].city}</strong>
+                      Behaves like a past theft in <strong>{b.similar_cases[0].city}</strong>
                       {" "}— {Math.round(b.similar_cases[0].similarity * 100)}% match
                     </div>
                   )}
-                  <div className="brain-rail-signals">
-                    <span className="brain-rail-reasons-count">
-                      {b.matched_signals.length} risk pattern{b.matched_signals.length === 1 ? "" : "s"} matched
-                    </span>
-                  </div>
-                </div>
-              </li>
-            ))}
+
+                  {/* Footer: Trip ID as link to FT main product */}
+                  <a
+                    href={ftUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="brain-rail-tripid"
+                    onClick={(e) => e.stopPropagation()}
+                    title="Open this trip in the FT control room"
+                  >
+                    Trip {b.trip_id} ↗
+                  </a>
+                </li>
+              );
+            })}
           </ul>
         </section>
       )}
