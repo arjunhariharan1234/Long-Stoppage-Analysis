@@ -50,13 +50,14 @@ else
   echo "[1/4] Skipped brain rebuild (--skip-rebuild)."
 fi
 
-# --- 2. Commit + push if brain artifacts changed ------------------------------
+# --- 2. Commit + push if brain artifacts or frontend src changed --------------
 echo "[2/4] Checking for changes to commit…"
 BRAIN_DIR="stoppage-intelligence/frontend/public/zepto/brain"
-BRAIN_CODE_DIRS=(brain tests/brain scripts)
+FRONTEND_SRC="stoppage-intelligence/frontend/src"
+PATHS_TO_STAGE=(brain tests/brain scripts "$BRAIN_DIR" "$FRONTEND_SRC")
 
-# Stage brain output JSONs + any code changes in brain/, tests/brain/, scripts/
-git add "$BRAIN_DIR" "${BRAIN_CODE_DIRS[@]}" 2>/dev/null || true
+# Stage brain code + brain JSONs + frontend src changes
+git add "${PATHS_TO_STAGE[@]}" 2>/dev/null || true
 
 if git diff --cached --quiet; then
   echo "      No brain changes staged — nothing to commit."
