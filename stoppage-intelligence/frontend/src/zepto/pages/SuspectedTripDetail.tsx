@@ -390,6 +390,15 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
       .sort((a, b) => b.brain_score - a.brain_score);
   }, [drill, allScores, tripId]);
 
+  // Auto-switch to "Trip view" once we have GPS data; otherwise stay on
+  // "Why suspected". Kept above the early-return so the hook order is
+  // stable across loading vs loaded renders (React rules-of-hooks).
+  const hasGeoForTab =
+    synthRow != null && synthRow.origin_lat != null && synthRow.destination_lat != null;
+  useEffect(() => {
+    if (hasGeoForTab) setTab("trip");
+  }, [hasGeoForTab]);
+
   if (loading) {
     return <div className="z-container susp-loading">Loading trip {tripId}…</div>;
   }
@@ -405,14 +414,7 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
   const distKm = score.transit_distance_km ?? 0;
   const planKm = score.google_distance_km ?? 0;
   const detourKm = Math.max(0, distKm - planKm);
-  const hasGeo = synthRow && synthRow.origin_lat != null && synthRow.destination_lat != null;
-
-  // Default the user to Trip view when geo is available; otherwise stay on
-  // Why suspected so they never land on an "unavailable" placeholder. Runs
-  // on first paint after the score loads.
-  useEffect(() => {
-    if (hasGeo) setTab("trip");
-  }, [hasGeo]);
+  const hasGeo = hasGeoForTab;
 
   return (
     <div className="z-container susp-page">
