@@ -4331,18 +4331,35 @@ html, body {
 }
 
 /* Floating halt detail card overlaid on the map */
+.z-halt-card-anchor {
+  /* Position controlled inline from TripDetail (map.project()).
+     Falls back to top-right if the anchor is unset. */
+}
 .z-halt-card {
-  position: absolute;
-  top: 76px;
-  right: 16px;
+  /* When wrapped by .z-halt-card-anchor the parent sets position. The card
+     itself is plain block; it no longer pins itself to top-right. */
+  position: relative;
   width: 360px;
   background: #fff;
   border: 1px solid #d8dce5;
   border-radius: 8px;
   box-shadow: 0 18px 40px -12px rgba(15, 23, 42, 0.25), 0 4px 12px rgba(15, 23, 42, 0.08);
   padding: 14px 16px 16px;
-  z-index: 5;
   font-family: "Inter", system-ui, sans-serif;
+}
+/* Triangle pointer at the bottom of the card pointing down at the halt. */
+.z-halt-card-anchor::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-right: 1px solid #d8dce5;
+  border-bottom: 1px solid #d8dce5;
+  z-index: 4;
 }
 .z-halt-card-head {
   display: flex;

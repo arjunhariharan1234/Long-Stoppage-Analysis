@@ -29,6 +29,10 @@ interface Props {
   trip: TripRow;
   onBack: () => void;
   aliasLocation: (s: string) => string;
+  /** Optional synthetic events (from brain halt clusters etc.) merged into
+   * the events sample so the entity drill panels still populate when the
+   * primary events JSON doesn't cover a brain-only entity. */
+  extraEvents?: EventRow[];
 }
 
 type LayerKey = "planned" | "halts" | "hexbin" | "pitch";
@@ -82,7 +86,7 @@ function haltElevation(durationHrs: number): number {
   return base + Math.min(durationHrs, 24) * 700;
 }
 
-export function TripDetail({ trip, onBack, aliasLocation }: Props) {
+export function TripDetail({ trip, onBack, aliasLocation, extraEvents }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const overlayRef = useRef<MapboxOverlay | null>(null);
@@ -92,6 +96,7 @@ export function TripDetail({ trip, onBack, aliasLocation }: Props) {
     planned: true, halts: true, hexbin: false, pitch: true,
   });
   const [activeHalt, setActiveHalt] = useState<number | null>(null);
+  const [haltCardPos, setHaltCardPos] = useState<{ x: number; y: number } | null>(null);
   const [entityFocus, setEntityFocus] = useState<EntityFocus | null>(null);
   const [routePath, setRoutePath] = useState<[number, number][] | null>(null);
 
@@ -108,11 +113,12 @@ export function TripDetail({ trip, onBack, aliasLocation }: Props) {
     Promise.all([api.drivers(), api.vehicles(), api.transporters(), api.routes(), api.hotspots(), api.events()])
       .then(([d, v, t, r, h, e]) => {
         if (cancelled) return;
-        setDrivers(d); setVehicles(v); setTransporters(t); setRoutes(r); setHotspots(h); setEvents(e);
+        setDrivers(d); setVehicles(v); setTransporters(t); setRoutes(r); setHotspots(h);
+        setEvents(extraEvents && extraEvents.length ? [...e, ...extraEvents] : e);
       })
       .catch(err => console.error("trip-detail data load failed", err));
     return () => { cancelled = true; };
-  }, []);
+  }, [extraEvents]);
 
   const halts: TripHalt[] = trip.halts || [];
   const validHalts = useMemo(() => halts.filter(h => h.lat != null && h.lng != null), [halts]);
@@ -316,6 +322,35 @@ export function TripDetail({ trip, onBack, aliasLocation }: Props) {
     mapRef.current.flyTo({ center: [h.lng, h.lat], zoom: Math.max(cur, 12), duration: 800 });
   }, [activeHalt, validHalts]);
 
+  // Keep the halt-detail card anchored over the clicked halt on the map.
+  // Project lat/lng → screen coords; recompute on every map move so the
+  // card follows when the user pans / zooms / pitches.
+  useEffect(() => {
+    if (activeHalt == null || !mapRef.current) {
+      setHaltCardPos(null);
+      return;
+    }
+    const h = validHalts[activeHalt];
+    if (!h || h.lat == null || h.lng == null) {
+      setHaltCardPos(null);
+      return;
+    }
+    const map = mapRef.current;
+    const update = () => {
+      const p = map.project([h.lng!, h.lat!]);
+      setHaltCardPos({ x: p.x, y: p.y });
+    };
+    update();
+    map.on("move", update);
+    map.on("zoom", update);
+    map.on("pitch", update);
+    return () => {
+      map.off("move", update);
+      map.off("zoom", update);
+      map.off("pitch", update);
+    };
+  }, [activeHalt, validHalts]);
+
   function escapeHtml(s: string) {
     return s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c] as string));
   }
@@ -502,15 +537,29 @@ export function TripDetail({ trip, onBack, aliasLocation }: Props) {
           <>
             <div ref={containerRef} className="z-td-map" />
             {focusedHalt && (
-              <HaltDetailCard
-                halt={focusedHalt}
-                haltIndex={activeHalt!}
-                tripId={trip.trip_id}
-                hotspots={hotspots}
-                events={events}
-                onClose={() => setActiveHalt(null)}
-                onEntityClick={(focus) => setEntityFocus(focus)}
-              />
+              <div
+                className="z-halt-card-anchor"
+                style={haltCardPos ? {
+                  position: "absolute",
+                  // Anchor the bottom of the card just above the halt point,
+                  // with a small offset and centred horizontally.
+                  left: Math.max(8, Math.min(haltCardPos.x - 180, /* card half-width */
+                    (containerRef.current?.clientWidth ?? 1200) - 368)),
+                  top: Math.max(8, haltCardPos.y - 16 - 240 /* approx card height */),
+                  zIndex: 5,
+                  pointerEvents: "auto",
+                } : { display: "none" }}
+              >
+                <HaltDetailCard
+                  halt={focusedHalt}
+                  haltIndex={activeHalt!}
+                  tripId={trip.trip_id}
+                  hotspots={hotspots}
+                  events={events}
+                  onClose={() => setActiveHalt(null)}
+                  onEntityClick={(focus) => setEntityFocus(focus)}
+                />
+              </div>
             )}
           </>
         )}

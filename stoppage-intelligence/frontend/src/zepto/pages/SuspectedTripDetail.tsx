@@ -3,10 +3,33 @@ import { Badge, Button } from "ft-design-system";
 import { api } from "../api";
 import type {
   BrainScore, BrainSignal, BrainSimilarCase, BrainRollupsFile, BrainEntityRollup,
-  TripRow, TripHalt,
+  TripRow, TripHalt, EventRow,
 } from "../types";
 import { TripDetail } from "../components/TripDetail";
 import { CopyButton } from "../components/CopyButton";
+
+/** Warehouse_code → (lat, lng) lookup built once per session from trips.json. */
+type WarehouseCoords = Map<string, { lat: number; lng: number }>;
+let warehouseCoordsCache: Promise<WarehouseCoords> | null = null;
+function loadWarehouseCoords(): Promise<WarehouseCoords> {
+  if (warehouseCoordsCache) return warehouseCoordsCache;
+  warehouseCoordsCache = api.trips().then(trips => {
+    const m: WarehouseCoords = new Map();
+    const tokenize = (s: string) => (s || "").trim().split(/\s+/)[0];
+    for (const t of trips) {
+      const oCode = tokenize(t.origin);
+      const dCode = tokenize(t.destination);
+      if (oCode && t.origin_lat != null && t.origin_lng != null && !m.has(oCode)) {
+        m.set(oCode, { lat: t.origin_lat, lng: t.origin_lng });
+      }
+      if (dCode && t.destination_lat != null && t.destination_lng != null && !m.has(dCode)) {
+        m.set(dCode, { lat: t.destination_lat, lng: t.destination_lng });
+      }
+    }
+    return m;
+  }).catch(() => new Map());
+  return warehouseCoordsCache;
+}
 
 interface Props {
   tripId: string;
@@ -56,13 +79,25 @@ function aliasLocation(s?: string): string {
 }
 
 /* Synthesize a TripRow from a BrainScore so we can reuse the existing TripDetail map. */
-function synthesizeTripRow(b: BrainScore): TripRow {
+function synthesizeTripRow(b: BrainScore, warehouseCoords?: WarehouseCoords): TripRow {
   const clusters = (b as any).halt_clusters as { lat: number; lng: number; ping_count: number }[] | undefined;
   const totalStop = b.stoppage_hrs ?? 0;
-  const oLat = (b as any).origin_lat as number | null;
-  const oLng = (b as any).origin_lng as number | null;
-  const dLat = (b as any).destination_lat as number | null;
-  const dLng = (b as any).destination_lng as number | null;
+  const tokenize = (s?: string) => (s || "").trim().split(/\s+/)[0];
+  // Prefer polyline-derived endpoints; otherwise fall back to the warehouse
+  // coordinate map built from trips.json so every suspected trip can render
+  // a map view.
+  let oLat = (b as any).origin_lat as number | null;
+  let oLng = (b as any).origin_lng as number | null;
+  let dLat = (b as any).destination_lat as number | null;
+  let dLng = (b as any).destination_lng as number | null;
+  if ((oLat == null || oLng == null) && warehouseCoords) {
+    const hit = warehouseCoords.get(tokenize(b.origin));
+    if (hit) { oLat = hit.lat; oLng = hit.lng; }
+  }
+  if ((dLat == null || dLng == null) && warehouseCoords) {
+    const hit = warehouseCoords.get(tokenize(b.destination));
+    if (hit) { dLat = hit.lat; dLng = hit.lng; }
+  }
   const totalPings = clusters && clusters.length ? clusters.reduce((a, c) => a + c.ping_count, 0) : 1;
   let halts: TripHalt[] = (clusters ?? []).map((c) => ({
     ts: "",
@@ -106,10 +141,10 @@ function synthesizeTripRow(b: BrainScore): TripRow {
     master_trip_id: String(b.trip_id),
     origin: b.origin || "",
     destination: b.destination || "",
-    origin_lat: (b as any).origin_lat ?? null,
-    origin_lng: (b as any).origin_lng ?? null,
-    destination_lat: (b as any).destination_lat ?? null,
-    destination_lng: (b as any).destination_lng ?? null,
+    origin_lat: oLat,
+    origin_lng: oLng,
+    destination_lat: dLat,
+    destination_lng: dLng,
     vehicle_number: b.vehicle || "",
     vehicle_type: "",
     transporter_branch: b.transporter || "",
@@ -349,9 +384,10 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
   const [score, setScore] = useState<BrainScore | null>(null);
   const [allScores, setAllScores] = useState<BrainScore[]>([]);
   const [rollups, setRollups] = useState<BrainRollupsFile | null>(null);
+  const [warehouseCoords, setWarehouseCoords] = useState<WarehouseCoords>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [tab, setTab] = useState<Tab>("brain");
+  const [tab, setTab] = useState<Tab>("trip");
   const [drill, setDrill] = useState<{ kind: "Driver" | "Vehicle" | "Transporter"; key: string; name: string; sub?: string } | null>(null);
 
   useEffect(() => {
@@ -360,13 +396,15 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
     Promise.all([
       api.brainScores(),
       api.brainRollups().catch(() => null),
+      loadWarehouseCoords(),
     ])
-      .then(([file, rups]) => {
+      .then(([file, rups, coords]) => {
         const hit = file.scores.find(s => s.trip_id === tripId) ?? null;
         if (!hit) setError(`Trip ${tripId} not in brain scores`);
         setScore(hit);
         setAllScores(file.scores);
         setRollups(rups);
+        setWarehouseCoords(coords);
         setLoading(false);
       })
       .catch(err => {
@@ -380,7 +418,59 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
     [score]
   );
 
-  const synthRow = useMemo(() => (score ? synthesizeTripRow(score) : null), [score]);
+  const synthRow = useMemo(
+    () => (score ? synthesizeTripRow(score, warehouseCoords) : null),
+    [score, warehouseCoords]
+  );
+
+  // Synthetic EventRows built from every brain trip's halt_clusters, so that
+  // when the user clicks Driver / Vehicle / Transporter inside TripDetail
+  // (which loads from events-in-transit.json), the drill panels still
+  // populate from BRAIN data — even when the entity isn't covered by the
+  // primary events sample.
+  const brainExtraEvents = useMemo<EventRow[]>(() => {
+    const out: EventRow[] = [];
+    for (const s of allScores) {
+      const clusters = (s as any).halt_clusters as
+        { lat: number; lng: number; ping_count: number }[] | undefined;
+      if (!clusters || clusters.length === 0) continue;
+      const dateStr = s.trip_closure_time || s.first_ping_outside_origin || "";
+      const totalPings = clusters.reduce((a, c) => a + c.ping_count, 0) || 1;
+      const totalStop = s.stoppage_hrs ?? 0;
+      clusters.forEach((c, i) => {
+        out.push({
+          trip_id: String(s.trip_id),
+          alert_id: `${s.trip_id}-h${i}`,
+          alert_created_at: dateStr,
+          alert_lat: c.lat,
+          alert_lng: c.lng,
+          long_stoppage_duration_hrs: totalPings > 0
+            ? Math.round((totalStop * c.ping_count / totalPings) * 100) / 100
+            : 0,
+          driver_name: s.driver_name || "",
+          driver_number: s.driver_number || "",
+          vehicle_number: s.vehicle || "",
+          vehicle_type: "",
+          transporter_branch: s.transporter || "",
+          cluster_id: `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`,
+          nearest_poi_name: "Halt cluster",
+          nearest_poi_type: "brain-detected",
+          distance_to_poi_km: "",
+          escalation_level: 2,
+          net_weight: "",
+          dedicated_vehicle_tag: "",
+          gps_integration_flag: "",
+          is_night: 0,
+          is_reefer: 0,
+          route_key: "",
+          zone: "",
+          origin: s.origin || "",
+          destination: s.destination || "",
+        });
+      });
+    }
+    return out;
+  }, [allScores]);
 
   const drillRollup = useMemo<BrainEntityRollup | null>(() => {
     if (!drill || !rollups) return null;
@@ -411,14 +501,6 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
       });
   }, [drill, allScores, tripId]);
 
-  // Auto-switch to "Trip view" once we have GPS data; otherwise stay on
-  // "Why suspected". Kept above the early-return so the hook order is
-  // stable across loading vs loaded renders (React rules-of-hooks).
-  const hasGeoForTab =
-    synthRow != null && synthRow.origin_lat != null && synthRow.destination_lat != null;
-  useEffect(() => {
-    if (hasGeoForTab) setTab("trip");
-  }, [hasGeoForTab]);
 
   if (loading) {
     return <div className="z-container susp-loading">Loading trip {tripId}…</div>;
@@ -426,7 +508,7 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
   if (error || !score) {
     return (
       <div className="z-container susp-loading">
-        <Button variant="secondary" size="sm" onClick={onBack}>← Back to review</Button>
+        <Button variant="secondary" size="sm" onClick={onBack}>← Back</Button>
         <p style={{ marginTop: 16 }}>{error || `No data for trip ${tripId}.`}</p>
       </div>
     );
@@ -435,13 +517,12 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
   const distKm = score.transit_distance_km ?? 0;
   const planKm = score.google_distance_km ?? 0;
   const detourKm = Math.max(0, distKm - planKm);
-  const hasGeo = hasGeoForTab;
 
   return (
     <div className="z-container susp-page">
       {/* Top bar */}
       <div className="susp-topbar">
-        <Button variant="secondary" size="sm" onClick={onBack}>← Back to review</Button>
+        <Button variant="secondary" size="sm" onClick={onBack}>← Back</Button>
         <div className="susp-topbar-trip">
           Trip {score.trip_id}
           <CopyButton value={score.trip_id} label="trip ID" />
@@ -493,17 +574,16 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
         </section>
       )}
 
-      {/* Tabs — Trip view only renders when GPS path is available so we
-          never expose a broken/empty tab. */}
+      {/* Tabs — Trip view is always available so every suspected trip
+          opens to the map detail layout. TripDetail handles missing
+          lat/lng gracefully (sidebar renders, map area stays empty). */}
       <div className="susp-tabs">
-        {hasGeo && (
-          <button
-            className={`susp-tab ${tab === "trip" ? "is-active" : ""}`}
-            onClick={() => setTab("trip")}
-          >
-            Trip view
-          </button>
-        )}
+        <button
+          className={`susp-tab ${tab === "trip" ? "is-active" : ""}`}
+          onClick={() => setTab("trip")}
+        >
+          Trip view
+        </button>
         <button
           className={`susp-tab ${tab === "brain" ? "is-active" : ""}`}
           onClick={() => setTab("brain")}
@@ -512,12 +592,13 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
         </button>
       </div>
 
-      {tab === "trip" && hasGeo && synthRow && (
+      {tab === "trip" && synthRow && (
         <div className="susp-tripview">
           <TripDetail
             trip={synthRow}
             onBack={onBack}
             aliasLocation={aliasLocation}
+            extraEvents={brainExtraEvents}
           />
         </div>
       )}
