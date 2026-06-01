@@ -221,11 +221,6 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
                   <div className="brain-rail-trip">
                     {b.driver_name || "Unknown driver"} · {b.vehicle || "?"}
                   </div>
-                  <div className="brain-rail-meta">
-                    {(b.origin || "?").split(" - ").slice(-1)[0]}
-                    {" → "}
-                    {(b.destination || "?").split(" - ").slice(-1)[0]}
-                  </div>
                   <div className="brain-rail-meta brain-rail-transporter">
                     {b.transporter || "—"}
                   </div>
