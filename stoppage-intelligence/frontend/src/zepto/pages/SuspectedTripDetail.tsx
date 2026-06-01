@@ -508,7 +508,10 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
   if (error || !score) {
     return (
       <div className="z-container susp-loading">
-        <Button variant="secondary" size="sm" onClick={onBack}>← Back</Button>
+        <button type="button" className="susp-back-btn" onClick={onBack}>
+          <span aria-hidden className="susp-back-arrow">←</span>
+          <span>Back to suspects</span>
+        </button>
         <p style={{ marginTop: 16 }}>{error || `No data for trip ${tripId}.`}</p>
       </div>
     );
@@ -522,7 +525,10 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
     <div className="z-container susp-page">
       {/* Top bar */}
       <div className="susp-topbar">
-        <Button variant="secondary" size="sm" onClick={onBack}>← Back</Button>
+        <button type="button" className="susp-back-btn" onClick={onBack}>
+          <span aria-hidden className="susp-back-arrow">←</span>
+          <span>Back to suspects</span>
+        </button>
         <div className="susp-topbar-trip">
           Trip {score.trip_id}
           <CopyButton value={score.trip_id} label="trip ID" />

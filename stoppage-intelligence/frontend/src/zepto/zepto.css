@@ -5241,3 +5241,34 @@ html, body {
 .z-trip-window-showing { margin-left: auto; font-size: 12px;
   color: var(--zepto-muted, #6b7280); font-variant-numeric: tabular-nums; }
 .z-trip-window-showing strong { color: var(--zepto-fg, #111827); font-weight: 600; }
+
+/* Map wrapper — provides the positioning context for the halt-detail
+   card overlay. The .z-halt-card-anchor's top/left are in map.project()
+   pixels (relative to the map canvas), so the wrapper has to share that
+   coordinate space. */
+.z-td-mapwrap {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+.z-td-mapwrap > .z-td-map {
+  position: absolute;
+  inset: 0;
+}
+
+/* Back button in the Suspected-trip detail top bar — give it room
+   so the arrow and label aren't crammed. */
+.susp-topbar .ft-button { padding: 6px 14px; }
+.susp-topbar .ft-button > * + * { margin-left: 4px; }
+
+/* Back navigation button in Suspected-trip header */
+.susp-back-btn { display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-radius: 8px;
+  background: #fff; border: 1px solid var(--zepto-border, #e5e7eb);
+  font-size: 13px; font-weight: 500; color: var(--zepto-fg, #111827);
+  cursor: pointer; line-height: 1;
+  transition: background 120ms ease, border-color 120ms ease, transform 80ms ease; }
+.susp-back-btn:hover { background: #f9fafb; border-color: #c4c9d1; }
+.susp-back-btn:active { transform: scale(0.98); }
+.susp-back-btn:focus-visible { outline: 2px solid var(--zepto-accent, #facc15); outline-offset: 1px; }
+.susp-back-arrow { font-size: 16px; line-height: 1; color: var(--zepto-muted, #6b7280); }

@@ -575,18 +575,21 @@ export function TripDetail({ trip, onBack, aliasLocation, extraEvents }: Props) 
             })()}
           </div>
         ) : (
-          <>
+          <div className="z-td-mapwrap">
             <div ref={containerRef} className="z-td-map" />
             {focusedHalt && (
               <div
                 className="z-halt-card-anchor"
                 style={haltCardPos ? {
                   position: "absolute",
-                  // Anchor the bottom of the card just above the halt point,
-                  // with a small offset and centred horizontally.
-                  left: Math.max(8, Math.min(haltCardPos.x - 180, /* card half-width */
+                  // Coords are from map.project() — relative to the map div.
+                  // The parent .z-td-mapwrap is position:relative so these
+                  // values place the card directly above the clicked halt.
+                  // Centred horizontally on the halt (180 = card half-width)
+                  // and anchored 16px above the halt point (240 = card height).
+                  left: Math.max(8, Math.min(haltCardPos.x - 180,
                     (containerRef.current?.clientWidth ?? 1200) - 368)),
-                  top: Math.max(8, haltCardPos.y - 16 - 240 /* approx card height */),
+                  top: Math.max(8, haltCardPos.y - 16 - 240),
                   zIndex: 5,
                   pointerEvents: "auto",
                 } : { display: "none" }}
@@ -602,7 +605,7 @@ export function TripDetail({ trip, onBack, aliasLocation, extraEvents }: Props) 
                 />
               </div>
             )}
-          </>
+          </div>
         )}
       </section>
 
