@@ -132,6 +132,14 @@ export function TripDetail({ trip, onBack, aliasLocation, extraEvents }: Props) 
     h.distance_to_poi_km == null || h.distance_to_poi_km > 1.0 || h.poi_type === "No POI within 2km";
 
   const hasGeo = trip.origin_lat != null && trip.origin_lng != null && trip.destination_lat != null && trip.destination_lng != null;
+  // Partial geo: at least one endpoint OR at least one halt cluster known.
+  // Lets us render a useful map even when one warehouse code isn't in our
+  // coordinate reference table.
+  const hasPartialGeo = !hasGeo && (
+    (trip.origin_lat != null && trip.origin_lng != null) ||
+    (trip.destination_lat != null && trip.destination_lng != null) ||
+    validHalts.length > 0
+  );
 
   // Fetch the planned route once per trip
   useEffect(() => {
@@ -532,7 +540,40 @@ export function TripDetail({ trip, onBack, aliasLocation, extraEvents }: Props) 
           </div>
         </div>
         {!hasGeo ? (
-          <div className="z-td-map-fallback">Trip coordinates are missing — cannot render the route.</div>
+          <div className="z-td-map-fallback">
+            {(() => {
+              const oOk = trip.origin_lat != null && trip.origin_lng != null;
+              const dOk = trip.destination_lat != null && trip.destination_lng != null;
+              const missing = !oOk && !dOk ? "origin and destination" : !oOk ? "origin" : "destination";
+              const knownLat = oOk ? trip.origin_lat : trip.destination_lat;
+              const knownLng = oOk ? trip.origin_lng : trip.destination_lng;
+              const knownLabel = oOk ? trip.origin : trip.destination;
+              const knownCode = oOk ? (trip.origin || "").split(" ")[0] : (trip.destination || "").split(" ")[0];
+              return (
+                <div className="z-td-map-fallback-body">
+                  <strong>Cannot render the full route.</strong>
+                  <p style={{ marginTop: 8, marginBottom: 0 }}>
+                    The {missing} warehouse {missing.includes(" ") ? "codes are" : "code is"} not in our coordinate reference table — that's why the map can't draw the route. The platform tracked the truck end-to-end though, so every number in this panel ({trip.total_transit_distance ? `${Math.round(trip.total_transit_distance)} km driven` : "distance"}, halt counts, ETA breach, alerts) is from real telemetry.
+                  </p>
+                  {oOk || dOk ? (
+                    <p style={{ marginTop: 12, fontSize: 12, color: "#6b7280" }}>
+                      We do have coordinates for the {oOk ? "origin" : "destination"} warehouse ({knownCode}):{" "}
+                      <a
+                        href={`https://www.google.com/maps/search/?api=1&query=${knownLat},${knownLng}`}
+                        target="_blank" rel="noopener noreferrer"
+                        style={{ color: "#2563eb" }}
+                      >
+                        open {knownLabel || knownCode} on Google Maps ↗
+                      </a>
+                    </p>
+                  ) : null}
+                  <p style={{ marginTop: 8, fontSize: 12, color: "#6b7280" }}>
+                    To fix this for future trips on this lane: ask the dispatch desk for the warehouse master (every site code with its lat/lng) so we can complete our reference table.
+                  </p>
+                </div>
+              );
+            })()}
+          </div>
         ) : (
           <>
             <div ref={containerRef} className="z-td-map" />

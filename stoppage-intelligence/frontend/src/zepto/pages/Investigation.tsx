@@ -78,25 +78,22 @@ export function Investigation({ preselect }: Props) {
     Promise.all([
       api.drivers(), api.vehicles(), api.transporters(), api.routes(),
       api.trips(), api.events(),
-      api.brainScores().catch(() => ({ scores: [] })),
+      api.brainScores().catch(() => ({ scores: [] as import("../types").BrainScore[] })),
     ])
       .then(([d, v, t, r, tr, e, brain]) => {
-        setDrivers(d); setVehicles(v); setTransporters(t); setRoutes(r);
-        setEvents(e);
+        setRoutes(r);
 
         // Build the brain-score lookup map.
         const bm = new Map<string, import("../types").BrainScore>();
         for (const s of brain.scores) bm.set(String(s.trip_id), s);
         setBrainByTrip(bm);
 
-        // Merge brain-only trips into tripRows so the Investigate table shows
-        // every trip we have data on (trips.json + brain). Skip trips that
-        // are already in tripRows.
+        // ---- Merge brain-only trips into tripRows ----
         const seen = new Set(tr.map(x => x.trip_id));
-        const synthesized: TripRow[] = [];
+        const synthesizedTrips: TripRow[] = [];
         for (const s of brain.scores) {
           if (seen.has(String(s.trip_id))) continue;
-          synthesized.push({
+          synthesizedTrips.push({
             trip_id: String(s.trip_id),
             master_trip_id: String(s.trip_id),
             origin: s.origin || "",
@@ -130,7 +127,179 @@ export function Investigation({ preselect }: Props) {
             unmapped_halts: ((s as any).halt_clusters || []).length,
           });
         }
-        setTripRows([...tr, ...synthesized]);
+        setTripRows([...tr, ...synthesizedTrips]);
+
+        // ---- Aggregate brain by driver / vehicle / transporter ----
+        // Most-common helper (used for "top" fields like top_transporter).
+        function mostCommon(arr: string[]): string {
+          const m = new Map<string, number>();
+          for (const v of arr) if (v) m.set(v, (m.get(v) || 0) + 1);
+          let best = "", best_n = 0;
+          for (const [k, n] of m) if (n > best_n) { best = k; best_n = n; }
+          return best;
+        }
+
+        // Driver aggregation.
+        const driverGroups = new Map<string, import("../types").BrainScore[]>();
+        for (const s of brain.scores) {
+          if (!s.driver_number) continue;
+          if (!driverGroups.has(s.driver_number)) driverGroups.set(s.driver_number, []);
+          driverGroups.get(s.driver_number)!.push(s);
+        }
+        const existingDrivers = new Set(d.map(x => x.driver_number));
+        const driverMergedById = new Map<string, DriverRollup>();
+        for (const dx of d) driverMergedById.set(dx.driver_number, { ...dx });
+        for (const [driver_number, grp] of driverGroups) {
+          const names = grp.map(s => s.driver_name).filter(Boolean) as string[];
+          const transporters = grp.map(s => s.transporter).filter(Boolean) as string[];
+          const vehicles = new Set(grp.map(s => s.vehicle).filter(Boolean));
+          const totalRisk = grp.reduce((a, s) => a + (s.brain_score || 0), 0);
+          const halts = grp.reduce((a, s) => a + ((s as any).halt_clusters || []).length, 0);
+          const avgStop = grp.length ? grp.reduce((a, s) => a + (s.stoppage_hrs || 0), 0) / grp.length : 0;
+          const synth: DriverRollup = {
+            driver_number,
+            driver_name: mostCommon(names) || "",
+            halt_count: halts || grp.length,
+            unique_vehicles: vehicles.size,
+            unique_transporters: new Set(transporters).size,
+            unique_clusters: halts,
+            night_share: 0,
+            reefer_share: 0,
+            median_duration_hrs: +avgStop.toFixed(2),
+            top_transporter: mostCommon(transporters),
+            risk_score: Math.round(totalRisk / Math.max(grp.length, 1)),
+          };
+          const existing = driverMergedById.get(driver_number);
+          if (existing) {
+            // Keep richer event-derived fields; overlay brain risk_score & top_transporter.
+            existing.risk_score = Math.max(existing.risk_score || 0, synth.risk_score);
+            if (!existing.driver_name) existing.driver_name = synth.driver_name;
+            if (!existing.top_transporter) existing.top_transporter = synth.top_transporter;
+          } else {
+            driverMergedById.set(driver_number, synth);
+          }
+        }
+        setDrivers([...driverMergedById.values()].sort((a, b) => b.risk_score - a.risk_score));
+
+        // Vehicle aggregation.
+        const vehicleGroups = new Map<string, import("../types").BrainScore[]>();
+        for (const s of brain.scores) {
+          if (!s.vehicle) continue;
+          if (!vehicleGroups.has(s.vehicle)) vehicleGroups.set(s.vehicle, []);
+          vehicleGroups.get(s.vehicle)!.push(s);
+        }
+        const vehicleMergedById = new Map<string, VehicleRollup>();
+        for (const vx of v) vehicleMergedById.set(vx.vehicle_number, { ...vx });
+        for (const [vehicle_number, grp] of vehicleGroups) {
+          const drivers_set = new Set(grp.map(s => s.driver_number).filter(Boolean));
+          const transporters = grp.map(s => s.transporter).filter(Boolean) as string[];
+          const halts = grp.reduce((a, s) => a + ((s as any).halt_clusters || []).length, 0);
+          const avgStop = grp.length ? grp.reduce((a, s) => a + (s.stoppage_hrs || 0), 0) / grp.length : 0;
+          const totalRisk = grp.reduce((a, s) => a + (s.brain_score || 0), 0);
+          const isReefer = /REEFER|COLD/i.test(grp[0].origin || "");
+          const synth: VehicleRollup = {
+            vehicle_number,
+            vehicle_type: isReefer ? "REEFER" : "",
+            halt_count: halts || grp.length,
+            unique_drivers: drivers_set.size,
+            unique_transporters: new Set(transporters).size,
+            unique_clusters: halts,
+            night_share: 0,
+            reefer_share: isReefer ? 1 : 0,
+            median_duration_hrs: +avgStop.toFixed(2),
+            is_reefer: isReefer,
+            dedicated: "—",
+            top_transporter: mostCommon(transporters),
+            risk_score: Math.round(totalRisk / Math.max(grp.length, 1)),
+          };
+          const existing = vehicleMergedById.get(vehicle_number);
+          if (existing) {
+            existing.risk_score = Math.max(existing.risk_score || 0, synth.risk_score);
+            if (!existing.top_transporter) existing.top_transporter = synth.top_transporter;
+          } else {
+            vehicleMergedById.set(vehicle_number, synth);
+          }
+        }
+        setVehicles([...vehicleMergedById.values()].sort((a, b) => b.risk_score - a.risk_score));
+
+        // Transporter aggregation.
+        const transporterGroups = new Map<string, import("../types").BrainScore[]>();
+        for (const s of brain.scores) {
+          if (!s.transporter) continue;
+          if (!transporterGroups.has(s.transporter)) transporterGroups.set(s.transporter, []);
+          transporterGroups.get(s.transporter)!.push(s);
+        }
+        const transporterMergedByName = new Map<string, TransporterRollup>();
+        for (const tx of t) transporterMergedByName.set(tx.transporter_branch, { ...tx });
+        for (const [transporter_branch, grp] of transporterGroups) {
+          const drivers_set = new Set(grp.map(s => s.driver_number).filter(Boolean));
+          const vehicles_set = new Set(grp.map(s => s.vehicle).filter(Boolean));
+          const halts = grp.reduce((a, s) => a + ((s as any).halt_clusters || []).length, 0);
+          const avgStop = grp.length ? grp.reduce((a, s) => a + (s.stoppage_hrs || 0), 0) / grp.length : 0;
+          const totalRisk = grp.reduce((a, s) => a + (s.brain_score || 0), 0);
+          const synth: TransporterRollup = {
+            transporter_branch,
+            halt_count: halts || grp.length,
+            unique_drivers: drivers_set.size,
+            unique_vehicles: vehicles_set.size,
+            unique_clusters: halts,
+            night_share: 0,
+            reefer_share: 0,
+            median_duration_hrs: +avgStop.toFixed(2),
+            risk_score: Math.round(totalRisk / Math.max(grp.length, 1)),
+          };
+          const existing = transporterMergedByName.get(transporter_branch);
+          if (existing) {
+            existing.risk_score = Math.max(existing.risk_score || 0, synth.risk_score);
+          } else {
+            transporterMergedByName.set(transporter_branch, synth);
+          }
+        }
+        setTransporters([...transporterMergedByName.values()].sort((a, b) => b.risk_score - a.risk_score));
+
+        // ---- Add brain halt-cluster events to the events stream so entity
+        // drill panels populate when the user lands from a Pulse deep-link. ----
+        const synthEvents: EventRow[] = [];
+        for (const s of brain.scores) {
+          const clusters = (s as any).halt_clusters as
+            { lat: number; lng: number; ping_count: number }[] | undefined;
+          if (!clusters || clusters.length === 0) continue;
+          const dateStr = s.trip_closure_time || s.first_ping_outside_origin || "";
+          const totalPings = clusters.reduce((a, c) => a + c.ping_count, 0) || 1;
+          const totalStop = s.stoppage_hrs ?? 0;
+          clusters.forEach((c, i) => {
+            synthEvents.push({
+              trip_id: String(s.trip_id),
+              alert_id: `${s.trip_id}-bh${i}`,
+              alert_created_at: dateStr,
+              alert_lat: c.lat,
+              alert_lng: c.lng,
+              long_stoppage_duration_hrs: totalPings > 0
+                ? Math.round((totalStop * c.ping_count / totalPings) * 100) / 100
+                : 0,
+              driver_name: s.driver_name || "",
+              driver_number: s.driver_number || "",
+              vehicle_number: s.vehicle || "",
+              vehicle_type: "",
+              transporter_branch: s.transporter || "",
+              cluster_id: `${c.lat.toFixed(4)},${c.lng.toFixed(4)}`,
+              nearest_poi_name: "Halt cluster",
+              nearest_poi_type: "brain-detected",
+              distance_to_poi_km: "",
+              escalation_level: 2,
+              net_weight: "",
+              dedicated_vehicle_tag: "",
+              gps_integration_flag: "",
+              is_night: 0,
+              is_reefer: 0,
+              route_key: "",
+              zone: "",
+              origin: s.origin || "",
+              destination: s.destination || "",
+            });
+          });
+        }
+        setEvents([...e, ...synthEvents]);
         setLoading(false);
       })
       .catch(err => { console.error(err); setLoading(false); });
