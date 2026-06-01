@@ -177,7 +177,7 @@ export function Investigation({ preselect }: Props) {
       }
       if (latestMs > 0) cutoffMs = latestMs - windowDays * 24 * 60 * 60 * 1000;
     }
-    return tripRows.filter(t => {
+    const filtered = tripRows.filter(t => {
       if (zoneFilter && t.zone !== zoneFilter) return false;
       if (directionFilter && t.inbound_or_outbound !== directionFilter) return false;
       if (cutoffMs != null) {
@@ -194,6 +194,16 @@ export function Investigation({ preselect }: Props) {
         t.destination.toLowerCase().includes(q)
       );
     });
+    // Recency-first sort: most-recent latest_alert_at on top. Older trips
+    // can't be acted on, so they shouldn't lead the list.
+    filtered.sort((a, b) => {
+      const ta = a.latest_alert_at ? Date.parse(a.latest_alert_at) : 0;
+      const tb = b.latest_alert_at ? Date.parse(b.latest_alert_at) : 0;
+      const aNum = isNaN(ta) ? 0 : ta;
+      const bNum = isNaN(tb) ? 0 : tb;
+      return bNum - aNum;
+    });
+    return filtered;
   }, [tripRows, query, zoneFilter, directionFilter, windowDays]);
 
   const tripKpis = useMemo(() => {

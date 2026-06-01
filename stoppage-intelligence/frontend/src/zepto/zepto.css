@@ -5159,3 +5159,32 @@ html, body {
   color: var(--zepto-fg, #111827); font-weight: 600;
   padding: 2px 8px; background: #fde68a; color: #78350f;
   border-radius: 999px; }
+
+/* CopyButton — inline icon for clipboard copy next to identifiers */
+.copy-btn { display: inline-flex; align-items: center; gap: 3px;
+  background: transparent; border: 1px solid transparent;
+  border-radius: 5px; padding: 2px 5px; margin-left: 6px;
+  cursor: pointer; color: var(--zepto-muted, #6b7280);
+  font-size: 11px; line-height: 1; vertical-align: middle;
+  transition: background 100ms ease, color 100ms ease, border-color 100ms ease; }
+.copy-btn:hover { background: #f1f5f9; color: #2563eb; border-color: #e0e7ff; }
+.copy-btn:focus-visible { outline: 2px solid var(--zepto-accent, #facc15);
+  outline-offset: 1px; }
+.copy-btn.is-copied { background: #d1fae5; color: #065f46;
+  border-color: #a7f3d0; }
+.copy-btn-text { font-weight: 500; }
+
+/* Drill modal — date pill + tighter layout */
+.susp-modal-trip-id { display: flex; flex-direction: column; gap: 2px;
+  align-items: flex-start; }
+.susp-modal-trip-date { font-size: 11px; font-weight: 600;
+  padding: 2px 8px; background: #fde68a; color: #78350f;
+  border-radius: 999px; line-height: 1.4; }
+.susp-modal-trip-id-num { font-size: 11px; color: var(--zepto-muted, #6b7280);
+  font-weight: 500; }
+
+/* Identity-cell value rows: allow the copy button to sit inline */
+.susp-identity-value { display: flex; align-items: center; gap: 4px;
+  flex-wrap: wrap; }
+.susp-identity-sub { display: flex; align-items: center; gap: 4px;
+  flex-wrap: wrap; }

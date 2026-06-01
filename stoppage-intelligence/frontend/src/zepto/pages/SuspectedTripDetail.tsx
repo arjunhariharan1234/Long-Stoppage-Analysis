@@ -6,6 +6,7 @@ import type {
   TripRow, TripHalt,
 } from "../types";
 import { TripDetail } from "../components/TripDetail";
+import { CopyButton } from "../components/CopyButton";
 
 interface Props {
   tripId: string;
@@ -315,13 +316,23 @@ function EntityDrillModal({
             <p className="zepto-empty">No other suspected trips for this {kind.toLowerCase()}.</p>
           ) : (
             <ul className="susp-modal-trip-list">
-              {suspectedTrips.slice(0, 20).map(t => (
-                <li key={t.trip_id} className="susp-modal-trip-row" onClick={() => onSelectTrip(t.trip_id)}>
-                  <div className="susp-modal-trip-id">Trip {t.trip_id}</div>
-                  <div className="susp-modal-trip-route">{aliasLocation(t.origin)} → {aliasLocation(t.destination)}</div>
-                  <Badge className={tierClass(t.tier)}>{t.brain_score}</Badge>
-                </li>
-              ))}
+              {suspectedTrips.slice(0, 20).map(t => {
+                const ds = t.trip_closure_time || t.first_ping_outside_origin;
+                const date = ds ? new Date(ds) : null;
+                const dateLabel = date && !isNaN(date.getTime())
+                  ? date.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })
+                  : "—";
+                return (
+                  <li key={t.trip_id} className="susp-modal-trip-row" onClick={() => onSelectTrip(t.trip_id)}>
+                    <div className="susp-modal-trip-id">
+                      <span className="susp-modal-trip-date">{dateLabel}</span>
+                      <span className="susp-modal-trip-id-num">Trip {t.trip_id}</span>
+                    </div>
+                    <div className="susp-modal-trip-route">{aliasLocation(t.origin)} → {aliasLocation(t.destination)}</div>
+                    <Badge className={tierClass(t.tier)}>{t.brain_score}</Badge>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
@@ -385,9 +396,19 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
     if (!drill) return [];
     const field: keyof BrainScore = drill.kind === "Driver" ? "driver_number"
                                  : drill.kind === "Vehicle" ? "vehicle" : "transporter";
+    const tripTime = (s: BrainScore): number => {
+      const ds = s.trip_closure_time || s.first_ping_outside_origin || s.gate_out;
+      if (!ds) return 0;
+      const t = Date.parse(ds);
+      return isNaN(t) ? 0 : t;
+    };
     return allScores
       .filter(s => s[field] === drill.key && s.trip_id !== tripId && s.brain_score > 0)
-      .sort((a, b) => b.brain_score - a.brain_score);
+      .sort((a, b) => {
+        const dt = tripTime(b) - tripTime(a);
+        if (dt !== 0) return dt;
+        return b.brain_score - a.brain_score;
+      });
   }, [drill, allScores, tripId]);
 
   // Auto-switch to "Trip view" once we have GPS data; otherwise stay on
@@ -423,6 +444,7 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
         <Button variant="secondary" size="sm" onClick={onBack}>← Back to review</Button>
         <div className="susp-topbar-trip">
           Trip {score.trip_id}
+          <CopyButton value={score.trip_id} label="trip ID" />
           {(() => {
             const ds = score.trip_closure_time || score.first_ping_outside_origin;
             if (!ds) return null;
@@ -599,7 +621,10 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
               >
                 <div className="susp-identity-label">Driver ↗</div>
                 <div className="susp-identity-value">{score.driver_name || "—"}</div>
-                <div className="susp-identity-sub">{score.driver_number || ""}</div>
+                <div className="susp-identity-sub">
+                  {score.driver_number || ""}
+                  <CopyButton value={score.driver_number} label="driver number" />
+                </div>
               </button>
               <button
                 type="button"
@@ -612,7 +637,10 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
                 disabled={!score.vehicle}
               >
                 <div className="susp-identity-label">Vehicle ↗</div>
-                <div className="susp-identity-value">{score.vehicle || "—"}</div>
+                <div className="susp-identity-value">
+                  {score.vehicle || "—"}
+                  <CopyButton value={score.vehicle} label="vehicle number" />
+                </div>
               </button>
               <button
                 type="button"
@@ -625,7 +653,10 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
                 disabled={!score.transporter}
               >
                 <div className="susp-identity-label">Transporter ↗</div>
-                <div className="susp-identity-value">{score.transporter || "—"}</div>
+                <div className="susp-identity-value">
+                  {score.transporter || "—"}
+                  <CopyButton value={score.transporter} label="transporter" />
+                </div>
               </button>
               <div className="susp-identity-cell">
                 <div className="susp-identity-label">Origin</div>

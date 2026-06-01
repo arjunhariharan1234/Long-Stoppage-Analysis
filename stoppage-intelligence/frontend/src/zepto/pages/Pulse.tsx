@@ -56,19 +56,31 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
       .then(([s, v, h, d, vh, t, e, brain]) => {
         setSummary(s); setVerdicts(v); setHotspots(h);
         setDrivers(d); setVehicles(vh); setTransporters(t); setEvents(e);
-        // Distinct top-10 trip patterns: keep the highest-scoring trip per
-        // (vehicle, origin_token, destination_token) so we don't show
-        // duplicate cards for the same recurring run.
+        // Distinct top-10 trip patterns sorted by RECENCY — investigators
+        // can only act on recent trips. Within a (vehicle, origin, destination)
+        // pattern we keep the MOST-RECENT trip (not the highest-scoring one,
+        // since stale theft is unactionable). Then we sort the deduped list by
+        // trip date desc, with brain_score as a tiebreaker for same-day trips.
         const tokenize = (s?: string) => (s || "").trim().split(/\s+/)[0] || "";
+        const tripTime = (s: BrainScore): number => {
+          const ds = s.trip_closure_time || s.first_ping_outside_origin || s.gate_out;
+          if (!ds) return 0;
+          const t = Date.parse(ds);
+          return isNaN(t) ? 0 : t;
+        };
         const byPattern = new Map<string, BrainScore>();
         for (const s of brain.scores) {
           if (s.tier !== "high") continue;
           const key = `${s.vehicle}|${tokenize(s.origin)}|${tokenize(s.destination)}`;
           const prev = byPattern.get(key);
-          if (!prev || s.brain_score > prev.brain_score) byPattern.set(key, s);
+          if (!prev || tripTime(s) > tripTime(prev)) byPattern.set(key, s);
         }
         const top = [...byPattern.values()]
-          .sort((a, b) => b.brain_score - a.brain_score)
+          .sort((a, b) => {
+            const dt = tripTime(b) - tripTime(a);
+            if (dt !== 0) return dt;
+            return b.brain_score - a.brain_score;
+          })
           .slice(0, 10);
         setBrainTop(top);
         setLoading(false);
