@@ -214,9 +214,16 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
                   <Badge className="is-critical">HIGH</Badge>
                 </div>
                 <div className="brain-rail-body">
-                  <div className="brain-rail-trip">Trip {b.trip_id}</div>
+                  <div className="brain-rail-trip">
+                    {b.driver_name || "Unknown driver"} · {b.vehicle || "?"}
+                  </div>
                   <div className="brain-rail-meta">
-                    {b.vehicle} · {b.transporter}
+                    {(b.origin || "?").split(" - ").slice(-1)[0]}
+                    {" → "}
+                    {(b.destination || "?").split(" - ").slice(-1)[0]}
+                  </div>
+                  <div className="brain-rail-meta brain-rail-transporter">
+                    {b.transporter || "—"}
                   </div>
                   {b.similar_cases.length > 0 && b.similar_cases[0].city && (
                     <div className="brain-rail-narrative">

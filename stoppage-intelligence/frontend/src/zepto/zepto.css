@@ -4883,8 +4883,10 @@ html, body {
 .brain-rail-num { font-size: 22px; font-weight: 600; }
 .brain-rail-body { flex: 1; display: flex; flex-direction: column; gap: 4px;
   font-size: 12px; }
-.brain-rail-trip { font-weight: 500; }
-.brain-rail-meta { color: var(--zepto-muted, #6b7280); }
+.brain-rail-trip { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brain-rail-meta { color: var(--zepto-muted, #6b7280);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brain-rail-meta.brain-rail-transporter { font-size: 11px; opacity: 0.85; }
 .brain-rail-narrative { font-size: 11px; color: var(--zepto-muted, #6b7280); }
 .brain-rail-signals { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
 .brain-rail-more { font-size: 11px; color: var(--zepto-muted, #6b7280); }

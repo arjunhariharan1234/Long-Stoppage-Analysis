@@ -340,7 +340,7 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
   const [rollups, setRollups] = useState<BrainRollupsFile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [tab, setTab] = useState<Tab>("trip");
+  const [tab, setTab] = useState<Tab>("brain");
   const [drill, setDrill] = useState<{ kind: "Driver" | "Vehicle" | "Transporter"; key: string; name: string; sub?: string } | null>(null);
 
   useEffect(() => {
@@ -407,6 +407,13 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
   const detourKm = Math.max(0, distKm - planKm);
   const hasGeo = synthRow && synthRow.origin_lat != null && synthRow.destination_lat != null;
 
+  // Default the user to Trip view when geo is available; otherwise stay on
+  // Why suspected so they never land on an "unavailable" placeholder. Runs
+  // on first paint after the score loads.
+  useEffect(() => {
+    if (hasGeo) setTab("trip");
+  }, [hasGeo]);
+
   return (
     <div className="z-container susp-page">
       {/* Top bar */}
@@ -449,14 +456,17 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
         </section>
       )}
 
-      {/* Tabs */}
+      {/* Tabs — Trip view only renders when GPS path is available so we
+          never expose a broken/empty tab. */}
       <div className="susp-tabs">
-        <button
-          className={`susp-tab ${tab === "trip" ? "is-active" : ""}`}
-          onClick={() => setTab("trip")}
-        >
-          Trip view
-        </button>
+        {hasGeo && (
+          <button
+            className={`susp-tab ${tab === "trip" ? "is-active" : ""}`}
+            onClick={() => setTab("trip")}
+          >
+            Trip view
+          </button>
+        )}
         <button
           className={`susp-tab ${tab === "brain" ? "is-active" : ""}`}
           onClick={() => setTab("brain")}
@@ -472,14 +482,6 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
             onBack={onBack}
             aliasLocation={aliasLocation}
           />
-        </div>
-      )}
-
-      {tab === "trip" && !hasGeo && (
-        <div className="susp-section">
-          <p className="zepto-empty">
-            Map view is unavailable for this trip — no GPS path was recorded. Switch to <strong>Why suspected</strong> for the behavioural analysis.
-          </p>
         </div>
       )}
 
