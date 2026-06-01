@@ -61,6 +61,9 @@ export function Investigation({ preselect }: Props) {
   const [query, setQuery] = useState("");
   const [zoneFilter, setZoneFilter] = useState<string>("");
   const [directionFilter, setDirectionFilter] = useState<string>("");
+  // Time-window filter — "actionable" view by default (last 7 days) so users
+  // land on recent trips. Stored as days; 0 = "All time".
+  const [windowDays, setWindowDays] = useState<number>(7);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [drillStack, setDrillStack] = useState<DrillStep[]>([]);
   const [loading, setLoading] = useState(true);
@@ -159,12 +162,28 @@ export function Investigation({ preselect }: Props) {
     return routes.filter(r => !gate || eventKeys.r.has(r.route_key)).filter(r => !q || r.route_key.toLowerCase().includes(q)).slice(0, 200);
   }, [lens, query, drivers, vehicles, transporters, routes, trips, eventKeys]);
 
-  // Trip-table data: respects the same query and adds zone / direction dropdowns.
+  // Trip-table data: respects the same query and adds zone / direction / time-window filters.
   const tripTableRows = useMemo(() => {
     const q = query.trim().toLowerCase();
+    // Anchor the time window to the latest alert timestamp in the data
+    // rather than `now()` — the demo dataset is from early 2026, so a
+    // wall-clock "last 7 days" would always be empty.
+    let cutoffMs: number | null = null;
+    if (windowDays > 0 && tripRows.length > 0) {
+      let latestMs = 0;
+      for (const t of tripRows) {
+        const ts = t.latest_alert_at ? Date.parse(t.latest_alert_at) : 0;
+        if (!isNaN(ts) && ts > latestMs) latestMs = ts;
+      }
+      if (latestMs > 0) cutoffMs = latestMs - windowDays * 24 * 60 * 60 * 1000;
+    }
     return tripRows.filter(t => {
       if (zoneFilter && t.zone !== zoneFilter) return false;
       if (directionFilter && t.inbound_or_outbound !== directionFilter) return false;
+      if (cutoffMs != null) {
+        const ts = t.latest_alert_at ? Date.parse(t.latest_alert_at) : 0;
+        if (isNaN(ts) || ts < cutoffMs) return false;
+      }
       if (!q) return true;
       return (
         t.trip_id.toLowerCase().includes(q) ||
@@ -175,7 +194,7 @@ export function Investigation({ preselect }: Props) {
         t.destination.toLowerCase().includes(q)
       );
     });
-  }, [tripRows, query, zoneFilter, directionFilter]);
+  }, [tripRows, query, zoneFilter, directionFilter, windowDays]);
 
   const tripKpis = useMemo(() => {
     const total = tripTableRows.length;
@@ -352,6 +371,8 @@ export function Investigation({ preselect }: Props) {
           onDirectionFilter={setDirectionFilter}
           zoneOptions={zoneOptions}
           directionOptions={directionOptions}
+          windowDays={windowDays}
+          onWindowDays={setWindowDays}
           aliasLocation={aliasLocation}
           onView={(t) => setDetailTrip(t)}
         />
@@ -439,7 +460,8 @@ export function Investigation({ preselect }: Props) {
  * ========================================================= */
 function TripTable({
   rows, kpis, query, onQuery, zoneFilter, onZoneFilter,
-  directionFilter, onDirectionFilter, zoneOptions, directionOptions, aliasLocation, onView,
+  directionFilter, onDirectionFilter, zoneOptions, directionOptions,
+  windowDays, onWindowDays, aliasLocation, onView,
 }: {
   rows: TripRow[];
   kpis: {
@@ -454,9 +476,17 @@ function TripTable({
   onDirectionFilter: (d: string) => void;
   zoneOptions: string[];
   directionOptions: string[];
+  windowDays: number;
+  onWindowDays: (d: number) => void;
   aliasLocation: (s: string) => string;
   onView: (t: TripRow) => void;
 }) {
+  const WINDOW_OPTIONS: { days: number; label: string }[] = [
+    { days: 7, label: "Last 7 days" },
+    { days: 30, label: "Last 30 days" },
+    { days: 90, label: "Last 90 days" },
+    { days: 0, label: "All time" },
+  ];
   const [page, setPage] = useState(0);
   const PER_PAGE = 50;
   const pageRows = rows.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
@@ -492,6 +522,21 @@ function TripTable({
         <TripKpi label="High severity" value={kpis.highEsc.toLocaleString("en-IN")} tone="high" />
         <TripKpi label="Critical" value={kpis.critical.toLocaleString("en-IN")} tone="critical" />
         <TripKpi label="Reefer trips" value={kpis.reeferCount.toLocaleString("en-IN")} />
+      </div>
+
+      {/* Time-window pill filter — recent trips are the actionable ones. */}
+      <div className="z-trip-window-row">
+        <span className="z-trip-window-label">When:</span>
+        {WINDOW_OPTIONS.map(opt => (
+          <button
+            key={opt.days}
+            type="button"
+            className={"z-trip-window-pill" + (windowDays === opt.days ? " is-active" : "")}
+            onClick={() => { onWindowDays(opt.days); setPage(0); }}
+          >
+            {opt.label}
+          </button>
+        ))}
       </div>
 
       {/* Filter bar */}

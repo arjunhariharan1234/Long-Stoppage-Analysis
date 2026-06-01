@@ -56,9 +56,9 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
       .then(([s, v, h, d, vh, t, e, brain]) => {
         setSummary(s); setVerdicts(v); setHotspots(h);
         setDrivers(d); setVehicles(vh); setTransporters(t); setEvents(e);
-        // Distinct top-5 trip patterns: keep the highest-scoring trip per
-        // (vehicle, origin_token, destination_token) so we don't show 5 cards
-        // for the same recurring run.
+        // Distinct top-10 trip patterns: keep the highest-scoring trip per
+        // (vehicle, origin_token, destination_token) so we don't show
+        // duplicate cards for the same recurring run.
         const tokenize = (s?: string) => (s || "").trim().split(/\s+/)[0] || "";
         const byPattern = new Map<string, BrainScore>();
         for (const s of brain.scores) {
@@ -69,7 +69,7 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
         }
         const top = [...byPattern.values()]
           .sort((a, b) => b.brain_score - a.brain_score)
-          .slice(0, 5);
+          .slice(0, 10);
         setBrainTop(top);
         setLoading(false);
       })
@@ -189,12 +189,16 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
       </div>
 
       {brainTop.length > 0 && (
-        <section className="pulse-rail brain-rail">
-          <header className="pulse-rail-header">
-            <h3>Suspected trips</h3>
-            <span className="pulse-rail-count">{brainTop.length} of top 5</span>
+        <section className="pulse-rail brain-rail brain-rail-attention">
+          <header className="pulse-rail-header brain-rail-header">
+            <div>
+              <h3 className="brain-rail-title">Suspected trips</h3>
+              <p className="brain-rail-subtitle">
+                {brainTop.length} high-risk trip{brainTop.length === 1 ? "" : "s"} the brain wants you to investigate
+              </p>
+            </div>
           </header>
-          <ul className="brain-rail-list brain-rail-list-row">
+          <ul className="brain-rail-list brain-rail-list-grid">
             {brainTop.map(b => (
               <li
                 key={b.trip_id}

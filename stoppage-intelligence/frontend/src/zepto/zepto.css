@@ -4866,12 +4866,35 @@ html, body {
 
 .brain-rail { padding: 12px; border: 1px solid var(--zepto-border, #e5e7eb);
   border-radius: 8px; background: var(--zepto-bg-soft, #f9fafb); margin: 12px 0; }
+/* Attention variant: amber-tinted background so the rail visually pops on
+   the Review page — these are the highest-leverage findings. */
+.brain-rail-attention { padding: 16px;
+  background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 60%, #fefce8 100%);
+  border: 1px solid #fed7aa; box-shadow: 0 1px 2px rgba(120, 53, 15, 0.06); }
+.brain-rail-header { display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-bottom: 4px; }
+.brain-rail-title { margin: 0; font-size: 16px; font-weight: 600; color: #7c2d12; }
+.brain-rail-subtitle { margin: 2px 0 0 0; font-size: 12px; color: #92400e; }
+
 .brain-rail-list { list-style: none; padding: 0; margin: 8px 0 0 0;
   display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; }
-/* Single-row variant: all suspected-trip cards on one line. */
+/* Single-row variant (kept for backwards compatibility / smaller cohorts). */
 .brain-rail-list-row { display: flex; flex-wrap: nowrap; overflow-x: auto;
   align-items: stretch; padding-bottom: 4px; }
 .brain-rail-list-row > .brain-rail-card { flex: 1 1 0; min-width: 220px; }
+/* Grid variant: 2 rows × 5 cards on desktop; auto-reflow on smaller widths. */
+.brain-rail-list-grid { display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 1280px) {
+  .brain-rail-list-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+@media (max-width: 1024px) {
+  .brain-rail-list-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  .brain-rail-list-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.brain-rail-list-grid > .brain-rail-card { min-width: 0; }
 .brain-rail-card { background: #fff; border: 1px solid var(--zepto-border, #e5e7eb);
   border-radius: 6px; padding: 10px; display: flex; gap: 10px;
   transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease; }
@@ -5109,3 +5132,19 @@ html, body {
 @media (max-width: 640px) {
   .susp-quick-review-list { grid-template-columns: 1fr; }
 }
+
+/* Investigate · time-window pill filter — recent trips first */
+.z-trip-window-row { display: flex; align-items: center; gap: 8px;
+  margin: 0 0 12px 0; flex-wrap: wrap; }
+.z-trip-window-label { font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.04em; color: var(--zepto-muted, #6b7280);
+  font-weight: 500; margin-right: 4px; }
+.z-trip-window-pill { background: #fff; border: 1px solid var(--zepto-border, #e5e7eb);
+  border-radius: 999px; padding: 6px 14px; font-size: 12px; font-weight: 500;
+  color: var(--zepto-fg, #111827); cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease, color 120ms ease; }
+.z-trip-window-pill:hover { border-color: #c4c9d1; background: #f9fafb; }
+.z-trip-window-pill.is-active { background: var(--zepto-fg, #111827);
+  border-color: var(--zepto-fg, #111827); color: #fff; }
+.z-trip-window-pill:focus-visible { outline: 2px solid var(--zepto-accent, #facc15);
+  outline-offset: 1px; }
