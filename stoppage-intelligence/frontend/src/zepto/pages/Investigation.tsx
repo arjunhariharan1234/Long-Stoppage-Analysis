@@ -32,6 +32,8 @@ export function aliasLocation(s: string): string {
 
 interface PreselectInfo {
   driver?: string; vehicle?: string; transporter?: string; route?: string; trip?: string;
+  /** Auto-open the full trip-detail panel for the selected trip. */
+  openDetail?: boolean;
 }
 
 interface TripSummary {
@@ -91,8 +93,18 @@ export function Investigation({ preselect }: Props) {
       setLens("route"); setSelectedKey(preselect.route); setQuery(preselect.route);
     } else if (preselect.trip) {
       setLens("trip"); setSelectedKey(preselect.trip); setQuery(preselect.trip);
+      if (preselect.openDetail) {
+        const tripRow = tripRows.find(t => t.trip_id === preselect.trip);
+        if (tripRow) {
+          setDetailTrip(tripRow);
+          setTripSubTab("detail");
+        }
+        // If the brain-flagged trip isn't in tripRows (events sample only
+        // covers a subset), the listing-state fallback above still narrows
+        // the query so the user lands close to the right context.
+      }
     }
-  }, [loading, preselect, drivers]);
+  }, [loading, preselect, drivers, tripRows]);
 
   // Scroll preselected row into view once data renders.
   useEffect(() => {

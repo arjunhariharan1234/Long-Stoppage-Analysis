@@ -33,9 +33,10 @@ interface Props {
   onOpenInMap: (verdict: Verdict) => void;
   onSeeAll: () => void;
   onJumpToHotspots?: () => void;
+  onSuspectedTripClick?: (tripId: string) => void;
 }
 
-export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots }: Props) {
+export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, onSuspectedTripClick }: Props) {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [verdicts, setVerdicts] = useState<Verdict[]>([]);
   const [hotspots, setHotspots] = useState<HotspotFC | null>(null);
@@ -180,12 +181,24 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots }
       {brainTop.length > 0 && (
         <section className="pulse-rail brain-rail">
           <header className="pulse-rail-header">
-            <h3>Brain-flagged this period</h3>
+            <h3>Suspected trips</h3>
             <span className="pulse-rail-count">{brainTop.length} of top 5</span>
           </header>
-          <ul className="brain-rail-list">
+          <ul className="brain-rail-list brain-rail-list-row">
             {brainTop.map(b => (
-              <li key={b.trip_id} className="brain-rail-card">
+              <li
+                key={b.trip_id}
+                className="brain-rail-card is-clickable"
+                role="button"
+                tabIndex={0}
+                onClick={() => onSuspectedTripClick?.(b.trip_id)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onSuspectedTripClick?.(b.trip_id);
+                  }
+                }}
+              >
                 <div className="brain-rail-score">
                   <span className="brain-rail-num">{b.brain_score}</span>
                   <Badge className="is-critical">HIGH</Badge>

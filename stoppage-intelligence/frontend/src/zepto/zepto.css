@@ -4868,8 +4868,16 @@ html, body {
   border-radius: 8px; background: var(--zepto-bg-soft, #f9fafb); margin: 12px 0; }
 .brain-rail-list { list-style: none; padding: 0; margin: 8px 0 0 0;
   display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; }
+/* Single-row variant: all suspected-trip cards on one line. */
+.brain-rail-list-row { display: flex; flex-wrap: nowrap; overflow-x: auto;
+  align-items: stretch; padding-bottom: 4px; }
+.brain-rail-list-row > .brain-rail-card { flex: 1 1 0; min-width: 220px; }
 .brain-rail-card { background: #fff; border: 1px solid var(--zepto-border, #e5e7eb);
-  border-radius: 6px; padding: 10px; display: flex; gap: 10px; }
+  border-radius: 6px; padding: 10px; display: flex; gap: 10px;
+  transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease; }
+.brain-rail-card.is-clickable { cursor: pointer; }
+.brain-rail-card.is-clickable:hover { border-color: #c4c9d1; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+.brain-rail-card.is-clickable:focus-visible { outline: 2px solid var(--zepto-accent, #facc15); outline-offset: 1px; }
 .brain-rail-score { display: flex; flex-direction: column; align-items: center; gap: 4px;
   min-width: 48px; }
 .brain-rail-num { font-size: 22px; font-weight: 600; }

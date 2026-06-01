@@ -37,6 +37,11 @@ export function ZeptoApp() {
     setPage("investigate");
   }
 
+  function openSuspectedTrip(tripId: string) {
+    setInvestPreselect({ trip: tripId, openDetail: true });
+    setPage("investigate");
+  }
+
   return (
     <div className="zepto-app" style={{ minHeight: "100vh", background: "#f5f7fa" }}>
       {/* Top navigation */}
@@ -77,6 +82,7 @@ export function ZeptoApp() {
             onOpenInMap={openInMap}
             onSeeAll={() => setPage("investigate")}
             onJumpToHotspots={() => setPage("hotspots")}
+            onSuspectedTripClick={openSuspectedTrip}
           />
         )}
         {page === "hotspots" && <HotspotMap focus={mapFocus} />}
