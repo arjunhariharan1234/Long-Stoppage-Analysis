@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./zepto.css";
 import { Pulse } from "./pages/Pulse";
 import { HotspotMap } from "./pages/HotspotMap";
@@ -19,11 +19,81 @@ const NAV: { id: Page; label: string }[] = [
   { id: "hotspots", label: "Visualise" },
 ];
 
+/** Read URL hash into (page, tripId). Supports:
+ *   #suspected/54404420   → suspected-trip detail page for trip 54404420
+ *   #review               → Pulse / Review
+ *   #investigate          → Investigate
+ *   #investigate?driver=… → Investigate with preselect
+ *   (empty)               → Pulse (default)
+ */
+function parseHash(hash: string): { page: Page; tripId?: string; preselect?: any } {
+  const raw = hash.replace(/^#\/?/, "");
+  if (!raw) return { page: "pulse" };
+  const [path, qs] = raw.split("?");
+  const parts = path.split("/");
+  const head = parts[0];
+  const params = new URLSearchParams(qs || "");
+  if (head === "suspected" && parts[1]) {
+    return { page: "suspected-trip", tripId: parts[1] };
+  }
+  if (head === "review" || head === "pulse") return { page: "pulse" };
+  if (head === "investigate") {
+    const pre: any = {};
+    for (const k of ["driver", "vehicle", "transporter", "route", "trip"]) {
+      const v = params.get(k);
+      if (v) pre[k] = v;
+    }
+    if (params.get("trip")) pre.openDetail = true;
+    return { page: "investigate", preselect: Object.keys(pre).length ? pre : null };
+  }
+  if (head === "hotspots") return { page: "hotspots" };
+  if (head === "ask") return { page: "ask" };
+  if (head === "actions") return { page: "actions" };
+  if (head === "risk-zones") return { page: "risk-zones" };
+  return { page: "pulse" };
+}
+
+function pageToHash(page: Page, tripId?: string | null, preselect?: any): string {
+  if (page === "suspected-trip" && tripId) return `#suspected/${tripId}`;
+  if (page === "pulse") return "#review";
+  if (page === "investigate") {
+    const qs = new URLSearchParams();
+    if (preselect?.driver) qs.set("driver", preselect.driver);
+    else if (preselect?.vehicle) qs.set("vehicle", preselect.vehicle);
+    else if (preselect?.transporter) qs.set("transporter", preselect.transporter);
+    else if (preselect?.trip) qs.set("trip", preselect.trip);
+    const s = qs.toString();
+    return s ? `#investigate?${s}` : "#investigate";
+  }
+  return `#${page}`;
+}
+
 export function ZeptoApp() {
-  const [page, setPage] = useState<Page>("pulse");
+  const initial = typeof window !== "undefined" ? parseHash(window.location.hash) : { page: "pulse" as Page };
+  const [page, setPage] = useState<Page>(initial.page);
   const [mapFocus, setMapFocus] = useState<{ lat: number; lng: number; zoom?: number } | null>(null);
-  const [investPreselect, setInvestPreselect] = useState<any>(null);
-  const [suspectedTripId, setSuspectedTripId] = useState<string | null>(null);
+  const [investPreselect, setInvestPreselect] = useState<any>(initial.preselect ?? null);
+  const [suspectedTripId, setSuspectedTripId] = useState<string | null>(initial.tripId ?? null);
+
+  // Keep the URL hash in sync with the current view so links are shareable.
+  useEffect(() => {
+    const want = pageToHash(page, suspectedTripId, investPreselect);
+    if (typeof window !== "undefined" && window.location.hash !== want) {
+      window.history.replaceState(null, "", want);
+    }
+  }, [page, suspectedTripId, investPreselect]);
+
+  // Respond to hash changes (back/forward, manually-pasted URL).
+  useEffect(() => {
+    const onHash = () => {
+      const next = parseHash(window.location.hash);
+      setPage(next.page);
+      if (next.tripId !== undefined) setSuspectedTripId(next.tripId);
+      if (next.preselect !== undefined) setInvestPreselect(next.preselect);
+    };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
 
   function openInMap(v: Verdict) {
     setMapFocus({ lat: v.location.lat, lng: v.location.lng, zoom: 11 });
