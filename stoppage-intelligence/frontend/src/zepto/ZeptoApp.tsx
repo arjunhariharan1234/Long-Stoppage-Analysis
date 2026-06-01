@@ -6,9 +6,10 @@ import { Investigation } from "./pages/Investigation";
 import { TheftZoneUpload } from "./pages/TheftZoneUpload";
 import { Ask } from "./pages/Ask";
 import { Actions } from "./pages/Actions";
+import { SuspectedTripDetail } from "./pages/SuspectedTripDetail";
 import type { Verdict } from "./types";
 
-type Page = "pulse" | "investigate" | "ask" | "hotspots" | "actions" | "risk-zones";
+type Page = "pulse" | "investigate" | "ask" | "hotspots" | "actions" | "risk-zones" | "suspected-trip";
 
 const NAV: { id: Page; label: string }[] = [
   { id: "pulse", label: "Review" },
@@ -22,6 +23,7 @@ export function ZeptoApp() {
   const [page, setPage] = useState<Page>("pulse");
   const [mapFocus, setMapFocus] = useState<{ lat: number; lng: number; zoom?: number } | null>(null);
   const [investPreselect, setInvestPreselect] = useState<any>(null);
+  const [suspectedTripId, setSuspectedTripId] = useState<string | null>(null);
 
   function openInMap(v: Verdict) {
     setMapFocus({ lat: v.location.lat, lng: v.location.lng, zoom: 11 });
@@ -38,8 +40,8 @@ export function ZeptoApp() {
   }
 
   function openSuspectedTrip(tripId: string) {
-    setInvestPreselect({ trip: tripId, openDetail: true });
-    setPage("investigate");
+    setSuspectedTripId(tripId);
+    setPage("suspected-trip");
   }
 
   return (
@@ -90,6 +92,9 @@ export function ZeptoApp() {
         {page === "ask" && <Ask />}
         {page === "actions" && <Actions />}
         {page === "risk-zones" && <TheftZoneUpload />}
+        {page === "suspected-trip" && suspectedTripId && (
+          <SuspectedTripDetail tripId={suspectedTripId} onBack={() => setPage("pulse")} />
+        )}
       </main>
     </div>
   );

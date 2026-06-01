@@ -243,10 +243,14 @@ def extract_trip_features(row: dict | Any) -> dict:
     origin_raw = _safe_str(g("window_origin", ""))
     destination_raw = _safe_str(g("window_destination", ""))
 
+    def _iso(dt):
+        return dt.isoformat(timespec="seconds") if dt is not None else None
+
     return {
         "trip_id": _safe_str(g("window_trip_id", "")),
         "vehicle": _safe_str(g("vehicle_number_clean", "")),
         "driver_number": _safe_str(g("window_driver_number", "")),
+        "driver_name": _safe_str(g("window_driver_name", "")),
         "transporter": _safe_str(g("window_transporter", "")),
         "origin": origin_raw,
         "destination": destination_raw,
@@ -271,8 +275,15 @@ def extract_trip_features(row: dict | Any) -> dict:
         "tracking_sources": tracking_sources_raw,
         "tracking_sources_count": _tracking_sources_count(tracking_sources_raw),
         "alerts_count": _count_alerts(g("window_alerts")),
+        "alerts_text": _safe_str(g("window_alerts", "")),
         "eta_breach_hrs": eta_breach_hrs,
         "destination_entry_present": _is_present(destination_entry_raw),
         "origin_code": _first_token(origin_raw),
         "destination_code": _first_token(destination_raw),
+        # --- Display-only timeline (ISO strings) -----------------------------
+        "gate_out_iso": _iso(gate_out_dt),
+        "first_ping_iso": _iso(first_ping_dt),
+        "destination_entry_iso": _iso(destination_entry_dt),
+        "closure_iso": _iso(closure_dt),
+        "google_eta_iso": _iso(google_eta_dt),
     }

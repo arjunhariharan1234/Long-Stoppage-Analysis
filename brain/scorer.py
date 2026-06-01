@@ -108,8 +108,16 @@ def nearest_cases(trip_vec: dict, cases: list[dict], weights: dict[str, float],
         if t and transporter_counts.get(t, 0) >= MAX_PER_TRANSPORTER:
             continue
         transporter_counts[t] = transporter_counts.get(t, 0) + 1
+        # Build a plain-English headline for the case so the UI doesn't need
+        # to leak codified IDs into user-facing labels.
+        city_str = c.get("city") or "an unknown city"
+        transporter_str = c.get("transporter") or "an unknown transporter"
+        loss = c.get("loss_inr")
+        loss_str = (f" — ₹{int(loss):,} loss" if loss and loss > 0 else "")
+        headline = f"Past theft incident in {city_str.title()} handled by {transporter_str}{loss_str}"
         out.append({
             "case_id": c.get("case_id"),
+            "headline": headline,
             "similarity": round(max(0.0, 1.0 - d / max_d), 3),
             "city": c.get("city"),
             "transporter": c.get("transporter"),
@@ -126,20 +134,56 @@ def score_trip(feats: dict, codex: dict, cases: list[dict], context: dict | None
     weights = _feature_weights_from_codex(codex)
     trip_vec = build_signature_vector(feats)
     similar = nearest_cases(trip_vec, cases, weights, k=3)
+
+    # Enrich matched-signal payloads with human-readable text + rationale from the registry.
+    from brain.signals import SIGNAL_REGISTRY
+    sig_meta = {s["id"]: s for s in SIGNAL_REGISTRY}
+    enriched_signals = []
+    for m in codex_result["matched"]:
+        reg = sig_meta.get(m["id"], {})
+        enriched_signals.append({
+            "id": m["id"],
+            "name": m["name"],
+            "category": m["category"],
+            "weight": m["weight"],
+            "evidence": m["evidence"],
+            "human_text": reg.get("human_text", m["name"]),
+            "rationale": reg.get("rationale", ""),
+        })
+
     return {
+        # --- identity ---
         "trip_id": feats.get("trip_id"),
         "vehicle": feats.get("vehicle"),
         "driver_number": feats.get("driver_number"),
+        "driver_name": feats.get("driver_name"),
         "transporter": feats.get("transporter"),
+        "origin": feats.get("origin"),
+        "destination": feats.get("destination"),
+        # --- scoring ---
         "brain_score": int(codex_result["score"]),
         "tier": _tier(codex_result["score"]),
-        "matched_signals": [
-            {"id": m["id"], "name": m["name"], "category": m["category"],
-             "weight": m["weight"], "evidence": m["evidence"]}
-            for m in codex_result["matched"]
-        ],
+        "matched_signals": enriched_signals,
         "similar_cases": similar,
         "recommended_action": _recommended_action(codex_result["matched"], similar),
+        # --- timeline (ISO strings, frontend formats) ---
+        "gate_out": feats.get("gate_out_iso"),
+        "first_ping_outside_origin": feats.get("first_ping_iso"),
+        "destination_entry": feats.get("destination_entry_iso"),
+        "trip_closure_time": feats.get("closure_iso"),
+        "google_eta": feats.get("google_eta_iso"),
+        # --- operational stats ---
+        "transit_distance_km": round(feats.get("transit_distance_km", 0), 1),
+        "google_distance_km": round(feats.get("google_distance_km", 0), 1),
+        "transit_time_hrs": round(feats.get("transit_time_hrs", 0), 2),
+        "stoppage_hrs": round(feats.get("stoppage_hrs", 0), 2),
+        "loading_time_hrs": round(feats.get("loading_time_hrs", 0), 2),
+        "unloading_time_hrs": round(feats.get("unloading_time_hrs", 0), 2),
+        "eta_breach_hrs": round(feats.get("eta_breach_hrs", 0), 2),
+        "total_pings": feats.get("total_pings", 0),
+        "alerts_text": feats.get("alerts_text", ""),
+        "tracking_health": feats.get("tracking_health", 100),
+        "closure_mode": feats.get("closure_mode", ""),
     }
 
 

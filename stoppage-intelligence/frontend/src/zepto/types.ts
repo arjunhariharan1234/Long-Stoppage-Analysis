@@ -287,25 +287,55 @@ export interface BrainSignal {
   category: string;
   weight: number;
   evidence: Record<string, unknown>;
+  /** Plain-English explanation for the operator. */
+  human_text?: string;
+  /** Why this signal exists in the codex (analyst rationale). */
+  rationale?: string;
 }
 
 export interface BrainSimilarCase {
   case_id: string;
+  /** Plain-English label, e.g. "Past theft in Delhi handled by Maa Durga Transport — ₹50,000 loss". */
+  headline?: string;
   similarity: number;
   city?: string;
+  transporter?: string;
   rca_summary?: string;
 }
 
 export interface BrainScore {
+  // identity
   trip_id: string;
   vehicle: string;
   driver_number: string;
+  driver_name?: string;
   transporter: string;
+  origin?: string;
+  destination?: string;
+  // scoring
   brain_score: number;
   tier: "low" | "medium" | "high";
   matched_signals: BrainSignal[];
   similar_cases: BrainSimilarCase[];
   recommended_action?: string;
+  // timeline (ISO strings)
+  gate_out?: string | null;
+  first_ping_outside_origin?: string | null;
+  destination_entry?: string | null;
+  trip_closure_time?: string | null;
+  google_eta?: string | null;
+  // operational stats
+  transit_distance_km?: number;
+  google_distance_km?: number;
+  transit_time_hrs?: number;
+  stoppage_hrs?: number;
+  loading_time_hrs?: number;
+  unloading_time_hrs?: number;
+  eta_breach_hrs?: number;
+  total_pings?: number;
+  alerts_text?: string;
+  tracking_health?: number;
+  closure_mode?: string;
 }
 
 export interface BrainScoresFile {
