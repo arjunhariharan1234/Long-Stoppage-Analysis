@@ -421,7 +421,20 @@ export function SuspectedTripDetail({ tripId, onBack, onOpenSuspectedTrip }: Pro
       {/* Top bar */}
       <div className="susp-topbar">
         <Button variant="secondary" size="sm" onClick={onBack}>← Back to review</Button>
-        <div className="susp-topbar-trip">Trip {score.trip_id}</div>
+        <div className="susp-topbar-trip">
+          Trip {score.trip_id}
+          {(() => {
+            const ds = score.trip_closure_time || score.first_ping_outside_origin;
+            if (!ds) return null;
+            const d = new Date(ds);
+            if (isNaN(d.getTime())) return null;
+            return (
+              <span className="susp-topbar-date">
+                · {d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+              </span>
+            );
+          })()}
+        </div>
         <Badge className={tierClass(score.tier)}>{tierLabel(score.tier)} · {score.brain_score}</Badge>
       </div>
 

@@ -221,6 +221,17 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
                   <div className="brain-rail-trip">
                     {b.driver_name || "Unknown driver"} · {b.vehicle || "?"}
                   </div>
+                  {(() => {
+                    const ds = b.trip_closure_time || b.first_ping_outside_origin;
+                    if (!ds) return null;
+                    const d = new Date(ds);
+                    if (isNaN(d.getTime())) return null;
+                    return (
+                      <div className="brain-rail-date">
+                        {d.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                      </div>
+                    );
+                  })()}
                   <div className="brain-rail-meta brain-rail-transporter">
                     {b.transporter || "—"}
                   </div>

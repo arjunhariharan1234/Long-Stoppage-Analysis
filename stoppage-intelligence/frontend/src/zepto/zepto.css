@@ -5148,3 +5148,14 @@ html, body {
   border-color: var(--zepto-fg, #111827); color: #fff; }
 .z-trip-window-pill:focus-visible { outline: 2px solid var(--zepto-accent, #facc15);
   outline-offset: 1px; }
+
+/* Trip date — prominent on Pulse cards and detail-page top bar
+   so the operator knows immediately WHEN the suspected trip happened. */
+.brain-rail-date { display: inline-block; padding: 2px 8px;
+  background: #fde68a; color: #78350f; font-weight: 600;
+  font-size: 12px; border-radius: 999px; line-height: 1.4;
+  align-self: flex-start; }
+.susp-topbar-date { margin-left: 8px; font-size: 13px;
+  color: var(--zepto-fg, #111827); font-weight: 600;
+  padding: 2px 8px; background: #fde68a; color: #78350f;
+  border-radius: 999px; }
