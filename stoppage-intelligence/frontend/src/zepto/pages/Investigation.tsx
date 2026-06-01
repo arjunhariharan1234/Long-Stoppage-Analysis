@@ -773,13 +773,13 @@ function TripTable({
     <>
       {/* KPI ribbon */}
       <div className="z-trip-kpi-row">
-        <TripKpi label="Total trips" value={kpis.total.toLocaleString("en-IN")} />
+        <TripKpi label="Trips on record" value={kpis.total.toLocaleString("en-IN")} />
+        <TripKpi label="Suspected (HIGH)" value={kpis.critical.toLocaleString("en-IN")} tone="critical" />
+        <TripKpi label="Worth a look" value={kpis.highEsc.toLocaleString("en-IN")} tone="high" />
         <TripKpi label="Total halts" value={kpis.halts.toLocaleString("en-IN")} />
         <TripKpi label="Avg stoppage" value={`${kpis.avgStoppage} hr`} />
         <TripKpi label="Unique vehicles" value={kpis.vehicles.toLocaleString("en-IN")} />
         <TripKpi label="Unique transporters" value={kpis.transporters.toLocaleString("en-IN")} />
-        <TripKpi label="High severity" value={kpis.highEsc.toLocaleString("en-IN")} tone="high" />
-        <TripKpi label="Critical" value={kpis.critical.toLocaleString("en-IN")} tone="critical" />
         <TripKpi label="Reefer trips" value={kpis.reeferCount.toLocaleString("en-IN")} />
       </div>
 

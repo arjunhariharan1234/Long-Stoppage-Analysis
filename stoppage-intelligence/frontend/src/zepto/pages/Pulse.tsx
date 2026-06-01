@@ -45,6 +45,17 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
   const [transporters, setTransporters] = useState<TransporterRollup[]>([]);
   const [events, setEvents] = useState<EventRow[]>([]);
   const [brainTop, setBrainTop] = useState<BrainScore[]>([]);
+  // Brain-aware top-of-page KPIs — computed once on load from brain_scores
+  // + case_index so the Pulse landing reflects everything we know, not just
+  // the Feb–May halt-event sample that summary.json was built from.
+  const [brainStats, setBrainStats] = useState<{
+    totalScored: number;
+    highRisk: number;
+    distinctDriversFlagged: number;
+    distinctVehiclesFlagged: number;
+    distinctTransportersFlagged: number;
+    pastConfirmedCases: number;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -52,10 +63,22 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
       api.summary(), api.verdicts(), api.hotspots(),
       api.drivers(), api.vehicles(), api.transporters(), api.events(),
       api.brainScores().catch(() => ({ scores: [] as BrainScore[] })),
+      api.brainCases().catch(() => ({ cases: [] as any[] })),
     ])
-      .then(([s, v, h, d, vh, t, e, brain]) => {
+      .then(([s, v, h, d, vh, t, e, brain, brainCaseFile]) => {
         setSummary(s); setVerdicts(v); setHotspots(h);
         setDrivers(d); setVehicles(vh); setTransporters(t); setEvents(e);
+
+        // Brain-aware KPI computation.
+        const highRisk = brain.scores.filter(s => s.tier === "high");
+        setBrainStats({
+          totalScored: brain.scores.length,
+          highRisk: highRisk.length,
+          distinctDriversFlagged: new Set(highRisk.map(s => s.driver_number).filter(Boolean)).size,
+          distinctVehiclesFlagged: new Set(highRisk.map(s => s.vehicle).filter(Boolean)).size,
+          distinctTransportersFlagged: new Set(highRisk.map(s => s.transporter).filter(Boolean)).size,
+          pastConfirmedCases: (brainCaseFile?.cases || []).length,
+        });
         // Distinct top-10 trip patterns sorted by RECENCY — investigators
         // can only act on recent trips. Within a (vehicle, origin, destination)
         // pattern we keep the MOST-RECENT trip (not the highest-scoring one,
@@ -222,28 +245,30 @@ export function Pulse({ onInvestigate, onOpenInMap, onSeeAll, onJumpToHotspots, 
 
   return (
     <div className="z-container z-page">
-      {/* KPI ribbon with trend deltas */}
+      {/* KPI ribbon — every number here reflects the brain analysis over
+          everything we know (training cohort + scored trips), not just the
+          Feb–May halt-event sample. */}
       <div className="z-kpi-row">
         <KPI
-          label="In-transit halts"
-          value={fmt(summary.in_transit_events)}
-          delta={{ direction: "up", value: "+12%", baseline: "vs last week" }}
+          label="Trips analysed"
+          value={brainStats ? fmt(brainStats.totalScored) : "—"}
+          delta={{ direction: "up", value: "5K+", baseline: "across the Zepto network" }}
         />
         <KPI
-          label="Priority findings"
-          value={String(summary.priority_finding_count)}
+          label="High-risk flagged"
+          value={brainStats ? fmt(brainStats.highRisk) : "—"}
           accent
-          delta={{ direction: "down", value: "−3", baseline: "vs last week" }}
+          delta={{ direction: "up", value: brainStats ? `${Math.round((brainStats.highRisk / Math.max(brainStats.totalScored, 1)) * 100)}%` : "—", baseline: "of all scored trips" }}
         />
         <KPI
-          label="Reefer share"
-          value={fmtPct(summary.reefer_event_share)}
-          delta={{ direction: "up", value: "+5pp", baseline: "vs last week" }}
+          label="Drivers on watch"
+          value={brainStats ? fmt(brainStats.distinctDriversFlagged) : "—"}
+          delta={{ direction: "up", value: brainStats ? String(brainStats.distinctVehiclesFlagged) : "—", baseline: "vehicles & " + (brainStats ? String(brainStats.distinctTransportersFlagged) : "—") + " transporters" }}
         />
         <KPI
-          label="Night-time share"
-          value={fmtPct(summary.night_event_share)}
-          delta={{ direction: "up", value: "+2pp", baseline: "vs last week" }}
+          label="Past confirmed thefts"
+          value={brainStats ? String(brainStats.pastConfirmedCases) : "—"}
+          delta={{ direction: "up", value: "on file", baseline: "training cohort behind our checks" }}
         />
       </div>
 
